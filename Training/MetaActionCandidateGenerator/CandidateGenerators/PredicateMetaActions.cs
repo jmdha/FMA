@@ -7,21 +7,30 @@ using System.Text;
 using System.Threading.Tasks;
 using PDDLSharp.Translators.StaticPredicateDetectors;
 using PDDLSharp.Models.PDDL.Expressions;
+using PDDLSharp.Contextualisers.PDDL;
+using PDDLSharp.ErrorListeners;
 
 namespace MetaActionCandidateGenerator.CandidateGenerators
 {
     public class PredicateMetaActions : ICandidateGenerator
     {
-        public List<ActionDecl> GenerateCandidates(PDDLDecl pddl)
+        public List<ActionDecl> GenerateCandidates(PDDLDecl pddlDecl)
         {
-            if (pddl.Domain.Predicates == null)
+            if (pddlDecl.Domain.Predicates == null)
                 throw new Exception("No predicates defined in domain!");
+
+            if (!pddlDecl.IsContextualised)
+            {
+                var listener = new ErrorListener();
+                var contextualiser = new PDDLContextualiser(listener);
+                contextualiser.Contexturalise(pddlDecl);
+            }
 
             var candidates = new List<ActionDecl>();
 
-            var statics = SimpleStaticPredicateDetector.FindStaticPredicates(pddl);
+            var statics = SimpleStaticPredicateDetector.FindStaticPredicates(pddlDecl);
             statics.Add(new PredicateExp("="));
-            foreach (var predicate in pddl.Domain.Predicates.Predicates)
+            foreach (var predicate in pddlDecl.Domain.Predicates.Predicates)
             {
                 if (!statics.Any(x => x.Name.ToUpper() == predicate.Name.ToUpper()))
                 {

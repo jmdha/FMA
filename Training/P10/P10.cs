@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using P10.RefinementStrategies;
 using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.Contextualisers.PDDL;
 using PDDLSharp.ErrorListeners;
@@ -55,8 +56,7 @@ namespace P10
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
             ConsoleHelper.WriteLineColor($"Generating Initial Candidates", ConsoleColor.Blue);
-            var generator = MetaActionCandidateGenerator.MetaActionCandidateGenerator.GetGenerator(opts.GeneratorStrategy);
-            var candidates = generator.GenerateCandidates(baseDecl);
+            var candidates = MetaActionCandidateGenerator.MetaActionCandidateGenerator.GetMetaActionCandidates(baseDecl, opts.GeneratorStrategy);
             ConsoleHelper.WriteLineColor($"\tTotal candidates: {candidates.Count}", ConsoleColor.Magenta);
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
@@ -66,8 +66,8 @@ namespace P10
             foreach (var candidate in candidates)
             {
                 ConsoleHelper.WriteLineColor($"\tCandidate: {count++} out of {candidates.Count}", ConsoleColor.Magenta);
-                var refiner = new MetaActionRefiner(candidate);
-                refiner.Refine();
+                var refiner = new MetaActionRefiner(candidate, GetRefinementStrategy(opts.RefinementStrategy));
+                refiner.Refine(domain, problems);
                 ConsoleHelper.WriteLineColor($"\tCandidate refinement complete!", ConsoleColor.Magenta);
             }
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
@@ -83,6 +83,15 @@ namespace P10
             newDomain.Actions.AddRange(refinedCandidates);
             codeGenerator.Generate(newDomain, Path.Combine(opts.OutputPath, "enhancedDomain.pddl"));
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
+        }
+
+        private static IRefinementStrategy GetRefinementStrategy(Options.RefinementStrategies strategy)
+        {
+            switch (strategy)
+            {
+                case Options.RefinementStrategies.SomeStrategy: return new SomeStrategy();
+                default: throw new Exception("Unknown strategy!");
+            }
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Text;
 using Tools;
 
-namespace StacklebergVerifier
+namespace StackelbergVerifier
 {
     public class StackelbergVerifier : BaseCLI
     {
@@ -12,7 +12,6 @@ namespace StacklebergVerifier
         private static string _stackelbergPath = PathHelper.RootPath("../Dependencies/stackelberg-planner/src/fast-downward.py");
         private static int _returnCode = int.MaxValue;
         private static Process? _activeProcess;
-        private static bool _timedOut = false;
 
         static int Main(string[] args)
         {
@@ -44,41 +43,8 @@ namespace StacklebergVerifier
 
             ConsoleHelper.WriteLineColor("Executing Stackelberg Planner");
             ConsoleHelper.WriteLineColor("(Note, this may take a while)");
-            var exitCode = ExecutePlanner(opts);
-            ConsoleHelper.WriteLineColor("Done!", ConsoleColor.Green);
-
-            if (exitCode == 0 || _timedOut)
-            {
-                if (Directory.Exists(_replacementsPath)) {
-                    int count = 0;
-                    int preCount = -1;
-                    while (count != preCount)
-                    {
-                        preCount = count;
-                        Thread.Sleep(1000);
-                        count = Directory.GetFiles(_replacementsPath).Count();
-                        ConsoleHelper.WriteLineColor($"Waiting for planner to finish outputting files [was {preCount} is now {count}]...", ConsoleColor.Yellow);
-                    }
-                }
-            }
-
-            if (exitCode != 0)
-            {
-                if (_timedOut)
-                {
-                    _returnCode = 2;
-                    ConsoleHelper.WriteLineColor("== Planner timed out ==", ConsoleColor.Yellow);
-                }
-                else
-                {
-                    _returnCode = 1;
-                    ConsoleHelper.WriteLineColor("== Frontier is not valid ==", ConsoleColor.Red);
-                }
-                return;
-            }
-
-            ConsoleHelper.WriteLineColor("Checking Frontier...");
-            if (IsFrontierValid(Path.Combine(opts.OutputPath, "pareto_frontier.json")))
+            var isValid = Validate(opts.DomainFilePath, opts.ProblemFilePath, opts.OutputPath);
+            if (isValid)
             {
                 _returnCode = 0;
                 ConsoleHelper.WriteLineColor("== Frontier is valid ==", ConsoleColor.Green);
@@ -104,16 +70,13 @@ namespace StacklebergVerifier
             return false;
         }
 
-        private static int ExecutePlanner(Options opts)
+        private static int ExecutePlanner(string domainPath, string problemPath, string outputPath)
         {
             StringBuilder sb = new StringBuilder("");
             sb.Append($"{_stackelbergPath} ");
-            sb.Append($"\"{opts.DomainFilePath}\" ");
-            sb.Append($"\"{opts.ProblemFilePath}\" ");
-            if (opts.IsEasyProblem)
-                sb.Append($"--search \"sym_stackelberg(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false)\" ");
-            else
-                sb.Append($"--search \"sym_stackelberg(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=true, plan_reuse_upper_bound=true, force_bw_search_minimum_task_seconds=30, time_limit_seconds_minimum_task=300), upper_bound_pruning=true)\" ");
+            sb.Append($"\"{domainPath}\" ");
+            sb.Append($"\"{problemPath}\" ");
+            sb.Append($"--search \"sym_stackelberg(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=true, plan_reuse_upper_bound=true, force_bw_search_minimum_task_seconds=30, time_limit_seconds_minimum_task=300), upper_bound_pruning=true)\" ");
 
             _activeProcess = new Process
             {
@@ -125,7 +88,7 @@ namespace StacklebergVerifier
                     UseShellExecute = false,
                     RedirectStandardError = true,
                     RedirectStandardOutput = true,
-                    WorkingDirectory = opts.OutputPath
+                    WorkingDirectory = outputPath
                 }
             };
 
@@ -134,5 +97,27 @@ namespace StacklebergVerifier
             return _activeProcess.ExitCode;
         }
 
+        public static bool Validate(string domainPath, string problemPath, string outputPath)
+        {
+            var exitCode = ExecutePlanner(domainPath, problemPath, outputPath);
+            if (exitCode != 0)
+                return false;
+            else
+            {
+                if (Directory.Exists(_replacementsPath))
+                {
+                    int count = 0;
+                    int preCount = -1;
+                    while (count != preCount)
+                    {
+                        preCount = count;
+                        Thread.Sleep(1000);
+                        count = Directory.GetFiles(_replacementsPath).Count();
+                        ConsoleHelper.WriteLineColor($"Waiting for planner to finish outputting files [was {preCount} is now {count}]...", ConsoleColor.Yellow);
+                    }
+                }
+            }
+            return IsFrontierValid(Path.Combine(outputPath, "pareto_frontier.json"));
+        }
     }
 }

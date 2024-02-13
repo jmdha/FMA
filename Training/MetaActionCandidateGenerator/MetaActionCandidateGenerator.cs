@@ -3,6 +3,7 @@ using MetaActionCandidateGenerator.CandidateGenerators;
 using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.Contextualisers.PDDL;
 using PDDLSharp.ErrorListeners;
+using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Parsers.PDDL;
@@ -38,14 +39,11 @@ namespace MetaActionCandidateGenerator
             ConsoleHelper.WriteLineColor($"Parsing PDDL Files", ConsoleColor.Blue);
             var listener = new ErrorListener();
             var parser = new PDDLParser(listener);
-            var contexturalizer = new PDDLContextualiser(listener);
             var pddlDecl = parser.ParseDecl(new FileInfo(opts.DomainPath), new FileInfo(opts.ProblemPath));
-            contexturalizer.Contexturalise(pddlDecl);
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
             ConsoleHelper.WriteLineColor($"Generating Candidates", ConsoleColor.Blue);
-            var generator = GetGenerator(opts.GeneratorStrategy);
-            var candidates = generator.GenerateCandidates(pddlDecl);
+            var candidates = GetMetaActionCandidates(pddlDecl, opts.GeneratorStrategy);
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
             ConsoleHelper.WriteLineColor($"Outputting Files", ConsoleColor.Blue);
@@ -56,13 +54,20 @@ namespace MetaActionCandidateGenerator
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
         }
 
-        public static ICandidateGenerator GetGenerator(GeneratorStrategies strategy)
+        private static ICandidateGenerator GetGenerator(GeneratorStrategies strategy)
         {
-            switch (strategy) 
+            switch (strategy)
             {
                 case GeneratorStrategies.PredicateMetaActions: return new PredicateMetaActions();
                 default: throw new Exception("Unknown generator strategy!");
             }
+        }
+
+        public static List<ActionDecl> GetMetaActionCandidates(PDDLDecl pddlDecl, GeneratorStrategies strategy)
+        {
+            var generator = GetGenerator(strategy);
+            var candidates = generator.GenerateCandidates(pddlDecl);
+            return candidates;
         }
     }
 }

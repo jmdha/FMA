@@ -10,7 +10,5 @@ namespace StackelbergVerifier
         public string ProblemFilePath { get; set; } = "";
         [Option("output", Required = false, HelpText = "Path to output files to")]
         public string OutputPath { get; set; } = "";
-        [Option("iseasy", Required = false, HelpText = "Is the problem an easy one", Default = false)]
-        public bool IsEasyProblem { get; set; } = false;
     }
 }

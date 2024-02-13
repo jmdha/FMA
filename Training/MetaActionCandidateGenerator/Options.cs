@@ -21,7 +21,7 @@ namespace MetaActionCandidateGenerator
         public string DomainPath { get; set; } = "";
         [Option("problem", Required = true, HelpText = "Path to the problem file")]
         public string ProblemPath { get; set; } = "";
-        [Option("strategy", Required = true, HelpText = "The generator strategy")]
+        [Option("generation-strategy", Required = true, HelpText = "The generator strategy")]
         public GeneratorStrategies GeneratorStrategy { get; set; }
     }
 }
