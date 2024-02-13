@@ -12,7 +12,7 @@ using static MetaActionCandidateGenerator.Options;
 
 namespace MetaActionCandidateGenerator
 {
-    internal class Program : BaseCLI
+    public class MetaActionCandidateGenerator : BaseCLI
     {
         private static void Main(string[] args)
         {
@@ -56,7 +56,7 @@ namespace MetaActionCandidateGenerator
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
         }
 
-        private static ICandidateGenerator GetGenerator(GeneratorStrategies strategy)
+        public static ICandidateGenerator GetGenerator(GeneratorStrategies strategy)
         {
             switch (strategy) 
             {
