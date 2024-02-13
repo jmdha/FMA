@@ -1,17 +1,13 @@
 ﻿using CommandLine;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MetaActionCandidateGenerator
 {
     public class Options
     {
         [Flags]
-        public enum GeneratorStrategies { 
-            None = 1, 
+        public enum GeneratorStrategies
+        {
+            None = 1,
             PredicateMetaActions = 2
         }
 

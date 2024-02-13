@@ -3,12 +3,6 @@ using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
-using StackelbergCompiler;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace P10
 {
@@ -38,7 +32,7 @@ namespace P10
             var listener = new ErrorListener();
             var codeGenerator = new PDDLCodeGenerator(listener);
             bool isValid = true;
-            foreach(var problem in problems)
+            foreach (var problem in problems)
             {
                 var compiled = StackelbergCompiler.StackelbergCompiler.CompileToStackelberg(new PDDLDecl(domain, problem), RefinedMetaActionCandidate);
                 codeGenerator.Generate(compiled.Domain, Path.Combine(_tempFolder, "tempDomain.pddl"));

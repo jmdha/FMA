@@ -7,7 +7,6 @@ using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers.PDDL;
-using System;
 using Tools;
 
 namespace P10
@@ -31,12 +30,12 @@ namespace P10
 
             opts.OutputPath = PathHelper.RootPath(opts.OutputPath);
             opts.DomainPath = PathHelper.RootPath(opts.DomainPath);
-            for(int i = 0; i < problemsPath.Count; i++)
+            for (int i = 0; i < problemsPath.Count; i++)
                 problemsPath[i] = PathHelper.RootPath(problemsPath[i]);
 
             if (!File.Exists(opts.DomainPath))
                 throw new FileNotFoundException($"Domain file not found: {opts.DomainPath}");
-            foreach(var problem in opts.ProblemsPath)
+            foreach (var problem in opts.ProblemsPath)
                 if (!File.Exists(problem))
                     throw new FileNotFoundException($"Problem file not found: {problem}");
 

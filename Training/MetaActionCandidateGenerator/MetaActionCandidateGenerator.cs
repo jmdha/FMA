@@ -1,13 +1,10 @@
 ﻿using CommandLine;
 using MetaActionCandidateGenerator.CandidateGenerators;
 using PDDLSharp.CodeGenerators.PDDL;
-using PDDLSharp.Contextualisers.PDDL;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
-using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Parsers.PDDL;
-using System;
 using Tools;
 using static MetaActionCandidateGenerator.Options;
 
