@@ -1,5 +1,6 @@
 ﻿using CommandLine;
 using P10.RefinementStrategies;
+using P10.RefinementStrategies.ActionPrecondition;
 using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.Contextualisers.PDDL;
 using PDDLSharp.ErrorListeners;
@@ -61,18 +62,24 @@ namespace P10
 
             ConsoleHelper.WriteLineColor($"Begining refinement process", ConsoleColor.Blue);
             var refinedCandidates = new List<ActionDecl>();
-            int count = 0;
+            int count = 1;
             foreach (var candidate in candidates)
             {
                 ConsoleHelper.WriteLineColor($"\tCandidate: {count++} out of {candidates.Count}", ConsoleColor.Magenta);
                 var refiner = new MetaActionRefiner(candidate, GetRefinementStrategy(opts.RefinementStrategy));
-                refiner.Refine(domain, problems);
-                ConsoleHelper.WriteLineColor($"\tCandidate refinement complete!", ConsoleColor.Magenta);
+                if (refiner.Refine(baseDecl, domain, problems))
+                {
+                    refinedCandidates.Add(refiner.RefinedMetaActionCandidate);
+                    ConsoleHelper.WriteLineColor($"\tCandidate have been refined!", ConsoleColor.Magenta);
+                }
+                else
+                    ConsoleHelper.WriteLineColor($"\tCandidate could not be refined!", ConsoleColor.Magenta);
             }
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
             ConsoleHelper.WriteLineColor($"Outputting refined candidates", ConsoleColor.Blue);
             var codeGenerator = new PDDLCodeGenerator(listener);
+            codeGenerator.Readable = true;
             foreach (var candidate in refinedCandidates)
                 codeGenerator.Generate(candidate, Path.Combine(opts.OutputPath, $"{candidate.Name}.pddl"));
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
@@ -88,7 +95,7 @@ namespace P10
         {
             switch (strategy)
             {
-                case Options.RefinementStrategies.SomeStrategy: return new SomeStrategy();
+                case Options.RefinementStrategies.ActionPrecondition: return new ActionPreconditionRefinement();
                 default: throw new Exception("Unknown strategy!");
             }
         }

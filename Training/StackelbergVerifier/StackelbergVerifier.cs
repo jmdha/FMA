@@ -75,7 +75,7 @@ namespace StackelbergVerifier
             sb.Append($"{_stackelbergPath} ");
             sb.Append($"\"{domainPath}\" ");
             sb.Append($"\"{problemPath}\" ");
-            sb.Append($"--search \"sym_stackelberg(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=true, plan_reuse_upper_bound=true, force_bw_search_minimum_task_seconds=30, time_limit_seconds_minimum_task=300), upper_bound_pruning=true)\" ");
+            sb.Append($"--search \"sym_stackelberg(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false)\" ");
 
             _activeProcess = new Process
             {

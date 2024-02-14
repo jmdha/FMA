@@ -9,7 +9,7 @@ namespace P10
         public enum RefinementStrategies
         {
             None = 1,
-            SomeStrategy = 2
+            ActionPrecondition = 2
         }
 
         [Option("output", Required = true, HelpText = "Where to output the meta actions")]
