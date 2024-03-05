@@ -6,7 +6,7 @@
     "WSL": {
       "commandName": "WSL2",
       "distributionName": "",
-      "commandLineArgs": "P10/bin/Debug/net7.0/P10.dll --output output/finished --domain ../Dependencies/downward-benchmarks/rovers/domain.pddl --problems ../Dependencies/downward-benchmarks/rovers/p01.pddl --generation-strategy PredicateMetaActions --refinement-strategy ActionPrecondition",
+      "commandLineArgs": "P10/bin/Debug/net7.0/P10.dll --output output/finished --domain ../Dependencies/downward-benchmarks/satellite/domain.pddl --problems ../Dependencies/downward-benchmarks/satellite/p01-pfile1.pddl --generation-strategy PredicateMetaActions --refinement-strategy GroundedPredicateAdditions",
       "workingDirectory": "Training/P10/../"
     }
   }
