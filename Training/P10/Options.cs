@@ -17,6 +17,8 @@ namespace P10
         public string OutputPath { get; set; } = "";
         [Option("domain", Required = true, HelpText = "Path to the domain file")]
         public string DomainPath { get; set; } = "";
+        [Option("usefulness", Required = false, HelpText = "Check if meta action candidates seem to be useful, before refining them.")]
+        public bool CheckUsefullness { get; set; } = false;
         [Option("problems", Required = true, HelpText = "Path to the problem file")]
         public IEnumerable<string> ProblemsPath { get; set; } = new List<string>();
         [Option("generation-strategy", Required = true, HelpText = "The generator strategy")]

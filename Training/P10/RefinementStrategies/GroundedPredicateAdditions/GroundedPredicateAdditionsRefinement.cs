@@ -9,7 +9,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
 {
     public class GroundedPredicateAdditionsRefinement : IRefinementStrategy
     {
-        private static readonly string _stateInfoFolder = "data";
+        private static readonly string _stateInfoFolder = "out";
 
         public IHeuristic<PreconditionState> Heuristic { get; set; }
         private readonly HashSet<PreconditionState> _closedList = new HashSet<PreconditionState>();
@@ -60,6 +60,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
 
             var selected = _openList.Dequeue();
             _closedList.Add(selected);
+            ConsoleHelper.WriteLineColor($"\t\tBest Validity: {Math.Round((((double)selected.ValidStates - (double)selected.InvalidStates) / (double)selected.ValidStates) * 100, 2)}%", ConsoleColor.Magenta);
             return selected.MetaAction;
         }
     }

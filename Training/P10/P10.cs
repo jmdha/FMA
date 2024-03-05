@@ -60,6 +60,15 @@ namespace P10
             ConsoleHelper.WriteLineColor($"\tTotal candidates: {candidates.Count}", ConsoleColor.Magenta);
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
+            if (opts.CheckUsefullness)
+            {
+                ConsoleHelper.WriteLineColor($"Pruning for useful meta action candidates", ConsoleColor.Blue);
+                var checker = new UsefullnessChecker();
+                candidates = checker.GetUsefulCandidates(domain, problems, candidates);
+                ConsoleHelper.WriteLineColor($"\tTotal candidates: {candidates.Count}", ConsoleColor.Magenta);
+                ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
+            }
+
             ConsoleHelper.WriteLineColor($"Begining refinement process", ConsoleColor.Blue);
             var refinedCandidates = new List<ActionDecl>();
             int count = 1;

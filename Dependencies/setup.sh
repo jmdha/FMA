@@ -1,3 +1,13 @@
+echo == Installing Fast-Downward ==
+echo 
+git clone https://github.com/aibasel/downward fast-downward
+cd fast-downward
+python3 build.py
+cd ..
+echo 
+echo == Done! ==
+echo 
+
 echo == Installing Stackelberg Planner ==
 echo 
 git clone -n --depth=1 --filter=tree:0 https://github.com/jamadaha/stackelberg-planner-sls.git stackelberg-planner

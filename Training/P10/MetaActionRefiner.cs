@@ -34,7 +34,7 @@ namespace P10
             while (!IsValid(domain, problems))
             {
                 _iteration++;
-                ConsoleHelper.WriteLineColor($"\tRefining...", ConsoleColor.Magenta);
+                ConsoleHelper.WriteLineColor($"\tRefining iteration {_iteration}...", ConsoleColor.Magenta);
                 var refined = Strategy.Refine(pddlDecl, RefinedMetaActionCandidate);
                 if (refined == null)
                     return false;

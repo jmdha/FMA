@@ -7,7 +7,7 @@ namespace StackelbergVerifier
 {
     public class StackelbergVerifier : BaseCLI
     {
-        private static string _outputDataPath = "data";
+        private static string _outputDataPath = "out";
         private static readonly string _stackelbergPath = PathHelper.RootPath("../Dependencies/stackelberg-planner/src/fast-downward.py");
         private static int _returnCode = int.MaxValue;
         private static Process? _activeProcess;
@@ -75,7 +75,7 @@ namespace StackelbergVerifier
             sb.Append($"{_stackelbergPath} ");
             sb.Append($"\"{domainPath}\" ");
             sb.Append($"\"{problemPath}\" ");
-            sb.Append($"--search \"state_explorer(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false)\" ");
+            sb.Append($"--search \"state_explore(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false)\" ");
 
             _activeProcess = new Process
             {
