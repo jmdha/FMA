@@ -7,7 +7,7 @@ namespace StackelbergVerifier
 {
     public class StackelbergVerifier : BaseCLI
     {
-        private static string _replacementsPath = "replacements";
+        private static string _outputDataPath = "data";
         private static readonly string _stackelbergPath = PathHelper.RootPath("../Dependencies/stackelberg-planner/src/fast-downward.py");
         private static int _returnCode = int.MaxValue;
         private static Process? _activeProcess;
@@ -25,7 +25,7 @@ namespace StackelbergVerifier
             opts.OutputPath = PathHelper.RootPath(opts.OutputPath);
             opts.DomainFilePath = PathHelper.RootPath(opts.DomainFilePath);
             opts.ProblemFilePath = PathHelper.RootPath(opts.ProblemFilePath);
-            _replacementsPath = Path.Combine(opts.OutputPath, _replacementsPath);
+            _outputDataPath = Path.Combine(opts.OutputPath, _outputDataPath);
 
             ConsoleHelper.WriteLineColor("Verifying paths...");
             if (!Directory.Exists(opts.OutputPath))
@@ -75,7 +75,7 @@ namespace StackelbergVerifier
             sb.Append($"{_stackelbergPath} ");
             sb.Append($"\"{domainPath}\" ");
             sb.Append($"\"{problemPath}\" ");
-            sb.Append($"--search \"sym_stackelberg(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false)\" ");
+            sb.Append($"--search \"state_explorer(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false)\" ");
 
             _activeProcess = new Process
             {
@@ -103,7 +103,7 @@ namespace StackelbergVerifier
                 return false;
             else
             {
-                if (Directory.Exists(_replacementsPath))
+                if (Directory.Exists(_outputDataPath))
                 {
                     int count = 0;
                     int preCount = -1;
@@ -111,7 +111,7 @@ namespace StackelbergVerifier
                     {
                         preCount = count;
                         Thread.Sleep(1000);
-                        count = Directory.GetFiles(_replacementsPath).Count();
+                        count = Directory.GetFiles(_outputDataPath).Count();
                         ConsoleHelper.WriteLineColor($"Waiting for planner to finish outputting files [was {preCount} is now {count}]...", ConsoleColor.Yellow);
                     }
                 }

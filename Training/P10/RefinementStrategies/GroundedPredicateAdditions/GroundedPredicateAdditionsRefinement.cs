@@ -3,11 +3,14 @@ using P10.RefinementStrategies.GroundedPredicateAdditions.Heuristics;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
+using Tools;
 
 namespace P10.RefinementStrategies.GroundedPredicateAdditions
 {
     public class GroundedPredicateAdditionsRefinement : IRefinementStrategy
     {
+        private static readonly string _stateInfoFolder = "data";
+
         public IHeuristic<PreconditionState> Heuristic { get; set; }
         private readonly HashSet<PreconditionState> _closedList = new HashSet<PreconditionState>();
         private readonly PriorityQueue<PreconditionState, int> _openList = new PriorityQueue<PreconditionState, int>();
@@ -23,7 +26,10 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
         {
             if (_openList.Count == 0)
             {
-                foreach (var file in new DirectoryInfo(MetaActionRefiner.StackelbergOutputPath).GetFiles())
+                var targetDir = new DirectoryInfo(Path.Combine(MetaActionRefiner.StackelbergOutputPath, _stateInfoFolder));
+                if (!targetDir.Exists)
+                    throw new Exception("Stackelberg output folder does not exist!");
+                foreach (var file in targetDir.GetFiles())
                 {
                     // parse files...
 

@@ -1,5 +1,6 @@
 ﻿using CommandLine;
 using P10.RefinementStrategies.ActionPrecondition;
+using P10.RefinementStrategies.GroundedPredicateAdditions;
 using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.Contextualisers.PDDL;
 using PDDLSharp.ErrorListeners;
@@ -95,6 +96,7 @@ namespace P10
             switch (strategy)
             {
                 case Options.RefinementStrategies.ActionPrecondition: return new ActionPreconditionRefinement();
+                case Options.RefinementStrategies.GroundedPredicateAdditions: return new GroundedPredicateAdditionsRefinement();
                 default: throw new Exception("Unknown strategy!");
             }
         }

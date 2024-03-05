@@ -9,11 +9,14 @@ namespace P10
 {
     public class MetaActionRefiner
     {
-        private readonly string _tempFolder = "temp/refiner";
-        public static string StackelbergOutputPath = "temp/stackelberg-output/";
+        private static readonly string _tempFolder = PathHelper.RootPath("temp/refiner");
+        public static readonly string StackelbergOutputPath = PathHelper.RootPath("temp/stackelberg-output/");
+
         public ActionDecl OriginalMetaActionCandidate { get; internal set; }
         public ActionDecl RefinedMetaActionCandidate { get; internal set; }
         public IRefinementStrategy Strategy { get; }
+
+        private int _iteration = 0;
 
         public MetaActionRefiner(ActionDecl metaActionCandidate, IRefinementStrategy strategy)
         {
@@ -21,17 +24,16 @@ namespace P10
             RefinedMetaActionCandidate = metaActionCandidate.Copy();
             Strategy = strategy;
 
-            _tempFolder = PathHelper.RootPath(_tempFolder);
-            StackelbergOutputPath = PathHelper.RootPath(StackelbergOutputPath);
-
             PathHelper.RecratePath(_tempFolder);
             PathHelper.RecratePath(StackelbergOutputPath);
         }
 
         public bool Refine(PDDLDecl pddlDecl, DomainDecl domain, List<ProblemDecl> problems)
         {
+            _iteration = 0;
             while (!IsValid(domain, problems))
             {
+                _iteration++;
                 ConsoleHelper.WriteLineColor($"\tRefining...", ConsoleColor.Magenta);
                 var refined = Strategy.Refine(pddlDecl, RefinedMetaActionCandidate);
                 if (refined == null)
@@ -49,11 +51,11 @@ namespace P10
             foreach (var problem in problems)
             {
                 var compiled = StackelbergCompiler.StackelbergCompiler.CompileToStackelberg(new PDDLDecl(domain, problem), RefinedMetaActionCandidate.Copy());
-                codeGenerator.Generate(compiled.Domain, Path.Combine(_tempFolder, "tempDomain.pddl"));
-                codeGenerator.Generate(compiled.Problem, Path.Combine(_tempFolder, "tempProblem.pddl"));
+                codeGenerator.Generate(compiled.Domain, Path.Combine(_tempFolder, $"{OriginalMetaActionCandidate.Name}_{_iteration}_tempDomain.pddl"));
+                codeGenerator.Generate(compiled.Problem, Path.Combine(_tempFolder, $"{OriginalMetaActionCandidate.Name}_{_iteration}_tempProblem.pddl"));
                 if (!StackelbergVerifier.StackelbergVerifier.Validate(
-                    Path.Combine(_tempFolder, "tempDomain.pddl"),
-                    Path.Combine(_tempFolder, "tempProblem.pddl"),
+                    Path.Combine(_tempFolder, $"{OriginalMetaActionCandidate.Name}_{_iteration}_tempDomain.pddl"),
+                    Path.Combine(_tempFolder, $"{OriginalMetaActionCandidate.Name}_{_iteration}_tempProblem.pddl"),
                     StackelbergOutputPath))
                     isValid = false;
             }
