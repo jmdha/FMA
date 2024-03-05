@@ -48,10 +48,10 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
         private List<PredicateExp> GetRequiredStatics(PDDLDecl pddlDecl, PredicateExp predicate)
         {
             var requiredStatics = new List<PredicateExp>();
-            foreach(var action in pddlDecl.Domain.Actions)
+            foreach (var action in pddlDecl.Domain.Actions)
             {
                 var staticsNames = GetStaticsForPredicate(pddlDecl, action, predicate);
-                foreach(var argName in staticsNames.Keys)
+                foreach (var argName in staticsNames.Keys)
                 {
                     var staticsToAdd = staticsNames[argName];
                     foreach (var staticToAdd in staticsToAdd)
@@ -74,11 +74,11 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
             var actionStatics = act.Preconditions.FindTypes<PredicateExp>().Where(x => statics.Any(y => y.Name == x.Name)).ToList();
 
             var instances = act.Effects.FindNames(pred.Name);
-            foreach(var instance in instances)
+            foreach (var instance in instances)
             {
-                if (instance is PredicateExp predicate && predicate.Arguments.Count == pred.Arguments.Count) 
-                { 
-                    for(int i = 0; i < predicate.Arguments.Count; i++)
+                if (instance is PredicateExp predicate && predicate.Arguments.Count == pred.Arguments.Count)
+                {
+                    for (int i = 0; i < predicate.Arguments.Count; i++)
                     {
                         var find = actionStatics.FirstOrDefault(x => x.Arguments[0].Name == predicate.Arguments[i].Name);
                         if (find != null)

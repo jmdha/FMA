@@ -1,10 +1,5 @@
 ﻿using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace P10.RefinementStrategies.GroundedPredicateAdditions
 {
@@ -41,7 +36,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
         public override int GetHashCode()
         {
             var hash = HashCode.Combine(ValidStates, InvalidStates, MetaAction);
-            foreach(var item in Precondition)
+            foreach (var item in Precondition)
                 hash ^= item.GetHashCode();
             return hash;
         }

@@ -9,7 +9,7 @@ namespace P10
 {
     public class MetaActionRefiner
     {
-        private string _tempFolder = "temp/refiner";
+        private readonly string _tempFolder = "temp/refiner";
         public static string StackelbergOutputPath = "temp/stackelberg-output/";
         public ActionDecl OriginalMetaActionCandidate { get; internal set; }
         public ActionDecl RefinedMetaActionCandidate { get; internal set; }

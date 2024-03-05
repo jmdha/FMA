@@ -1,5 +1,4 @@
 ﻿using P10.Models;
-using P10.RefinementStrategies.ActionPrecondition;
 using P10.RefinementStrategies.GroundedPredicateAdditions.Heuristics;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
@@ -10,8 +9,8 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
     public class GroundedPredicateAdditionsRefinement : IRefinementStrategy
     {
         public IHeuristic<PreconditionState> Heuristic { get; set; }
-        private HashSet<PreconditionState> _closedList = new HashSet<PreconditionState>();
-        private PriorityQueue<PreconditionState, int> _openList = new PriorityQueue<PreconditionState, int>();
+        private readonly HashSet<PreconditionState> _closedList = new HashSet<PreconditionState>();
+        private readonly PriorityQueue<PreconditionState, int> _openList = new PriorityQueue<PreconditionState, int>();
 
         public GroundedPredicateAdditionsRefinement()
         {
@@ -24,7 +23,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
         {
             if (_openList.Count == 0)
             {
-                foreach(var file in new DirectoryInfo(MetaActionRefiner.StackelbergOutputPath).GetFiles())
+                foreach (var file in new DirectoryInfo(MetaActionRefiner.StackelbergOutputPath).GetFiles())
                 {
                     // parse files...
 

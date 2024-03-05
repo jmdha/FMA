@@ -8,7 +8,7 @@ namespace StackelbergVerifier
     public class StackelbergVerifier : BaseCLI
     {
         private static string _replacementsPath = "replacements";
-        private static string _stackelbergPath = PathHelper.RootPath("../Dependencies/stackelberg-planner/src/fast-downward.py");
+        private static readonly string _stackelbergPath = PathHelper.RootPath("../Dependencies/stackelberg-planner/src/fast-downward.py");
         private static int _returnCode = int.MaxValue;
         private static Process? _activeProcess;
 

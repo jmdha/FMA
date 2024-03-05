@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace P10.Models
+﻿namespace P10.Models
 {
     public class hSum<T> : IHeuristic<T>
     {

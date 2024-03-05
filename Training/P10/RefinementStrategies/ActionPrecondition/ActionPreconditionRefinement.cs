@@ -9,14 +9,14 @@ namespace P10.RefinementStrategies.ActionPrecondition
     public class ActionPreconditionRefinement : IRefinementStrategy
     {
         public IHeuristic<MetaActionState> Heuristic { get; set; }
-        private HashSet<MetaActionState> _closedList = new HashSet<MetaActionState>();
-        private PriorityQueue<MetaActionState, int> _openList = new PriorityQueue<MetaActionState, int>();
-        private PriorityQueue<MetaActionState, int> _bestList = new PriorityQueue<MetaActionState, int>();
+        private readonly HashSet<MetaActionState> _closedList = new HashSet<MetaActionState>();
+        private readonly PriorityQueue<MetaActionState, int> _openList = new PriorityQueue<MetaActionState, int>();
+        private readonly PriorityQueue<MetaActionState, int> _bestList = new PriorityQueue<MetaActionState, int>();
         private bool _haveExhausted = false;
 
         public ActionPreconditionRefinement()
         {
-            Heuristic = new hSum<MetaActionState>(new List<IHeuristic<MetaActionState>>() { 
+            Heuristic = new hSum<MetaActionState>(new List<IHeuristic<MetaActionState>>() {
                 new hParams()
             });
         }
@@ -74,7 +74,7 @@ namespace P10.RefinementStrategies.ActionPrecondition
             foreach (var effect in actEffect)
             {
                 var applyRefs = apply.FindTypes<PredicateExp>().Where(x => x.Name == effect.Name).Distinct().ToList();
-                foreach(var applyRef in applyRefs)
+                foreach (var applyRef in applyRefs)
                 {
                     var newApply = apply.Copy();
                     var newMeta = from.MetaAction.Copy();

@@ -1,15 +1,10 @@
-﻿using PDDLSharp.Models.PDDL.Domain;
-using PDDLSharp.Models.PDDL;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PDDLSharp.Models.PDDL.Expressions;
-using PDDLSharp.Translators.StaticPredicateDetectors;
-using PDDLSharp.Contextualisers.PDDL;
+﻿using PDDLSharp.Contextualisers.PDDL;
 using PDDLSharp.ErrorListeners;
+using PDDLSharp.Models.PDDL;
+using PDDLSharp.Models.PDDL.Domain;
+using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Tools;
+using PDDLSharp.Translators.StaticPredicateDetectors;
 
 namespace MetaActionCandidateGenerator.CandidateGenerators
 {
@@ -40,7 +35,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
 
                 var requiredStatics = new HashSet<PredicateExp>();
                 var effects = newAction.Effects.FindTypes<PredicateExp>();
-                foreach(var effect in effects)
+                foreach (var effect in effects)
                 {
                     foreach (var arg in effect.Arguments)
                         if (!newAction.Parameters.Values.Contains(arg))
