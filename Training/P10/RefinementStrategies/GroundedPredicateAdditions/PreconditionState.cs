@@ -24,6 +24,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             {
                 if (other.ValidStates != ValidStates) return false;
                 if (other.InvalidStates != InvalidStates) return false;
+                if (!other.MetaAction.Equals(MetaAction)) return false;
                 if (other.Precondition.Count != Precondition.Count) return false;
                 for (int i = 0; i < other.Precondition.Count; i++)
                     if (!other.Precondition[i].Equals(Precondition[i]))
