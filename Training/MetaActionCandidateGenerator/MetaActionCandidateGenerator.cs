@@ -56,6 +56,7 @@ namespace MetaActionCandidateGenerator
             switch (strategy)
             {
                 case GeneratorStrategies.PredicateMetaActions: return new PredicateMetaActions();
+                case GeneratorStrategies.StrippedMetaActions: return new StrippedMetaActions();
                 default: throw new Exception("Unknown generator strategy!");
             }
         }

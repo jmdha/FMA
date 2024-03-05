@@ -6,7 +6,7 @@
     "WSL": {
       "commandName": "WSL2",
       "distributionName": "",
-      "commandLineArgs": "MetaActionCandidateGenerator/bin/Debug/net7.0/MetaActionCandidateGenerator.dll --output output/initialMetaActions --domain ../Dependencies/downward-benchmarks/gripper/domain.pddl --problem ../Dependencies/downward-benchmarks/gripper/prob01.pddl --strategy PredicateMetaActions",
+      "commandLineArgs": "MetaActionCandidateGenerator/bin/Debug/net7.0/MetaActionCandidateGenerator.dll --output output/initialMetaActions --domain ../Dependencies/downward-benchmarks/gripper/domain.pddl --problem ../Dependencies/downward-benchmarks/gripper/prob01.pddl --generation-strategy StrippedMetaActions",
       "workingDirectory": "Training/MetaActionCandidateGenerator/../"
     }
   }

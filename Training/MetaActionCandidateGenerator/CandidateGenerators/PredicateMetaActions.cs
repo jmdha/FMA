@@ -7,6 +7,10 @@ using PDDLSharp.Translators.StaticPredicateDetectors;
 
 namespace MetaActionCandidateGenerator.CandidateGenerators
 {
+    /// <summary>
+    /// Takes all non-static predicates and makes meta actions based on no preconditions and simply the predicate.
+    /// Both a normal and a negated version is made for each predicate
+    /// </summary>
     public class PredicateMetaActions : ICandidateGenerator
     {
         public List<ActionDecl> GenerateCandidates(PDDLDecl pddlDecl)
@@ -32,7 +36,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                     var newAct = new ActionDecl($"meta_{predicate.Name}");
                     foreach (var arg in predicate.Arguments)
                         newAct.Parameters.Add(arg.Copy());
-                    newAct.Preconditions = new AndExp(newAct, new List<IExp>(GetRequiredStatics(pddlDecl, predicate, newAct)));
+                    newAct.Preconditions = new AndExp(newAct, new List<IExp>(GetRequiredStatics(pddlDecl, predicate)));
                     newAct.Effects = new AndExp(newAct, new List<IExp>() { predicate.Copy() });
                     candidates.Add(newAct);
                 }
@@ -41,7 +45,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
             return candidates;
         }
 
-        private List<PredicateExp> GetRequiredStatics(PDDLDecl pddlDecl, PredicateExp predicate, ActionDecl newMetaAction)
+        private List<PredicateExp> GetRequiredStatics(PDDLDecl pddlDecl, PredicateExp predicate)
         {
             var requiredStatics = new List<PredicateExp>();
             foreach(var action in pddlDecl.Domain.Actions)

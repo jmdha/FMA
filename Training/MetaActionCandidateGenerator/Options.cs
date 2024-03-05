@@ -8,7 +8,8 @@ namespace MetaActionCandidateGenerator
         public enum GeneratorStrategies
         {
             None = 1,
-            PredicateMetaActions = 2
+            PredicateMetaActions = 2,
+            StrippedMetaActions = 3
         }
 
         [Option("output", Required = true, HelpText = "Where to output the meta actions")]
