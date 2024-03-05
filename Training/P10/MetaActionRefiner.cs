@@ -10,7 +10,7 @@ namespace P10
     public class MetaActionRefiner
     {
         private string _tempFolder = "temp/refiner";
-        private string _tempStatePath = "temp/refiner/states";
+        public static string StackelbergOutputPath = "temp/stackelberg-output/";
         public ActionDecl OriginalMetaActionCandidate { get; internal set; }
         public ActionDecl RefinedMetaActionCandidate { get; internal set; }
         public IRefinementStrategy Strategy { get; }
@@ -22,10 +22,10 @@ namespace P10
             Strategy = strategy;
 
             _tempFolder = PathHelper.RootPath(_tempFolder);
-            _tempStatePath = PathHelper.RootPath(_tempStatePath);
+            StackelbergOutputPath = PathHelper.RootPath(StackelbergOutputPath);
 
             PathHelper.RecratePath(_tempFolder);
-            PathHelper.RecratePath(_tempStatePath);
+            PathHelper.RecratePath(StackelbergOutputPath);
         }
 
         public bool Refine(PDDLDecl pddlDecl, DomainDecl domain, List<ProblemDecl> problems)
@@ -54,7 +54,7 @@ namespace P10
                 if (!StackelbergVerifier.StackelbergVerifier.Validate(
                     Path.Combine(_tempFolder, "tempDomain.pddl"),
                     Path.Combine(_tempFolder, "tempProblem.pddl"),
-                    _tempStatePath))
+                    StackelbergOutputPath))
                     isValid = false;
             }
             return isValid;

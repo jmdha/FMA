@@ -1,4 +1,5 @@
-﻿using P10.RefinementStrategies.ActionPrecondition.Heuristics;
+﻿using P10.Models;
+using P10.RefinementStrategies.ActionPrecondition.Heuristics;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
@@ -7,7 +8,7 @@ namespace P10.RefinementStrategies.ActionPrecondition
 {
     public class ActionPreconditionRefinement : IRefinementStrategy
     {
-        public IHeuristic Heuristic { get; set; }
+        public IHeuristic<MetaActionState> Heuristic { get; set; }
         private HashSet<MetaActionState> _closedList = new HashSet<MetaActionState>();
         private PriorityQueue<MetaActionState, int> _openList = new PriorityQueue<MetaActionState, int>();
         private PriorityQueue<MetaActionState, int> _bestList = new PriorityQueue<MetaActionState, int>();
@@ -15,7 +16,7 @@ namespace P10.RefinementStrategies.ActionPrecondition
 
         public ActionPreconditionRefinement()
         {
-            Heuristic = new hSum(new List<IHeuristic>() { 
+            Heuristic = new hSum<MetaActionState>(new List<IHeuristic<MetaActionState>>() { 
                 new hParams()
             });
         }

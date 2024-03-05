@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace P10.RefinementStrategies.ActionPrecondition
+namespace P10.Models
 {
-    public interface IHeuristic
+    public interface IHeuristic<T>
     {
-        public int GetValue(MetaActionState metaAction);
+        public int GetValue(T metaAction);
     }
 }

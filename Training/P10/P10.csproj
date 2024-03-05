@@ -18,8 +18,4 @@
     <ProjectReference Include="..\Tools\Tools.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-
 </Project>
