@@ -1,4 +1,5 @@
-﻿using PDDLSharp.Models.PDDL.Domain;
+﻿using PDDLSharp.Models.PDDL;
+using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
 
 namespace P10.RefinementStrategies.GroundedPredicateAdditions
@@ -8,9 +9,9 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
         public int ValidStates { get; set; }
         public int InvalidStates { get; set; }
         public ActionDecl MetaAction { get; set; }
-        public List<PredicateExp> Precondition { get; set; }
+        public List<IExp> Precondition { get; set; }
 
-        public PreconditionState(int validStates, int invalidStates, ActionDecl metaAction, List<PredicateExp> precondition)
+        public PreconditionState(int validStates, int invalidStates, ActionDecl metaAction, List<IExp> precondition)
         {
             ValidStates = validStates;
             InvalidStates = invalidStates;
