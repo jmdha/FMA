@@ -28,6 +28,8 @@ namespace P10.Verifiers
 
         public override bool Verify(DomainDecl domain, ProblemDecl problem, string workingDir)
         {
+            if (File.Exists(Path.Combine(workingDir, "pareto_frontier.json")))
+                File.Delete(Path.Combine(workingDir, "pareto_frontier.json"));
             var listener = new ErrorListener();
             var codeGenerator = new PDDLCodeGenerator(listener);
             var domainFile = Path.Combine(workingDir, $"tempDomain.pddl");
