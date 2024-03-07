@@ -1,5 +1,6 @@
 ﻿using P10.Models;
 using P10.RefinementStrategies.ActionPrecondition.Heuristics;
+using P10.Verifiers;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
@@ -8,6 +9,7 @@ namespace P10.RefinementStrategies.ActionPrecondition
 {
     public class ActionPreconditionRefinement : IRefinementStrategy
     {
+        public IVerifier Verifier { get; } = new FrontierVerifier();
         public IHeuristic<MetaActionState> Heuristic { get; set; }
         private readonly HashSet<MetaActionState> _closedList = new HashSet<MetaActionState>();
         private readonly PriorityQueue<MetaActionState, int> _openList = new PriorityQueue<MetaActionState, int>();
@@ -21,7 +23,7 @@ namespace P10.RefinementStrategies.ActionPrecondition
             });
         }
 
-        public ActionDecl? Refine(PDDLDecl pddlDecl, ActionDecl currentMetaAction)
+        public ActionDecl? Refine(PDDLDecl pddlDecl, ActionDecl currentMetaAction, string workingDir)
         {
             if (_bestList.Count == 0)
             {

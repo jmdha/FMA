@@ -7,7 +7,7 @@
       "commandName": "WSL",
       "distributionName": "",
       //"commandLineArgs": "StackelbergCompiler/bin/Debug/net7.0/StackelbergCompiler.dll --domain StackelbergCompiler/bin/Debug/net7.0/TestData/satellite-domain.pddl --problem StackelbergCompiler/bin/Debug/net7.0/TestData/satellite-prob1.pddl --meta-action StackelbergCompiler/bin/Debug/net7.0/TestData/satellite-metaaction.pddl --output StackelbergDomains/satellite",
-      "commandLineArgs": "StackelbergCompiler/bin/Debug/net7.0/StackelbergCompiler.dll --domain StackelbergCompiler/bin/Debug/net7.0/TestData/thoughtful-domain.pddl --problem StackelbergCompiler/bin/Debug/net7.0/TestData/thoughtful-prob1.pddl --meta-action StackelbergCompiler/bin/Debug/net7.0/TestData/thoughtful-metaaction.pddl --output temp/train/thoughtful",
+      "commandLineArgs": "StackelbergCompiler/bin/Debug/net7.0/StackelbergCompiler.dll --domain ../Dependencies/downward-benchmarks/gripper/domain.pddl --problem ../Dependencies/downward-benchmarks/gripper/prob01.pddl --meta-action ../Dependencies/downward-benchmarks/gripper/meta.pddl --output temp/train/thoughtful",
       "workingDirectory": "Training/StackelbergCompiler/../"
     }
   }

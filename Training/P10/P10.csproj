@@ -14,7 +14,6 @@
   <ItemGroup>
     <ProjectReference Include="..\MetaActionCandidateGenerator\MetaActionCandidateGenerator.csproj" />
     <ProjectReference Include="..\StackelbergCompiler\StackelbergCompiler.csproj" />
-    <ProjectReference Include="..\StackelbergVerifier\StackelbergVerifier.csproj" />
     <ProjectReference Include="..\Tools\Tools.csproj" />
   </ItemGroup>
 

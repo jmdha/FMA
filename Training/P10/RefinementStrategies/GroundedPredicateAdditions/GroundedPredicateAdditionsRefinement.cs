@@ -1,5 +1,6 @@
 ﻿using P10.Models;
 using P10.RefinementStrategies.GroundedPredicateAdditions.Heuristics;
+using P10.Verifiers;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
@@ -12,6 +13,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
 {
     public class GroundedPredicateAdditionsRefinement : IRefinementStrategy
     {
+        public IVerifier Verifier { get; } = new StateExploreVerifier();
         private static readonly string _stateInfoFile = "out";
 
         public IHeuristic<PreconditionState> Heuristic { get; set; }
@@ -25,14 +27,15 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             });
         }
 
-        public ActionDecl? Refine(PDDLDecl pddlDecl, ActionDecl currentMetaAction)
+        public ActionDecl? Refine(PDDLDecl pddlDecl, ActionDecl currentMetaAction, string workingDir)
         {
             if (_openList.Count == 0)
             {
-                var targetFile = new FileInfo(Path.Combine(MetaActionRefiner.StackelbergOutputPath, _stateInfoFile));
+                var targetFile = new FileInfo(Path.Combine(workingDir, _stateInfoFile));
 
                 if (!targetFile.Exists)
-                    throw new Exception("Stackelberg output does not exist!");
+                    return null;
+                    //throw new Exception("Stackelberg output does not exist!");
 
                 var listener = new ErrorListener();
                 var parser = new PDDLParser(listener);
@@ -40,12 +43,12 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 var text = File.ReadAllText(targetFile.FullName);
                 var lines = text.Split('\n').ToList();
                 lines.RemoveAll(x => x == "");
-                var validStates = Convert.ToInt32(lines[0].Replace("Valid: ", ""));
-                for(int i = 0; i < lines.Count; i += 2)
+                var validStates = Convert.ToInt32(lines[0]);
+                for(int i = 2; i < lines.Count; i += 2)
                 {
                     var preconditions = new List<IExp>();
 
-                    var facts = lines[i].Replace("Facts: ","").Split(';').ToList();
+                    var facts = lines[i].Split('|').ToList();
                     facts.RemoveAll(x => x == "");
                     foreach(var fact in facts)
                     {
@@ -60,7 +63,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                             preconditions.Add(parser.ParseAs<PredicateExp>(predText));
                         }
                     }
-                    var invalidStates = Convert.ToInt32(lines[i + 1].Replace("Invalid: ", ""));
+                    var invalidStates = Convert.ToInt32(lines[i + 1]);
 
                     var metaAction = currentMetaAction.Copy();
                     if (metaAction.Preconditions is AndExp and)
