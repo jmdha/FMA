@@ -7,6 +7,6 @@ namespace P10.RefinementStrategies
     public interface IRefinementStrategy
     {
         public IVerifier Verifier { get; }
-        public ActionDecl? Refine(PDDLDecl pddlDecl, ActionDecl currentMetaAction, string workingDir);
+        public ActionDecl? Refine(PDDLDecl pddlDecl, ActionDecl currentMetaAction, ActionDecl originalMetaAction, string workingDir);
     }
 }

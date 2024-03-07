@@ -23,7 +23,7 @@ namespace P10.RefinementStrategies.ActionPrecondition
             });
         }
 
-        public ActionDecl? Refine(PDDLDecl pddlDecl, ActionDecl currentMetaAction, string workingDir)
+        public ActionDecl? Refine(PDDLDecl pddlDecl, ActionDecl currentMetaAction, ActionDecl originalMetaAction, string workingDir)
         {
             if (_bestList.Count == 0)
             {

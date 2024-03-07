@@ -23,9 +23,6 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
         {
             if (obj is PreconditionState other)
             {
-                if (other.ValidStates != ValidStates) return false;
-                if (other.InvalidStates != InvalidStates) return false;
-                if (!other.MetaAction.Equals(MetaAction)) return false;
                 if (other.Precondition.Count != Precondition.Count) return false;
                 for (int i = 0; i < other.Precondition.Count; i++)
                     if (!other.Precondition[i].Equals(Precondition[i]))
@@ -37,7 +34,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
 
         public override int GetHashCode()
         {
-            var hash = HashCode.Combine(ValidStates, InvalidStates, MetaAction);
+            var hash = 1;
             foreach (var item in Precondition)
                 hash ^= item.GetHashCode();
             return hash;

@@ -27,67 +27,78 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             });
         }
 
-        public ActionDecl? Refine(PDDLDecl pddlDecl, ActionDecl currentMetaAction, string workingDir)
+        public ActionDecl? Refine(PDDLDecl pddlDecl, ActionDecl currentMetaAction, ActionDecl originalMetaAction, string workingDir)
         {
-            if (_openList.Count == 0)
-            {
-                var targetFile = new FileInfo(Path.Combine(workingDir, _stateInfoFile));
-
-                if (!targetFile.Exists)
-                    return null;
-                    //throw new Exception("Stackelberg output does not exist!");
-
-                var listener = new ErrorListener();
-                var parser = new PDDLParser(listener);
-
-                var text = File.ReadAllText(targetFile.FullName);
-                var lines = text.Split('\n').ToList();
-                lines.RemoveAll(x => x == "");
-                var validStates = Convert.ToInt32(lines[0]);
-                for(int i = 2; i < lines.Count; i += 2)
-                {
-                    var preconditions = new List<IExp>();
-
-                    var facts = lines[i].Split('|').ToList();
-                    facts.RemoveAll(x => x == "");
-                    foreach(var fact in facts)
-                    {
-                        if (fact.Contains("NegatedAtom"))
-                        {
-                            var predText = fact.Replace("NegatedAtom", "").Trim();
-                            preconditions.Add(new NotExp(parser.ParseAs<PredicateExp>(predText)));
-                        }
-                        else
-                        {
-                            var predText = fact.Replace("Atom", "").Trim();
-                            preconditions.Add(parser.ParseAs<PredicateExp>(predText));
-                        }
-                    }
-                    var invalidStates = Convert.ToInt32(lines[i + 1]);
-
-                    var metaAction = currentMetaAction.Copy();
-                    if (metaAction.Preconditions is AndExp and)
-                    {
-                        var notNode = new NotExp(and);
-                        var andNode = new AndExp(notNode);
-                        foreach (var precon in preconditions)
-                            andNode.Children.Add(precon);
-                        and.Add(andNode);
-                    }
-
-                    var newState = new PreconditionState(validStates, invalidStates, metaAction, preconditions);
-                    if (!_closedList.Contains(newState))
-                        _openList.Enqueue(newState, Heuristic.GetValue(newState));
-                }
-            }
-
-            if (_openList.Count == 0)
+            if (!UpdateOpenList(originalMetaAction, workingDir) && _openList.Count == 0)
                 return null;
 
-            var selected = _openList.Dequeue();
-            _closedList.Add(selected);
-            ConsoleHelper.WriteLineColor($"\t\tBest Validity: {Math.Round((((double)selected.ValidStates - (double)selected.InvalidStates) / (double)selected.ValidStates) * 100, 2)}%", ConsoleColor.Magenta);
-            return selected.MetaAction;
+            ConsoleHelper.WriteLineColor($"\t\t{_openList.Count} possibilities left", ConsoleColor.Magenta);
+            var state = _openList.Dequeue();
+            _closedList.Add(state);
+            ConsoleHelper.WriteLineColor($"\t\tBest Validity: {Math.Round((((double)state.ValidStates - (double)state.InvalidStates) / (double)state.ValidStates) * 100, 2)}%", ConsoleColor.Magenta);
+            return state.MetaAction;
+        }
+
+        private bool UpdateOpenList(ActionDecl currentMetaAction, string workingDir)
+        {
+            ConsoleHelper.WriteLineColor($"\t\tUpdating open list...", ConsoleColor.Magenta);
+            var targetFile = new FileInfo(Path.Combine(workingDir, _stateInfoFile));
+
+            if (!targetFile.Exists)
+                return false;
+            //throw new Exception("Stackelberg output does not exist!");
+
+            _openList.Clear();
+
+            var listener = new ErrorListener();
+            var parser = new PDDLParser(listener);
+
+            var text = File.ReadAllText(targetFile.FullName);
+            var lines = text.Split('\n').ToList();
+            lines.RemoveAll(x => x == "");
+            var validStates = Convert.ToInt32(lines[0]);
+            for (int i = 2; i < lines.Count; i += 2)
+            {
+                var preconditions = new List<IExp>();
+
+                var facts = lines[i].Split('|').ToList();
+                facts.RemoveAll(x => x == "");
+                foreach (var fact in facts)
+                {
+                    if (fact.Contains("NegatedAtom"))
+                    {
+                        var predText = fact.Replace("NegatedAtom", "").Trim();
+                        preconditions.Add(new NotExp(parser.ParseAs<PredicateExp>(predText)));
+                    }
+                    else
+                    {
+                        var predText = fact.Replace("Atom", "").Trim();
+                        preconditions.Add(parser.ParseAs<PredicateExp>(predText));
+                    }
+                }
+                var invalidStates = Convert.ToInt32(lines[i + 1]);
+
+                var metaAction = currentMetaAction.Copy();
+                if (metaAction.Preconditions is AndExp and)
+                {
+                    var andNode = new AndExp(and);
+                    foreach (var precon in preconditions)
+                        andNode.Children.Add(precon);
+                    and.Add(andNode);
+
+                    // Prune some nonsensical preconditions.
+                    if (andNode.Children.Any(x => andNode.Children.Contains(new NotExp(x))))
+                        continue;
+                }
+
+                var newState = new PreconditionState(validStates, invalidStates, metaAction, preconditions);
+                if (!_closedList.Contains(newState))
+                    _openList.Enqueue(newState, Heuristic.GetValue(newState));
+            }
+
+            targetFile.Delete();
+
+            return true;
         }
     }
 }

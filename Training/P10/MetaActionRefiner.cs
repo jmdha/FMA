@@ -34,7 +34,7 @@ namespace P10
             {
                 _iteration++;
                 ConsoleHelper.WriteLineColor($"\tRefining iteration {_iteration}...", ConsoleColor.Magenta);
-                var refined = Strategy.Refine(pddlDecl, RefinedMetaActionCandidate, _tempFolder);
+                var refined = Strategy.Refine(pddlDecl, RefinedMetaActionCandidate, OriginalMetaActionCandidate, _tempFolder);
                 if (refined == null)
                     return false;
                 RefinedMetaActionCandidate = refined;
@@ -44,6 +44,7 @@ namespace P10
 
         private bool IsValid(DomainDecl domain, List<ProblemDecl> problems)
         {
+            ConsoleHelper.WriteLineColor($"\tValidating...", ConsoleColor.Magenta);
             bool isValid = true;
             foreach(var problem in problems)
             {
@@ -51,7 +52,6 @@ namespace P10
                 if (!Strategy.Verifier.Verify(compiled.Domain, compiled.Problem, _tempFolder))
                     isValid = false;
             }
-            return isValid;
             return isValid;
         }
     }
