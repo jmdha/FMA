@@ -10,7 +10,7 @@ namespace P10
 {
     public class MetaActionRefiner
     {
-        private static readonly string _tempFolder = PathHelper.RootPath("temp/refiner");
+        private static readonly string _tempFolder = PathHelper.RootPath("temp");
 
         public ActionDecl OriginalMetaActionCandidate { get; internal set; }
         public ActionDecl RefinedMetaActionCandidate { get; internal set; }
