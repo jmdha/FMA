@@ -81,24 +81,23 @@ namespace P10
                 {
                     refinedCandidates.Add(refiner.RefinedMetaActionCandidate);
                     ConsoleHelper.WriteLineColor($"\tCandidate have been refined!", ConsoleColor.Magenta);
+
+                    ConsoleHelper.WriteLineColor($"Outputting refined candidate", ConsoleColor.Blue);
+                    var codeGenerator = new PDDLCodeGenerator(listener);
+                    codeGenerator.Readable = true;
+                    codeGenerator.Generate(refiner.RefinedMetaActionCandidate, Path.Combine(opts.OutputPath, $"{refiner.RefinedMetaActionCandidate.Name}.pddl"));
+                    ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
                 }
                 else
                     ConsoleHelper.WriteLineColor($"\tCandidate could not be refined!", ConsoleColor.Magenta);
             }
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
-            ConsoleHelper.WriteLineColor($"Outputting refined candidates", ConsoleColor.Blue);
-            var codeGenerator = new PDDLCodeGenerator(listener);
-            codeGenerator.Readable = true;
-            foreach (var candidate in refinedCandidates)
-                codeGenerator.Generate(candidate, Path.Combine(opts.OutputPath, $"{candidate.Name}.pddl"));
-            ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
-
-            ConsoleHelper.WriteLineColor($"Outputting enhanced domain", ConsoleColor.Blue);
-            var newDomain = domain.Copy();
-            newDomain.Actions.AddRange(refinedCandidates);
-            codeGenerator.Generate(newDomain, Path.Combine(opts.OutputPath, "enhancedDomain.pddl"));
-            ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
+            //ConsoleHelper.WriteLineColor($"Outputting enhanced domain", ConsoleColor.Blue);
+            //var newDomain = domain.Copy();
+            //newDomain.Actions.AddRange(refinedCandidates);
+            //codeGenerator.Generate(newDomain, Path.Combine(opts.OutputPath, "enhancedDomain.pddl"));
+            //ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
         }
 
         private static IRefinementStrategy GetRefinementStrategy(Options.RefinementStrategies strategy)
