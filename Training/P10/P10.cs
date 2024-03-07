@@ -71,7 +71,6 @@ namespace P10
             }
 
             ConsoleHelper.WriteLineColor($"Begining refinement process", ConsoleColor.Blue);
-            var refinedCandidates = new List<ActionDecl>();
             int count = 1;
             foreach (var candidate in candidates)
             {
@@ -79,14 +78,13 @@ namespace P10
                 var refiner = new MetaActionRefiner(candidate, GetRefinementStrategy(opts.RefinementStrategy));
                 if (refiner.Refine(baseDecl, domain, problems))
                 {
-                    refinedCandidates.Add(refiner.RefinedMetaActionCandidate);
                     ConsoleHelper.WriteLineColor($"\tCandidate have been refined!", ConsoleColor.Magenta);
 
-                    ConsoleHelper.WriteLineColor($"Outputting refined candidate", ConsoleColor.Blue);
+                    ConsoleHelper.WriteLineColor($"\tOutputting refined candidate", ConsoleColor.Magenta);
                     var codeGenerator = new PDDLCodeGenerator(listener);
                     codeGenerator.Readable = true;
                     codeGenerator.Generate(refiner.RefinedMetaActionCandidate, Path.Combine(opts.OutputPath, $"{refiner.RefinedMetaActionCandidate.Name}.pddl"));
-                    ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
+                    ConsoleHelper.WriteLineColor($"\tDone!", ConsoleColor.Green);
                 }
                 else
                     ConsoleHelper.WriteLineColor($"\tCandidate could not be refined!", ConsoleColor.Magenta);
