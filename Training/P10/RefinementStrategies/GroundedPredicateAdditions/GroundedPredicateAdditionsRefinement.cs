@@ -17,7 +17,6 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
         private static readonly string _stateInfoFile = "out";
 
         public IHeuristic<PreconditionState> Heuristic { get; set; }
-        private readonly HashSet<PreconditionState> _closedList = new HashSet<PreconditionState>();
         private readonly PriorityQueue<PreconditionState, int> _openList = new PriorityQueue<PreconditionState, int>();
         private bool _isInitialized = false;
 
@@ -46,7 +45,6 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
 
             ConsoleHelper.WriteLineColor($"\t\t{_openList.Count} possibilities left", ConsoleColor.Magenta);
             var state = _openList.Dequeue();
-            _closedList.Add(state);
             ConsoleHelper.WriteLineColor($"\t\tBest Validity: {Math.Round((((double)state.ValidStates - (double)state.InvalidStates) / (double)state.ValidStates) * 100, 2)}%", ConsoleColor.Magenta);
             return state.MetaAction;
         }
@@ -102,8 +100,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 }
 
                 var newState = new PreconditionState(validStates, invalidStates, metaAction, preconditions);
-                if (!_closedList.Contains(newState))
-                    _openList.Enqueue(newState, Heuristic.GetValue(newState));
+                _openList.Enqueue(newState, Heuristic.GetValue(newState));
             }
 
             targetFile.Delete();
