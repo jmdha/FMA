@@ -13,12 +13,13 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
 {
     public class GroundedPredicateAdditionsRefinement : IRefinementStrategy
     {
-        public IVerifier Verifier { get; } = new StateExploreVerifier();
+        public IVerifier Verifier { get; } = new FrontierVerifier();
         private static readonly string _stateInfoFile = "out";
 
         public IHeuristic<PreconditionState> Heuristic { get; set; }
         private readonly HashSet<PreconditionState> _closedList = new HashSet<PreconditionState>();
         private readonly PriorityQueue<PreconditionState, int> _openList = new PriorityQueue<PreconditionState, int>();
+        private bool _isInitialized = false;
 
         public GroundedPredicateAdditionsRefinement()
         {
@@ -29,7 +30,18 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
 
         public ActionDecl? Refine(PDDLDecl pddlDecl, ActionDecl currentMetaAction, ActionDecl originalMetaAction, string workingDir)
         {
-            if (!UpdateOpenList(originalMetaAction, workingDir) && _openList.Count == 0)
+            if (!_isInitialized)
+            {
+                ConsoleHelper.WriteLineColor($"\t\tInitial state space exploration started...", ConsoleColor.Magenta);
+                _isInitialized = true;
+                var compiled = StackelbergCompiler.StackelbergCompiler.CompileToStackelberg(pddlDecl, originalMetaAction.Copy());
+                var verifier = new StateExploreVerifier();
+                verifier.Verify(compiled.Domain, compiled.Problem, workingDir);
+                if (!UpdateOpenList(originalMetaAction, workingDir))
+                    return null;
+                ConsoleHelper.WriteLineColor($"\t\tExploration finished", ConsoleColor.Magenta);
+            }
+            if (_openList.Count == 0)
                 return null;
 
             ConsoleHelper.WriteLineColor($"\t\t{_openList.Count} possibilities left", ConsoleColor.Magenta);
@@ -47,8 +59,6 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             if (!targetFile.Exists)
                 return false;
             //throw new Exception("Stackelberg output does not exist!");
-
-            _openList.Clear();
 
             var listener = new ErrorListener();
             var parser = new PDDLParser(listener);
@@ -97,7 +107,6 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             }
 
             targetFile.Delete();
-
             return true;
         }
     }
