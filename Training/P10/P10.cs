@@ -78,6 +78,7 @@ namespace P10
             foreach (var candidate in candidates)
             {
                 ConsoleHelper.WriteLineColor($"\tCandidate: {count++} out of {candidates.Count}", ConsoleColor.Magenta);
+                ConsoleHelper.WriteLineColor($"\tCandidate Name: {candidate.Name}", ConsoleColor.Magenta);
                 var refiner = new MetaActionRefiner(candidate, GetRefinementStrategy(opts.RefinementStrategy));
                 if (refiner.Refine(domain, problems))
                 {
