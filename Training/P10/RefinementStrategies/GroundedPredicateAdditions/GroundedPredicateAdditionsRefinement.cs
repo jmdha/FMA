@@ -26,10 +26,10 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
         public GroundedPredicateAdditionsRefinement()
         {
             Heuristic = new hSum<PreconditionState>(new List<IHeuristic<PreconditionState>>() {
-                new hMostValid(),
-                new hMostApplicable(),
                 new hMustBeApplicable(),
-                new hMustBeValid()
+                new hMustBeValid(),
+                new hWeighted<PreconditionState>(new hMostValid(), 10000),
+                new hMostApplicable(),
             });
         }
 
