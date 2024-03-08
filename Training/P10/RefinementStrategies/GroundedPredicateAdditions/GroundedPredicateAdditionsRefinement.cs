@@ -56,7 +56,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             if (_openList.Count == 0)
                 return null;
 
-            ConsoleHelper.WriteLineColor($"\t\t{_openList.Count} possibilities left [Est. {TimeSpan.FromMilliseconds(_openList.Count * ((_initialPossibilities - _openList.Count + 1) / _watch.ElapsedMilliseconds)).ToString("hh\\:mm\\:ss")} until finished]", ConsoleColor.Magenta);
+            ConsoleHelper.WriteLineColor($"\t\t{_openList.Count} possibilities left [Est. {TimeSpan.FromMilliseconds((double)_openList.Count * ((double)(1 + (_initialPossibilities - _openList.Count)) / (double)(_watch.ElapsedMilliseconds + 1))).ToString("hh\\:mm\\:ss")} until finished]", ConsoleColor.Magenta);
             var state = _openList.Dequeue();
             ConsoleHelper.WriteLineColor($"\t\tBest Validity: {Math.Round((((double)state.ValidStates - (double)state.InvalidStates) / (double)state.ValidStates) * 100, 2)}%", ConsoleColor.Magenta);
             return state.MetaAction;
