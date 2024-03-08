@@ -44,6 +44,8 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 //AddParameterPredicates(compiled, originalMetaAction, workingDir);
 
                 var verifier = new StateExploreVerifier();
+                if (File.Exists(Path.Combine(workingDir, StateExploreVerifier.StateInfoFile)))
+                    File.Delete(Path.Combine(workingDir, StateExploreVerifier.StateInfoFile));
                 verifier.Verify(compiled.Domain, compiled.Problem, workingDir);
                 if (!UpdateOpenList(originalMetaAction, workingDir))
                     return null;
@@ -185,7 +187,6 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             }
             _initialPossibilities = _openList.Count;
 
-            targetFile.Delete();
             return true;
         }
     }
