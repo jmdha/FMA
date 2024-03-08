@@ -11,7 +11,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions.Heuristics
     {
         public int GetValue(PreconditionState preconditions)
         {
-            return (preconditions.ValidStates + preconditions.InvalidStates) - preconditions.Applicability;
+            return preconditions.TotalStates - preconditions.Applicability;
         }
     }
 }
