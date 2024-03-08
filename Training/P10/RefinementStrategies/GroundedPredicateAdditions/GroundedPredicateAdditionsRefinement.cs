@@ -60,11 +60,20 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             ConsoleHelper.WriteLineColor($"\t\t{_openList.Count} possibilities left [Est. {TimeSpan.FromMilliseconds((double)_openList.Count * ((double)(_watch.ElapsedMilliseconds + 1) / (double)(1 + (_initialPossibilities - _openList.Count)))).ToString("hh\\:mm\\:ss")} until finished]", ConsoleColor.Magenta);
             var state = _openList.Dequeue();
             ConsoleHelper.WriteLineColor($"\t\tBest Validity: {Math.Round((((double)state.ValidStates - (double)state.InvalidStates) / (double)state.ValidStates) * 100, 2)}%", ConsoleColor.Magenta);
-            var preconStr = "";
-            foreach (var precon in state.Precondition)
-                preconStr += $"{precon} & ";
-            ConsoleHelper.WriteLineColor($"\t\tPrecondition: {preconStr}", ConsoleColor.Magenta);
+#if DEBUG
+            ConsoleHelper.WriteLineColor($"\t\tPrecondition: {GetPreconText(state.Precondition)}", ConsoleColor.Magenta);
+#endif
             return state.MetaAction;
+        }
+
+        private string GetPreconText(List<IExp> precons)
+        {
+            var listener = new ErrorListener();
+            var codeGenerator = new PDDLCodeGenerator(listener);
+            var preconStr = "";
+            foreach (var precon in precons)
+                preconStr += $"{codeGenerator.Generate(precon)}, ";
+            return preconStr;
         }
 
         private void AddParameterPredicates(PDDLDecl compiled, ActionDecl originalMetaAction, string workingDir)
