@@ -166,11 +166,8 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                         continue;
                 }
 
-                if (invalidStates != 0)
-                {
-                    var newState = new PreconditionState(validStates, invalidStates, metaAction, preconditions);
-                    _openList.Enqueue(newState, Heuristic.GetValue(newState));
-                }
+                var newState = new PreconditionState(validStates, invalidStates, metaAction, preconditions);
+                _openList.Enqueue(newState, Heuristic.GetValue(newState));
             }
             _initialPossibilities = _openList.Count;
 
