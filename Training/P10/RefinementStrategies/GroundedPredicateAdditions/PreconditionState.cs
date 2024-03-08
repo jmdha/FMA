@@ -1,6 +1,5 @@
 ﻿using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
-using PDDLSharp.Models.PDDL.Expressions;
 
 namespace P10.RefinementStrategies.GroundedPredicateAdditions
 {

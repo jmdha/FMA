@@ -8,13 +8,9 @@ using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Models.PDDL.Problem;
-using PDDLSharp.Parsers.FastDownward.Plans;
 using PDDLSharp.Parsers.FastDownward.SAS;
 using PDDLSharp.Parsers.PDDL;
-using System;
 using System.Diagnostics;
-using System.Numerics;
-using System.Text.RegularExpressions;
 using Tools;
 
 namespace P10.RefinementStrategies.GroundedPredicateAdditions
@@ -25,7 +21,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
         private readonly PriorityQueue<PreconditionState, int> _openList = new PriorityQueue<PreconditionState, int>();
         private bool _isInitialized = false;
         private int _initialPossibilities = 0;
-        private Stopwatch _watch = new Stopwatch();
+        private readonly Stopwatch _watch = new Stopwatch();
 
         public GroundedPredicateAdditionsRefinement()
         {
@@ -117,13 +113,13 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                     throw new Exception("Stackelberg translator failed!");
                 var sasParser = new FDSASParser(listener);
                 var parsed = sasParser.ParseAs<SASDecl>(sasFile);
-                if (parsed != null) 
+                if (parsed != null)
                 {
                     foreach (var parameter in parameterPredicates)
                         if (!parsed.Variables.Any(x => x.SymbolicNames.Any(y => y.Contains(parameter.Name))))
                             throw new Exception($"Translator removed parameter predicate '{parameter.Name}'!");
                 }
-                else 
+                else
                     throw new Exception("Exception while parsing SAS file");
             }
         }

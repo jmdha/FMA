@@ -1,7 +1,5 @@
 ﻿using P10.RefinementStrategies;
 using P10.Verifiers;
-using PDDLSharp.CodeGenerators.PDDL;
-using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
@@ -48,7 +46,7 @@ namespace P10
         {
             ConsoleHelper.WriteLineColor($"\tValidating...", ConsoleColor.Magenta);
             bool isValid = true;
-            foreach(var problem in problems)
+            foreach (var problem in problems)
             {
                 var compiled = StackelbergCompiler.StackelbergCompiler.CompileToStackelberg(new PDDLDecl(domain, problem), RefinedMetaActionCandidate.Copy());
                 if (!Verifier.Verify(compiled.Domain, compiled.Problem, _tempFolder))

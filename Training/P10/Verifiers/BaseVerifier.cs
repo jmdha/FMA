@@ -1,14 +1,7 @@
-﻿using PDDLSharp.CodeGenerators.PDDL;
-using PDDLSharp.ErrorListeners;
-using PDDLSharp.Models.PDDL.Domain;
+﻿using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Numerics;
 using System.Text;
-using System.Threading.Tasks;
 using Tools;
 
 namespace P10.Verifiers
