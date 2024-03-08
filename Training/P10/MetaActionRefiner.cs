@@ -49,7 +49,7 @@ namespace P10
             foreach (var problem in problems)
             {
                 var compiled = StackelbergCompiler.StackelbergCompiler.CompileToStackelberg(new PDDLDecl(domain, problem), RefinedMetaActionCandidate.Copy());
-                if (!Verifier.Verify(compiled.Domain, compiled.Problem, _tempFolder))
+                if (!Verifier.Verify(compiled.Domain, compiled.Problem, Path.Combine(_tempFolder, "validation")))
                     isValid = false;
             }
             return isValid;

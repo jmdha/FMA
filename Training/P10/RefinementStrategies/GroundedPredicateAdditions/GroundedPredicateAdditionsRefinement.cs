@@ -45,10 +45,10 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 //AddParameterPredicates(compiled, originalMetaAction, workingDir);
 
                 var verifier = new StateExploreVerifier();
-                if (File.Exists(Path.Combine(workingDir, StateExploreVerifier.StateInfoFile)))
-                    File.Delete(Path.Combine(workingDir, StateExploreVerifier.StateInfoFile));
-                verifier.Verify(compiled.Domain, compiled.Problem, workingDir);
-                if (!UpdateOpenList(originalMetaAction, workingDir))
+                if (File.Exists(Path.Combine(workingDir, "state-search", StateExploreVerifier.StateInfoFile)))
+                    File.Delete(Path.Combine(workingDir, "state-search", StateExploreVerifier.StateInfoFile));
+                verifier.Verify(compiled.Domain, compiled.Problem, Path.Combine(workingDir, "state-search"));
+                if (!UpdateOpenList(originalMetaAction, Path.Combine(workingDir, "state-search")))
                     return null;
                 ConsoleHelper.WriteLineColor($"\t\tExploration finished", ConsoleColor.Magenta);
                 _watch.Start();
