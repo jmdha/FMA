@@ -41,7 +41,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 var pddlDecl = new PDDLDecl(domain, problems[0]);
                 var compiled = StackelbergCompiler.StackelbergCompiler.CompileToStackelberg(pddlDecl, originalMetaAction.Copy());
 
-                AddParameterPredicates(compiled, originalMetaAction, workingDir);
+                //AddParameterPredicates(compiled, originalMetaAction, workingDir);
 
                 var verifier = new StateExploreVerifier();
                 verifier.Verify(compiled.Domain, compiled.Problem, workingDir);
@@ -162,8 +162,8 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                         preconditions.Add(parser.ParseAs<PredicateExp>(predText));
                     }
                 }
-                var invalidStates = Convert.ToInt32(lines[i + 1]);
-                var applicability = Convert.ToInt32(lines[i + 2]);
+                var invalidStates = Convert.ToInt32(lines[i + 2]);
+                var applicability = Convert.ToInt32(lines[i + 1]);
 
                 var metaAction = currentMetaAction.Copy();
                 if (metaAction.Preconditions is AndExp and)
@@ -173,9 +173,9 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                         andNode.Children.Add(precon);
                     and.Add(andNode);
 
-                    // Prune some nonsensical preconditions.
-                    if (andNode.Children.Any(x => andNode.Children.Contains(new NotExp(x))))
-                        continue;
+                    //// Prune some nonsensical preconditions.
+                    //if (andNode.Children.Any(x => andNode.Children.Contains(new NotExp(x))))
+                    //    continue;
                 }
 
                 var newState = new PreconditionState(validStates, invalidStates, applicability, metaAction, preconditions);
