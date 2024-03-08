@@ -5,17 +5,17 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
 {
     public class PreconditionState
     {
+        public int TotalStates { get; set; }
         public int ValidStates { get; set; }
         public int InvalidStates { get; set; }
         public int Applicability { get; set; }
-        public int InApplicability { get; set; }
         public ActionDecl MetaAction { get; set; }
         public List<IExp> Precondition { get; set; }
 
-        public PreconditionState(int validStates, int invalidStates, int applicability, int inApplicability, ActionDecl metaAction, List<IExp> precondition)
+        public PreconditionState(int totalStates, int validStates, int invalidStates, int applicability, ActionDecl metaAction, List<IExp> precondition)
         {
+            TotalStates = totalStates;
             Applicability = applicability;
-            InApplicability = inApplicability;
             ValidStates = validStates;
             InvalidStates = invalidStates;
             MetaAction = metaAction;

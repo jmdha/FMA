@@ -58,7 +58,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             ConsoleHelper.WriteLineColor($"\t\t{_openList.Count} possibilities left [Est. {TimeSpan.FromMilliseconds((double)_openList.Count * ((double)(_watch.ElapsedMilliseconds + 1) / (double)(1 + (_initialPossibilities - _openList.Count)))).ToString("hh\\:mm\\:ss")} until finished]", ConsoleColor.Magenta);
             var state = _openList.Dequeue();
             ConsoleHelper.WriteLineColor($"\t\tBest Validity: {Math.Round((((double)state.ValidStates - (double)state.InvalidStates) / (double)state.ValidStates) * 100, 2)}%", ConsoleColor.Magenta);
-            ConsoleHelper.WriteLineColor($"\t\tBest Applicability: {Math.Round(((double)state.Applicability / (double)state.InApplicability) * 100, 2)}%", ConsoleColor.Magenta);
+            ConsoleHelper.WriteLineColor($"\t\tBest Applicability: {Math.Round(((double)state.Applicability / (double)state.TotalStates) * 100, 2)}%", ConsoleColor.Magenta);
 #if DEBUG
             ConsoleHelper.WriteLineColor($"\t\tPrecondition: {GetPreconText(state.Precondition)}", ConsoleColor.Magenta);
 #endif
@@ -181,7 +181,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                     //    continue;
                 }
 
-                var newState = new PreconditionState(validStates, invalidStates, applicability, (validStates + totalInvalidStates) - applicability, metaAction, preconditions);
+                var newState = new PreconditionState(validStates + totalInvalidStates, validStates, invalidStates, applicability, metaAction, preconditions);
                 var hValue = Heuristic.GetValue(newState);
                 if (hValue != int.MaxValue)
                     _openList.Enqueue(newState, hValue);
