@@ -37,6 +37,8 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
         {
             if (!_isInitialized)
             {
+                var searchWorkingDir = Path.Combine(workingDir, "state-search");
+                PathHelper.RecratePath(searchWorkingDir);
                 ConsoleHelper.WriteLineColor($"\t\tInitial state space exploration started...", ConsoleColor.Magenta);
                 _isInitialized = true;
                 var pddlDecl = new PDDLDecl(domain, problems[0]);
@@ -45,10 +47,10 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 //AddParameterPredicates(compiled, originalMetaAction, workingDir);
 
                 var verifier = new StateExploreVerifier();
-                if (File.Exists(Path.Combine(workingDir, "state-search", StateExploreVerifier.StateInfoFile)))
-                    File.Delete(Path.Combine(workingDir, "state-search", StateExploreVerifier.StateInfoFile));
+                if (File.Exists(Path.Combine(searchWorkingDir, StateExploreVerifier.StateInfoFile)))
+                    File.Delete(Path.Combine(searchWorkingDir, StateExploreVerifier.StateInfoFile));
                 verifier.Verify(compiled.Domain, compiled.Problem, Path.Combine(workingDir, "state-search"));
-                if (!UpdateOpenList(originalMetaAction, Path.Combine(workingDir, "state-search")))
+                if (!UpdateOpenList(originalMetaAction, searchWorkingDir))
                     return null;
                 ConsoleHelper.WriteLineColor($"\t\tExploration finished", ConsoleColor.Magenta);
                 _watch.Start();

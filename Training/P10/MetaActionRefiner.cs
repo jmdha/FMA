@@ -10,6 +10,7 @@ namespace P10
     public class MetaActionRefiner
     {
         private static readonly string _tempFolder = PathHelper.RootPath("temp");
+        private static readonly string _tempValidationFolder = Path.Combine(_tempFolder, "validation");
 
         public ActionDecl OriginalMetaActionCandidate { get; internal set; }
         public ActionDecl RefinedMetaActionCandidate { get; internal set; }
@@ -25,6 +26,7 @@ namespace P10
             Strategy = strategy;
 
             PathHelper.RecratePath(_tempFolder);
+            PathHelper.RecratePath(_tempValidationFolder);
         }
 
         public bool Refine(DomainDecl domain, List<ProblemDecl> problems)
@@ -49,7 +51,7 @@ namespace P10
             foreach (var problem in problems)
             {
                 var compiled = StackelbergCompiler.StackelbergCompiler.CompileToStackelberg(new PDDLDecl(domain, problem), RefinedMetaActionCandidate.Copy());
-                if (!Verifier.Verify(compiled.Domain, compiled.Problem, Path.Combine(_tempFolder, "validation")))
+                if (!Verifier.Verify(compiled.Domain, compiled.Problem, _tempValidationFolder))
                     isValid = false;
             }
             return isValid;
