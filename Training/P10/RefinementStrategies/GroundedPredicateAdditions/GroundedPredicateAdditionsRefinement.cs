@@ -57,9 +57,9 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
 
             ConsoleHelper.WriteLineColor($"\t\t{_openList.Count} possibilities left [Est. {TimeSpan.FromMilliseconds((double)_openList.Count * ((double)(_watch.ElapsedMilliseconds + 1) / (double)(1 + (_initialPossibilities - _openList.Count)))).ToString("hh\\:mm\\:ss")} until finished]", ConsoleColor.Magenta);
             var state = _openList.Dequeue();
+#if DEBUG
             ConsoleHelper.WriteLineColor($"\t\tBest Validity: {Math.Round(((double)state.ValidStates / (double)state.TotalValidStates) * 100, 2)}%", ConsoleColor.Magenta);
             ConsoleHelper.WriteLineColor($"\t\tBest Applicability: {Math.Round(((double)state.Applicability / (double)state.TotalValidStates) * 100, 2)}%", ConsoleColor.Magenta);
-#if DEBUG
             ConsoleHelper.WriteLineColor($"\t\tPrecondition: {GetPreconText(state.Precondition)}", ConsoleColor.Magenta);
 #endif
             return state.MetaAction;
@@ -184,7 +184,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 var newState = new PreconditionState(
                     totalValidStates,
                     totalInvalidStates,
-                    totalValidStates + totalInvalidStates - invalidStates, 
+                    totalValidStates + totalInvalidStates - (totalInvalidStates - invalidStates), 
                     invalidStates, 
                     applicability, 
                     metaAction, 
