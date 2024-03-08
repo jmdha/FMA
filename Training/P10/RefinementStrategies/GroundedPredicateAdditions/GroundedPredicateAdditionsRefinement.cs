@@ -28,7 +28,8 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             Heuristic = new hSum<PreconditionState>(new List<IHeuristic<PreconditionState>>() {
                 new hMostValid(),
                 new hMostApplicable(),
-                new hMustBeApplicable()
+                new hMustBeApplicable(),
+                new hMustBeValid()
             });
         }
 
