@@ -61,7 +61,7 @@ namespace P10
             ConsoleHelper.WriteLineColor($"\tTotal candidates: {candidates.Count}", ConsoleColor.Magenta);
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
-            if (opts.CheckUsefullness)
+            if (opts.PreCheckUsefullness)
             {
                 ConsoleHelper.WriteLineColor($"Pruning for useful meta action candidates", ConsoleColor.Blue);
                 var checker = new UsefullnessChecker();
@@ -71,7 +71,10 @@ namespace P10
             }
 
             ConsoleHelper.WriteLineColor($"Begining refinement process", ConsoleColor.Blue);
+            var codeGenerator = new PDDLCodeGenerator(listener);
+            codeGenerator.Readable = true;
             int count = 1;
+            var refinedCandidates = new List<ActionDecl>();
             foreach (var candidate in candidates)
             {
                 ConsoleHelper.WriteLineColor($"\tCandidate: {count++} out of {candidates.Count}", ConsoleColor.Magenta);
@@ -79,23 +82,32 @@ namespace P10
                 if (refiner.Refine(baseDecl, domain, problems))
                 {
                     ConsoleHelper.WriteLineColor($"\tCandidate have been refined!", ConsoleColor.Magenta);
+                    refinedCandidates.Add(refiner.RefinedMetaActionCandidate);
 
                     ConsoleHelper.WriteLineColor($"\tOutputting refined candidate", ConsoleColor.Magenta);
-                    var codeGenerator = new PDDLCodeGenerator(listener);
-                    codeGenerator.Readable = true;
                     codeGenerator.Generate(refiner.RefinedMetaActionCandidate, Path.Combine(opts.OutputPath, $"{refiner.RefinedMetaActionCandidate.Name}.pddl"));
                     ConsoleHelper.WriteLineColor($"\tDone!", ConsoleColor.Green);
+                    break;
                 }
                 else
                     ConsoleHelper.WriteLineColor($"\tCandidate could not be refined!", ConsoleColor.Magenta);
             }
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
-            //ConsoleHelper.WriteLineColor($"Outputting enhanced domain", ConsoleColor.Blue);
-            //var newDomain = domain.Copy();
-            //newDomain.Actions.AddRange(refinedCandidates);
-            //codeGenerator.Generate(newDomain, Path.Combine(opts.OutputPath, "enhancedDomain.pddl"));
-            //ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
+            if (opts.PostCheckUsefullness)
+            {
+                ConsoleHelper.WriteLineColor($"Pruning for useful refined meta action", ConsoleColor.Blue);
+                var checker = new UsefullnessChecker();
+                refinedCandidates = checker.GetUsefulCandidates(domain, problems, refinedCandidates);
+                ConsoleHelper.WriteLineColor($"\tTotal meta actions: {refinedCandidates.Count}", ConsoleColor.Magenta);
+                ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
+            }
+
+            ConsoleHelper.WriteLineColor($"Outputting enhanced domain", ConsoleColor.Blue);
+            var newDomain = domain.Copy();
+            newDomain.Actions.AddRange(refinedCandidates);
+            codeGenerator.Generate(newDomain, Path.Combine(opts.OutputPath, "enhancedDomain.pddl"));
+            ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
         }
 
         private static IRefinementStrategy GetRefinementStrategy(Options.RefinementStrategies strategy)
