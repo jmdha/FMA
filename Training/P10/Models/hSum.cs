@@ -1,4 +1,6 @@
-﻿namespace P10.Models
+﻿using PDDLSharp.Models.SAS;
+
+namespace P10.Models
 {
     public class hSum<T> : IHeuristic<T>
     {
@@ -11,10 +13,18 @@
 
         public int GetValue(T metaAction)
         {
-            var value = 0;
+            int sum = 0;
             foreach (var heuristic in Heuristics)
-                value += heuristic.GetValue(metaAction);
-            return value;
+                if (sum < int.MaxValue)
+                    sum = ClampSum(sum, heuristic.GetValue(metaAction));
+            return sum;
+        }
+
+        private int ClampSum(int value1, int value2)
+        {
+            if (value1 == int.MaxValue || value2 == int.MaxValue)
+                return int.MaxValue;
+            return value1 + value2;
         }
     }
 }

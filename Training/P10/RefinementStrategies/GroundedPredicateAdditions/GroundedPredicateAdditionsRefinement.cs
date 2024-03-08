@@ -26,7 +26,9 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
         public GroundedPredicateAdditionsRefinement()
         {
             Heuristic = new hSum<PreconditionState>(new List<IHeuristic<PreconditionState>>() {
-                new hMostValid()
+                new hMostValid(),
+                new hMostApplicable(),
+                new hMustBeApplicable()
             });
         }
 
@@ -54,6 +56,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             ConsoleHelper.WriteLineColor($"\t\t{_openList.Count} possibilities left [Est. {TimeSpan.FromMilliseconds((double)_openList.Count * ((double)(_watch.ElapsedMilliseconds + 1) / (double)(1 + (_initialPossibilities - _openList.Count)))).ToString("hh\\:mm\\:ss")} until finished]", ConsoleColor.Magenta);
             var state = _openList.Dequeue();
             ConsoleHelper.WriteLineColor($"\t\tBest Validity: {Math.Round((((double)state.ValidStates - (double)state.InvalidStates) / (double)state.ValidStates) * 100, 2)}%", ConsoleColor.Magenta);
+            ConsoleHelper.WriteLineColor($"\t\tBest Applicability: {Math.Round(((double)state.Applicability / ((double)state.ValidStates + (double)state.InvalidStates)) * 100, 2)}%", ConsoleColor.Magenta);
 #if DEBUG
             ConsoleHelper.WriteLineColor($"\t\tPrecondition: {GetPreconText(state.Precondition)}", ConsoleColor.Magenta);
 #endif
@@ -140,7 +143,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             var lines = text.Split('\n').ToList();
             lines.RemoveAll(x => x == "");
             var validStates = Convert.ToInt32(lines[0]);
-            for (int i = 2; i < lines.Count; i += 2)
+            for (int i = 2; i < lines.Count; i += 3)
             {
                 var preconditions = new List<IExp>();
 
@@ -160,6 +163,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                     }
                 }
                 var invalidStates = Convert.ToInt32(lines[i + 1]);
+                var applicability = Convert.ToInt32(lines[i + 2]);
 
                 var metaAction = currentMetaAction.Copy();
                 if (metaAction.Preconditions is AndExp and)
@@ -174,8 +178,10 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                         continue;
                 }
 
-                var newState = new PreconditionState(validStates, invalidStates, metaAction, preconditions);
-                _openList.Enqueue(newState, Heuristic.GetValue(newState));
+                var newState = new PreconditionState(validStates, invalidStates, applicability, metaAction, preconditions);
+                var hValue = Heuristic.GetValue(newState);
+                if (hValue != int.MaxValue)
+                    _openList.Enqueue(newState, hValue);
             }
             _initialPossibilities = _openList.Count;
 
