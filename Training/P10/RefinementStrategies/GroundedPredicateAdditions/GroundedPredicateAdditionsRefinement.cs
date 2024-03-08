@@ -21,8 +21,6 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
 {
     public class GroundedPredicateAdditionsRefinement : IRefinementStrategy
     {
-        private static readonly string _stateInfoFile = "out";
-
         public IHeuristic<PreconditionState> Heuristic { get; set; }
         private readonly PriorityQueue<PreconditionState, int> _openList = new PriorityQueue<PreconditionState, int>();
         private bool _isInitialized = false;
@@ -133,7 +131,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
         private bool UpdateOpenList(ActionDecl currentMetaAction, string workingDir)
         {
             ConsoleHelper.WriteLineColor($"\t\tUpdating open list...", ConsoleColor.Magenta);
-            var targetFile = new FileInfo(Path.Combine(workingDir, _stateInfoFile));
+            var targetFile = new FileInfo(Path.Combine(workingDir, StateExploreVerifier.StateInfoFile));
 
             if (!targetFile.Exists)
                 return false;
