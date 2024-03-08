@@ -1,12 +1,17 @@
 ﻿using P10.Models;
 using P10.RefinementStrategies.GroundedPredicateAdditions.Heuristics;
 using P10.Verifiers;
+using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.ErrorListeners;
+using PDDLSharp.Models.FastDownward.SAS;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
+using PDDLSharp.Parsers.FastDownward.Plans;
+using PDDLSharp.Parsers.FastDownward.SAS;
 using PDDLSharp.Parsers.PDDL;
 using System;
+using System.Numerics;
 using Tools;
 
 namespace P10.RefinementStrategies.GroundedPredicateAdditions
@@ -34,6 +39,9 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 ConsoleHelper.WriteLineColor($"\t\tInitial state space exploration started...", ConsoleColor.Magenta);
                 _isInitialized = true;
                 var compiled = StackelbergCompiler.StackelbergCompiler.CompileToStackelberg(pddlDecl, originalMetaAction.Copy());
+
+                AddParameterPredicates(compiled, originalMetaAction, workingDir);
+
                 var verifier = new StateExploreVerifier();
                 verifier.Verify(compiled.Domain, compiled.Problem, workingDir);
                 if (!UpdateOpenList(originalMetaAction, workingDir))
@@ -47,6 +55,60 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             var state = _openList.Dequeue();
             ConsoleHelper.WriteLineColor($"\t\tBest Validity: {Math.Round((((double)state.ValidStates - (double)state.InvalidStates) / (double)state.ValidStates) * 100, 2)}%", ConsoleColor.Magenta);
             return state.MetaAction;
+        }
+
+        private void AddParameterPredicates(PDDLDecl compiled, ActionDecl originalMetaAction, string workingDir)
+        {
+            var parameterPredicates = new List<PredicateExp>();
+            var count = 0;
+            foreach (var parameter in originalMetaAction.Parameters.Values)
+                parameterPredicates.Add(new PredicateExp($"param{count++}", new List<NameExp>() { parameter.Copy() }));
+
+            if (compiled.Domain.Predicates != null)
+                foreach (var parameter in parameterPredicates)
+                    compiled.Domain.Predicates.Add(parameter);
+            var metaAction = compiled.Domain.Actions.First(x => x.Name == $"fix_{originalMetaAction.Name}");
+            if (metaAction != null && metaAction.Effects is AndExp and)
+                foreach (var parameter in parameterPredicates)
+                    and.Add(parameter);
+
+            CheckIfTranslatorRemovedParameterFacts(compiled, parameterPredicates, workingDir);
+        }
+
+        private void CheckIfTranslatorRemovedParameterFacts(PDDLDecl compiled, List<PredicateExp> parameterPredicates, string workingDir)
+        {
+            workingDir = Path.Combine(workingDir, "translator-test");
+            PathHelper.RecratePath(workingDir);
+            var listener = new ErrorListener();
+            var codeGenerator = new PDDLCodeGenerator(listener);
+            var domainFile = Path.Combine(workingDir, $"tempDomain.pddl");
+            var problemFile = Path.Combine(workingDir, $"tempProblem.pddl");
+            codeGenerator.Generate(compiled.Domain, domainFile);
+            codeGenerator.Generate(compiled.Problem, problemFile);
+
+            using (ArgsCaller fdCaller = new ArgsCaller("python2"))
+            {
+                fdCaller.StdOut += (s, o) => { };
+                fdCaller.StdErr += (s, o) => { };
+                fdCaller.Arguments.Add(BaseVerifier.StackelbergPath, "");
+                fdCaller.Arguments.Add(domainFile, "");
+                fdCaller.Arguments.Add(problemFile, "");
+                fdCaller.Process.StartInfo.WorkingDirectory = workingDir;
+                fdCaller.Run();
+                var sasFile = new FileInfo(Path.Combine(workingDir, "output.sas"));
+                if (!sasFile.Exists)
+                    throw new Exception("Stackelberg translator failed!");
+                var sasParser = new FDSASParser(listener);
+                var parsed = sasParser.ParseAs<SASDecl>(sasFile);
+                if (parsed != null) 
+                {
+                    foreach (var parameter in parameterPredicates)
+                        if (!parsed.Variables.Any(x => x.SymbolicNames.Any(y => y.Contains(parameter.Name))))
+                            throw new Exception($"Translator removed parameter predicate '{parameter.Name}'!");
+                }
+                else 
+                    throw new Exception("Exception while parsing SAS file");
+            }
         }
 
         private bool UpdateOpenList(ActionDecl currentMetaAction, string workingDir)

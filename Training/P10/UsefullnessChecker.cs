@@ -15,6 +15,7 @@ namespace P10
     public class UsefullnessChecker
     {
         private static readonly string _tempFolder = PathHelper.RootPath("temp/usefullness");
+        public static readonly string FastDownwardPath = PathHelper.RootPath("../Dependencies/fast-downward/fast-downward.py");
 
         public UsefullnessChecker()
         {
@@ -57,7 +58,7 @@ namespace P10
                 {
                     fdCaller.StdOut += (s, o) => { };
                     fdCaller.StdErr += (s, o) => { };
-                    fdCaller.Arguments.Add(PathHelper.RootPath("../Dependencies/fast-downward/fast-downward.py"), "");
+                    fdCaller.Arguments.Add(FastDownwardPath, "");
                     fdCaller.Arguments.Add("--alias", "lama-first");
                     fdCaller.Arguments.Add("--overall-time-limit", "5m");
                     fdCaller.Arguments.Add("--plan-file", "plan.plan");
