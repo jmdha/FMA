@@ -7,6 +7,7 @@ using PDDLSharp.Models.FastDownward.SAS;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
+using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers.FastDownward.Plans;
 using PDDLSharp.Parsers.FastDownward.SAS;
 using PDDLSharp.Parsers.PDDL;
@@ -20,7 +21,6 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
 {
     public class GroundedPredicateAdditionsRefinement : IRefinementStrategy
     {
-        public IVerifier Verifier { get; } = new FrontierVerifier();
         private static readonly string _stateInfoFile = "out";
 
         public IHeuristic<PreconditionState> Heuristic { get; set; }
@@ -36,12 +36,13 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             });
         }
 
-        public ActionDecl? Refine(PDDLDecl pddlDecl, ActionDecl currentMetaAction, ActionDecl originalMetaAction, string workingDir)
+        public ActionDecl? Refine(DomainDecl domain, List<ProblemDecl> problems, ActionDecl currentMetaAction, ActionDecl originalMetaAction, string workingDir)
         {
             if (!_isInitialized)
             {
                 ConsoleHelper.WriteLineColor($"\t\tInitial state space exploration started...", ConsoleColor.Magenta);
                 _isInitialized = true;
+                var pddlDecl = new PDDLDecl(domain, problems[0]);
                 var compiled = StackelbergCompiler.StackelbergCompiler.CompileToStackelberg(pddlDecl, originalMetaAction.Copy());
 
                 AddParameterPredicates(compiled, originalMetaAction, workingDir);
@@ -59,6 +60,10 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             ConsoleHelper.WriteLineColor($"\t\t{_openList.Count} possibilities left [Est. {TimeSpan.FromMilliseconds((double)_openList.Count * ((double)(_watch.ElapsedMilliseconds + 1) / (double)(1 + (_initialPossibilities - _openList.Count)))).ToString("hh\\:mm\\:ss")} until finished]", ConsoleColor.Magenta);
             var state = _openList.Dequeue();
             ConsoleHelper.WriteLineColor($"\t\tBest Validity: {Math.Round((((double)state.ValidStates - (double)state.InvalidStates) / (double)state.ValidStates) * 100, 2)}%", ConsoleColor.Magenta);
+            var preconStr = "";
+            foreach (var precon in state.Precondition)
+                preconStr += $"{precon} & ";
+            ConsoleHelper.WriteLineColor($"\t\tPrecondition: {preconStr}", ConsoleColor.Magenta);
             return state.MetaAction;
         }
 

@@ -79,7 +79,7 @@ namespace P10
             {
                 ConsoleHelper.WriteLineColor($"\tCandidate: {count++} out of {candidates.Count}", ConsoleColor.Magenta);
                 var refiner = new MetaActionRefiner(candidate, GetRefinementStrategy(opts.RefinementStrategy));
-                if (refiner.Refine(baseDecl, domain, problems))
+                if (refiner.Refine(domain, problems))
                 {
                     ConsoleHelper.WriteLineColor($"\tCandidate have been refined!", ConsoleColor.Magenta);
                     refinedCandidates.Add(refiner.RefinedMetaActionCandidate);

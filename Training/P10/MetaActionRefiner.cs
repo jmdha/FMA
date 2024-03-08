@@ -1,4 +1,5 @@
 ﻿using P10.RefinementStrategies;
+using P10.Verifiers;
 using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
@@ -15,6 +16,7 @@ namespace P10
         public ActionDecl OriginalMetaActionCandidate { get; internal set; }
         public ActionDecl RefinedMetaActionCandidate { get; internal set; }
         public IRefinementStrategy Strategy { get; }
+        public IVerifier Verifier { get; } = new FrontierVerifier();
 
         private int _iteration = 0;
 
@@ -27,14 +29,14 @@ namespace P10
             PathHelper.RecratePath(_tempFolder);
         }
 
-        public bool Refine(PDDLDecl pddlDecl, DomainDecl domain, List<ProblemDecl> problems)
+        public bool Refine(DomainDecl domain, List<ProblemDecl> problems)
         {
             _iteration = 0;
             while (!IsValid(domain, problems))
             {
                 _iteration++;
                 ConsoleHelper.WriteLineColor($"\tRefining iteration {_iteration}...", ConsoleColor.Magenta);
-                var refined = Strategy.Refine(pddlDecl, RefinedMetaActionCandidate, OriginalMetaActionCandidate, _tempFolder);
+                var refined = Strategy.Refine(domain, problems, RefinedMetaActionCandidate, OriginalMetaActionCandidate, _tempFolder);
                 if (refined == null)
                     return false;
                 RefinedMetaActionCandidate = refined;
@@ -49,7 +51,7 @@ namespace P10
             foreach(var problem in problems)
             {
                 var compiled = StackelbergCompiler.StackelbergCompiler.CompileToStackelberg(new PDDLDecl(domain, problem), RefinedMetaActionCandidate.Copy());
-                if (!Strategy.Verifier.Verify(compiled.Domain, compiled.Problem, _tempFolder))
+                if (!Verifier.Verify(compiled.Domain, compiled.Problem, _tempFolder))
                     isValid = false;
             }
             return isValid;

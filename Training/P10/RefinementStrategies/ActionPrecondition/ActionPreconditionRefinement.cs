@@ -4,12 +4,12 @@ using P10.Verifiers;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
+using PDDLSharp.Models.PDDL.Problem;
 
 namespace P10.RefinementStrategies.ActionPrecondition
 {
     public class ActionPreconditionRefinement : IRefinementStrategy
     {
-        public IVerifier Verifier { get; } = new FrontierVerifier();
         public IHeuristic<MetaActionState> Heuristic { get; set; }
         private readonly HashSet<MetaActionState> _closedList = new HashSet<MetaActionState>();
         private readonly PriorityQueue<MetaActionState, int> _openList = new PriorityQueue<MetaActionState, int>();
@@ -23,13 +23,14 @@ namespace P10.RefinementStrategies.ActionPrecondition
             });
         }
 
-        public ActionDecl? Refine(PDDLDecl pddlDecl, ActionDecl currentMetaAction, ActionDecl originalMetaAction, string workingDir)
+        public ActionDecl? Refine(DomainDecl domain, List<ProblemDecl> problems, ActionDecl currentMetaAction, ActionDecl originalMetaAction, string workingDir)
         {
             if (_bestList.Count == 0)
             {
                 if (_haveExhausted)
                     return null;
 
+                var pddlDecl = new PDDLDecl(domain, problems[0]);
                 _openList.Enqueue(new MetaActionState(currentMetaAction, new List<string>()), int.MaxValue);
                 while (_openList.Count > 0)
                 {
