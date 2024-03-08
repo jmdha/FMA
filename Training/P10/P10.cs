@@ -87,7 +87,6 @@ namespace P10
                     ConsoleHelper.WriteLineColor($"\tOutputting refined candidate", ConsoleColor.Magenta);
                     codeGenerator.Generate(refiner.RefinedMetaActionCandidate, Path.Combine(opts.OutputPath, $"{refiner.RefinedMetaActionCandidate.Name}.pddl"));
                     ConsoleHelper.WriteLineColor($"\tDone!", ConsoleColor.Green);
-                    break;
                 }
                 else
                     ConsoleHelper.WriteLineColor($"\tCandidate could not be refined!", ConsoleColor.Magenta);
