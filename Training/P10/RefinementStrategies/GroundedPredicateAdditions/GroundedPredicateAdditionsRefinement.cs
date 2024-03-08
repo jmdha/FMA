@@ -11,7 +11,9 @@ using PDDLSharp.Parsers.FastDownward.Plans;
 using PDDLSharp.Parsers.FastDownward.SAS;
 using PDDLSharp.Parsers.PDDL;
 using System;
+using System.Diagnostics;
 using System.Numerics;
+using System.Text.RegularExpressions;
 using Tools;
 
 namespace P10.RefinementStrategies.GroundedPredicateAdditions
@@ -24,6 +26,8 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
         public IHeuristic<PreconditionState> Heuristic { get; set; }
         private readonly PriorityQueue<PreconditionState, int> _openList = new PriorityQueue<PreconditionState, int>();
         private bool _isInitialized = false;
+        private int _initialPossibilities = 0;
+        private Stopwatch _watch = new Stopwatch();
 
         public GroundedPredicateAdditionsRefinement()
         {
@@ -47,11 +51,12 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 if (!UpdateOpenList(originalMetaAction, workingDir))
                     return null;
                 ConsoleHelper.WriteLineColor($"\t\tExploration finished", ConsoleColor.Magenta);
+                _watch.Start();
             }
             if (_openList.Count == 0)
                 return null;
 
-            ConsoleHelper.WriteLineColor($"\t\t{_openList.Count} possibilities left", ConsoleColor.Magenta);
+            ConsoleHelper.WriteLineColor($"\t\t{_openList.Count} possibilities left [Est. {TimeSpan.FromMilliseconds(_openList.Count * ((_initialPossibilities - _openList.Count + 1) / _watch.ElapsedMilliseconds)).ToString("hh\\:mm\\:ss")} until finished]", ConsoleColor.Magenta);
             var state = _openList.Dequeue();
             ConsoleHelper.WriteLineColor($"\t\tBest Validity: {Math.Round((((double)state.ValidStates - (double)state.InvalidStates) / (double)state.ValidStates) * 100, 2)}%", ConsoleColor.Magenta);
             return state.MetaAction;
@@ -164,6 +169,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 var newState = new PreconditionState(validStates, invalidStates, metaAction, preconditions);
                 _openList.Enqueue(newState, Heuristic.GetValue(newState));
             }
+            _initialPossibilities = _openList.Count;
 
             targetFile.Delete();
             return true;
