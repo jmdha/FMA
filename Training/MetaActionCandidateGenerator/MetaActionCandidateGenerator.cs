@@ -66,7 +66,8 @@ namespace MetaActionCandidateGenerator
             var generator = GetGenerator(strategy);
             var candidates = generator.GenerateCandidates(pddlDecl);
             foreach (var candidate in candidates)
-                candidate.Name = $"${candidate.Name}";
+                if (!candidate.Name.Contains('$'))
+                    candidate.Name = $"${candidate.Name}";
             return candidates;
         }
     }

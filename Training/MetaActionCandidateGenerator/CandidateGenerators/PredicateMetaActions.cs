@@ -36,8 +36,14 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                     var newAct = new ActionDecl($"meta_{predicate.Name}");
                     foreach (var arg in predicate.Arguments)
                         newAct.Parameters.Add(arg.Copy());
-                    newAct.Preconditions = new AndExp(newAct, new List<IExp>(GetRequiredStatics(pddlDecl, predicate)));
+                    var reqStatics = GetRequiredStatics(pddlDecl, predicate);
+                    newAct.Preconditions = new AndExp(newAct, new List<IExp>(reqStatics));
                     newAct.Effects = new AndExp(newAct, new List<IExp>() { predicate.Copy() });
+                    foreach(var reqStatic in reqStatics)
+                        foreach(var args in reqStatic.Arguments)
+                            if (!newAct.Parameters.Values.Contains(args))
+                                newAct.Parameters.Add(args.Copy());
+
                     candidates.Add(newAct);
                 }
             }
@@ -50,45 +56,55 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
             var requiredStatics = new List<PredicateExp>();
             foreach (var action in pddlDecl.Domain.Actions)
             {
-                var staticsNames = GetStaticsForPredicate(pddlDecl, action, predicate);
-                foreach (var argName in staticsNames.Keys)
-                {
-                    var staticsToAdd = staticsNames[argName];
-                    foreach (var staticToAdd in staticsToAdd)
-                    {
-                        var newStatics = new PredicateExp(staticToAdd);
-                        newStatics.Arguments.Add(new NameExp(argName));
-                        if (!requiredStatics.Contains(newStatics))
-                            requiredStatics.Add(newStatics);
-                    }
-                }
+                var staticsToAdd = GetStaticsForPredicate(pddlDecl, action, predicate);
+                foreach(var toAdd in staticsToAdd)
+                    if (!requiredStatics.Any(x => x.Name == toAdd.Name))
+                        requiredStatics.Add(toAdd);
             }
             return requiredStatics;
         }
 
-        private Dictionary<string, List<string>> GetStaticsForPredicate(PDDLDecl pddlDecl, ActionDecl act, PredicateExp pred)
+        private List<PredicateExp> GetStaticsForPredicate(PDDLDecl pddlDecl, ActionDecl act, PredicateExp pred)
         {
-            var requiredStatics = new Dictionary<string, List<string>>();
             var statics = SimpleStaticPredicateDetector.FindStaticPredicates(pddlDecl);
-            statics.RemoveAll(x => x.Arguments.Count != 1);
             var actionStatics = act.Preconditions.FindTypes<PredicateExp>().Where(x => statics.Any(y => y.Name == x.Name)).ToList();
+
+            var requiredStatics = new List<PredicateExp>();
+            var checkStatics = new List<PredicateExp>();
 
             var instances = act.Effects.FindNames(pred.Name);
             foreach (var instance in instances)
             {
                 if (instance is PredicateExp predicate && predicate.Arguments.Count == pred.Arguments.Count)
                 {
+                    var nameMap = new Dictionary<string, string>();
                     for (int i = 0; i < predicate.Arguments.Count; i++)
                     {
-                        var find = actionStatics.FirstOrDefault(x => x.Arguments[0].Name == predicate.Arguments[i].Name);
+                        var find = actionStatics.Where(x => x.Arguments.Any(y => y.Name == predicate.Arguments[i].Name));
                         if (find != null)
                         {
-                            if (!requiredStatics.ContainsKey(pred.Arguments[i].Name))
-                                requiredStatics.Add(pred.Arguments[i].Name, new List<string>() { find.Name });
-                            else
-                                requiredStatics[pred.Arguments[i].Name].Add(find.Name);
+                            foreach (var actionStatic in find)
+                            {
+                                if (!requiredStatics.Any(x => x.Name == actionStatic.Name))
+                                {
+                                    var name = actionStatic.Arguments.First(x => x.Name == predicate.Arguments[i].Name);
+                                    if (!nameMap.ContainsKey(name.Name))
+                                        nameMap.Add(name.Name, pred.Arguments[i].Name);
+                                    if (!checkStatics.Any(x => x.Name == actionStatic.Name))
+                                        checkStatics.Add(actionStatic.Copy());
+                                }
+                            }
                         }
                     }
+                    foreach(var check in checkStatics)
+                    {
+                        var newStatic = check.Copy();
+                        foreach (var arg in newStatic.Arguments)
+                            if (nameMap.ContainsKey(arg.Name))
+                                arg.Name = nameMap[arg.Name];
+                        requiredStatics.Add(newStatic);
+                    }
+
                 }
             }
 
