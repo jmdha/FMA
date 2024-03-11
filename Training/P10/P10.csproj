@@ -17,4 +17,17 @@
     <ProjectReference Include="..\Tools\Tools.csproj" />
   </ItemGroup>
 
-</Project>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="wsl cd /home/kris/P10/Training/P10/bin; cp -r /mnt/d/kris7/OneDrive/Programming/University/P10/Training/P10/bin/Debug ." />
+  </Target>
+
+	
+	
+
+	
+	
+	
+	
+	
+	</Project>

@@ -29,6 +29,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 new hMustBeApplicable(),
                 new hMustBeValid(),
                 new hWeighted<PreconditionState>(new hMostValid(), 10000),
+                new hWeighted<PreconditionState>(new hFewestPre(), 1000),
                 new hMostApplicable(),
             });
         }
@@ -43,8 +44,6 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 _isInitialized = true;
                 var pddlDecl = new PDDLDecl(domain, problems[0]);
                 var compiled = StackelbergCompiler.StackelbergCompiler.CompileToStackelberg(pddlDecl, originalMetaAction.Copy());
-
-                //AddParameterPredicates(compiled, originalMetaAction, workingDir);
 
                 var verifier = new StateExploreVerifier();
                 if (File.Exists(Path.Combine(searchWorkingDir, StateExploreVerifier.StateInfoFile)))
@@ -78,60 +77,6 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             return preconStr;
         }
 
-        private void AddParameterPredicates(PDDLDecl compiled, ActionDecl originalMetaAction, string workingDir)
-        {
-            var parameterPredicates = new List<PredicateExp>();
-            var count = 0;
-            foreach (var parameter in originalMetaAction.Parameters.Values)
-                parameterPredicates.Add(new PredicateExp($"param{count++}", new List<NameExp>() { parameter.Copy() }));
-
-            if (compiled.Domain.Predicates != null)
-                foreach (var parameter in parameterPredicates)
-                    compiled.Domain.Predicates.Add(parameter);
-            var metaAction = compiled.Domain.Actions.First(x => x.Name == $"fix_{originalMetaAction.Name}");
-            if (metaAction != null && metaAction.Effects is AndExp and)
-                foreach (var parameter in parameterPredicates)
-                    and.Add(parameter);
-
-            CheckIfTranslatorRemovedParameterFacts(compiled, parameterPredicates, workingDir);
-        }
-
-        private void CheckIfTranslatorRemovedParameterFacts(PDDLDecl compiled, List<PredicateExp> parameterPredicates, string workingDir)
-        {
-            workingDir = Path.Combine(workingDir, "translator-test");
-            PathHelper.RecratePath(workingDir);
-            var listener = new ErrorListener();
-            var codeGenerator = new PDDLCodeGenerator(listener);
-            var domainFile = Path.Combine(workingDir, $"tempDomain.pddl");
-            var problemFile = Path.Combine(workingDir, $"tempProblem.pddl");
-            codeGenerator.Generate(compiled.Domain, domainFile);
-            codeGenerator.Generate(compiled.Problem, problemFile);
-
-            using (ArgsCaller fdCaller = new ArgsCaller("python2"))
-            {
-                fdCaller.StdOut += (s, o) => { };
-                fdCaller.StdErr += (s, o) => { };
-                fdCaller.Arguments.Add(BaseVerifier.StackelbergPath, "");
-                fdCaller.Arguments.Add(domainFile, "");
-                fdCaller.Arguments.Add(problemFile, "");
-                fdCaller.Process.StartInfo.WorkingDirectory = workingDir;
-                fdCaller.Run();
-                var sasFile = new FileInfo(Path.Combine(workingDir, "output.sas"));
-                if (!sasFile.Exists)
-                    throw new Exception("Stackelberg translator failed!");
-                var sasParser = new FDSASParser(listener);
-                var parsed = sasParser.ParseAs<SASDecl>(sasFile);
-                if (parsed != null)
-                {
-                    foreach (var parameter in parameterPredicates)
-                        if (!parsed.Variables.Any(x => x.SymbolicNames.Any(y => y.Contains(parameter.Name))))
-                            throw new Exception($"Translator removed parameter predicate '{parameter.Name}'!");
-                }
-                else
-                    throw new Exception("Exception while parsing SAS file");
-            }
-        }
-
         private bool UpdateOpenList(ActionDecl currentMetaAction, string workingDir)
         {
             ConsoleHelper.WriteLineColor($"\t\tUpdating open list...", ConsoleColor.Magenta);
@@ -157,16 +102,24 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 facts.RemoveAll(x => x == "");
                 foreach (var fact in facts)
                 {
-                    if (fact.Contains("NegatedAtom"))
+                    bool isNegative = fact.Contains("NegatedAtom");
+                    var predText = fact.Replace("NegatedAtom", "").Replace("Atom", "").Trim();
+                    var predName = predText.Substring(0, predText.IndexOf('[')).Trim();
+                    var paramString = predText.Substring(predText.IndexOf('[')).Replace("[", "").Replace("]", "").Trim();
+                    var paramStrings = paramString.Split(',').ToList();
+                    paramStrings.RemoveAll(x => x == "");
+
+                    var newPredicate = new PredicateExp(predName);
+                    foreach (var item in paramStrings)
                     {
-                        var predText = fact.Replace("NegatedAtom", "").Trim();
-                        preconditions.Add(new NotExp(parser.ParseAs<PredicateExp>(predText)));
+                        var index = Int32.Parse(item);
+                        newPredicate.Arguments.Add(new NameExp(currentMetaAction.Parameters.Values[index].Name));
                     }
+
+                    if (isNegative)
+                        preconditions.Add(new NotExp(newPredicate));
                     else
-                    {
-                        var predText = fact.Replace("Atom", "").Trim();
-                        preconditions.Add(parser.ParseAs<PredicateExp>(predText));
-                    }
+                        preconditions.Add(newPredicate);
                 }
                 var invalidStates = Convert.ToInt32(lines[i + 2]);
                 var applicability = Convert.ToInt32(lines[i + 1]);
