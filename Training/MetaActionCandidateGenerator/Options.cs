@@ -9,7 +9,8 @@ namespace MetaActionCandidateGenerator
         {
             None = 1,
             PredicateMetaActions = 2,
-            StrippedMetaActions = 3
+            StrippedMetaActions = 3,
+            AgressiveStrippedMetaActions = 4
         }
 
         [Option("output", Required = true, HelpText = "Where to output the meta actions")]
