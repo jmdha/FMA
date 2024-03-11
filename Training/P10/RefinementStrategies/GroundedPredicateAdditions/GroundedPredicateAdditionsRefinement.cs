@@ -113,8 +113,15 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                     foreach (var item in paramStrings)
                     {
                         var index = Int32.Parse(item);
-                        var param = currentMetaAction.Parameters.Values[index];
-                        newPredicate.Arguments.Add(new NameExp(param.Name));
+                        if (index >= currentMetaAction.Parameters.Values.Count)
+                        {
+                            newPredicate.Arguments.Add(new NameExp(item));
+                        }
+                        else
+                        {
+                            var param = currentMetaAction.Parameters.Values[index];
+                            newPredicate.Arguments.Add(new NameExp(param.Name));
+                        }
                     }
 
                     if (isNegative)
