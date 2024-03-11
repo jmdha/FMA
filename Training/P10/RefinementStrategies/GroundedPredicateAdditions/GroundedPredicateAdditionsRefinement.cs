@@ -3,12 +3,10 @@ using P10.RefinementStrategies.GroundedPredicateAdditions.Heuristics;
 using P10.Verifiers;
 using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.ErrorListeners;
-using PDDLSharp.Models.FastDownward.SAS;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Models.PDDL.Problem;
-using PDDLSharp.Parsers.FastDownward.SAS;
 using PDDLSharp.Parsers.PDDL;
 using System.Diagnostics;
 using Tools;
@@ -150,10 +148,10 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 var newState = new PreconditionState(
                     totalValidStates,
                     totalInvalidStates,
-                    totalValidStates + totalInvalidStates - (totalInvalidStates - invalidStates), 
-                    invalidStates, 
-                    applicability, 
-                    metaAction, 
+                    totalValidStates + totalInvalidStates - (totalInvalidStates - invalidStates),
+                    invalidStates,
+                    applicability,
+                    metaAction,
                     preconditions);
                 var hValue = Heuristic.GetValue(newState);
                 if (hValue != int.MaxValue)

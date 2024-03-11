@@ -1,6 +1,4 @@
-﻿using PDDLSharp.Models.SAS;
-
-namespace P10.Models
+﻿namespace P10.Models
 {
     public class hSum<T> : IHeuristic<T>
     {

@@ -1,15 +1,9 @@
 ﻿using PDDLSharp.Contextualisers.PDDL;
 using PDDLSharp.ErrorListeners;
+using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
-using PDDLSharp.Models.PDDL;
-using PDDLSharp.Tools;
 using PDDLSharp.Translators.StaticPredicateDetectors;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MetaActionCandidateGenerator.CandidateGenerators
 {
@@ -37,7 +31,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                 var effects = new HashSet<IExp>();
                 if (action.Effects is AndExp andEff)
                 {
-                    foreach(var child in andEff.Children)
+                    foreach (var child in andEff.Children)
                     {
                         if (child is NotExp not)
                         {
@@ -70,7 +64,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                     newAction.Effects = new AndExp(newAction, new List<IExp>() { effect });
 
                     var toRemove = new List<NameExp>();
-                    foreach(var arg in newAction.Parameters.Values)
+                    foreach (var arg in newAction.Parameters.Values)
                     {
                         var find = newAction.FindNames(arg.Name);
                         if (find.Count == 1)

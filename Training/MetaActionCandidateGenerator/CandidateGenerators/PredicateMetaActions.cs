@@ -39,8 +39,8 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                     var reqStatics = GetRequiredStatics(pddlDecl, predicate);
                     newAct.Preconditions = new AndExp(newAct, new List<IExp>(reqStatics));
                     newAct.Effects = new AndExp(newAct, new List<IExp>() { predicate.Copy() });
-                    foreach(var reqStatic in reqStatics)
-                        foreach(var args in reqStatic.Arguments)
+                    foreach (var reqStatic in reqStatics)
+                        foreach (var args in reqStatic.Arguments)
                             if (!newAct.Parameters.Values.Contains(args))
                                 newAct.Parameters.Add(args.Copy());
 
@@ -57,7 +57,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
             foreach (var action in pddlDecl.Domain.Actions)
             {
                 var staticsToAdd = GetStaticsForPredicate(pddlDecl, action, predicate);
-                foreach(var toAdd in staticsToAdd)
+                foreach (var toAdd in staticsToAdd)
                     if (!requiredStatics.Any(x => x.Name == toAdd.Name))
                         requiredStatics.Add(toAdd);
             }
@@ -96,7 +96,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                             }
                         }
                     }
-                    foreach(var check in checkStatics)
+                    foreach (var check in checkStatics)
                     {
                         var newStatic = check.Copy();
                         foreach (var arg in newStatic.Arguments)
