@@ -113,7 +113,8 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                     foreach (var item in paramStrings)
                     {
                         var index = Int32.Parse(item);
-                        newPredicate.Arguments.Add(new NameExp(currentMetaAction.Parameters.Values[index].Name));
+                        var param = currentMetaAction.Parameters.Values[index];
+                        newPredicate.Arguments.Add(new NameExp(param.Name));
                     }
 
                     if (isNegative)
@@ -127,10 +128,12 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 var metaAction = currentMetaAction.Copy();
                 if (metaAction.Preconditions is AndExp and)
                 {
-                    var andNode = new AndExp(and);
+                    // Remove preconditions that have the same effect
+                    if (metaAction.Effects is AndExp effAnd && preconditions.Any(x => effAnd.Children.Any(y => y.Equals(x))))
+                        continue;
+
                     foreach (var precon in preconditions)
-                        andNode.Children.Add(precon);
-                    and.Add(andNode);
+                        and.Children.Add(precon);
 
                     //// Prune some nonsensical preconditions.
                     //if (andNode.Children.Any(x => andNode.Children.Contains(new NotExp(x))))

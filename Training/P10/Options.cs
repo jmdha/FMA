@@ -27,5 +27,10 @@ namespace P10
         public GeneratorStrategies GeneratorStrategy { get; set; }
         [Option("refinement-strategy", Required = true, HelpText = "The refinement strategy")]
         public RefinementStrategies RefinementStrategy { get; set; }
+
+        [Option("fast-downward-path", Required = false, HelpText = "Path to Fast Downward")]
+        public string FastDownwardPath { get; set; } = "";
+        [Option("stackelberg-path", Required = false, HelpText = "Path to the Stackelberg Planner")]
+        public string StackelbergPath { get; set; } = "";
     }
 }

@@ -2,6 +2,7 @@
 using P10.RefinementStrategies;
 using P10.RefinementStrategies.ActionPrecondition;
 using P10.RefinementStrategies.GroundedPredicateAdditions;
+using P10.Verifiers;
 using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.Contextualisers.PDDL;
 using PDDLSharp.ErrorListeners;
@@ -29,6 +30,21 @@ namespace P10
             var problemsPath = opts.ProblemsPath.ToList();
             if (problemsPath.Count == 0)
                 throw new Exception("No problem files where given!");
+
+            if (opts.FastDownwardPath != "")
+            {
+                opts.FastDownwardPath = PathHelper.RootPath(opts.FastDownwardPath);
+                if (!File.Exists(opts.FastDownwardPath))
+                    throw new FileNotFoundException($"Fast Downward path not found: {opts.FastDownwardPath}");
+                UsefullnessChecker.FastDownwardPath = opts.FastDownwardPath;
+            }
+            if (opts.StackelbergPath != "")
+            {
+                opts.StackelbergPath = PathHelper.RootPath(opts.StackelbergPath);
+                if (!File.Exists(opts.FastDownwardPath))
+                    throw new FileNotFoundException($"Stackelberg Planner path not found: {opts.StackelbergPath}");
+                BaseVerifier.StackelbergPath = opts.StackelbergPath;
+            }
 
             opts.OutputPath = PathHelper.RootPath(opts.OutputPath);
             opts.DomainPath = PathHelper.RootPath(opts.DomainPath);
