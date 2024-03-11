@@ -95,6 +95,8 @@ namespace P10
             {
                 ConsoleHelper.WriteLineColor($"\tCandidate: {count++} out of {candidates.Count}", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"\tCandidate Name: {candidate.Name}", ConsoleColor.Magenta);
+                ConsoleHelper.WriteLineColor($"\tCandidate Precondition: {codeGenerator.Generate(candidate.Preconditions)}", ConsoleColor.Magenta);
+                ConsoleHelper.WriteLineColor($"\tCandidate Effects: {codeGenerator.Generate(candidate.Effects)}", ConsoleColor.Magenta);
                 var refiner = new MetaActionRefiner(candidate, GetRefinementStrategy(opts.RefinementStrategy));
                 if (refiner.Refine(domain, problems))
                 {
