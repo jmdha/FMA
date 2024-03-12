@@ -13,15 +13,17 @@ namespace P10
         public IRefinementStrategy Strategy { get; }
         public IVerifier Verifier { get; } = new FrontierVerifier();
 
+        private int _iterationLimit;
         private int _iteration = 0;
         private string _tempPath = "";
         private string _tempValidationFolder = "";
 
-        public MetaActionRefiner(ActionDecl metaActionCandidate, IRefinementStrategy strategy, string tempPath)
+        public MetaActionRefiner(ActionDecl metaActionCandidate, IRefinementStrategy strategy, string tempPath, int iterationLimit)
         {
             OriginalMetaActionCandidate = metaActionCandidate.Copy();
             Strategy = strategy;
             _tempPath = tempPath;
+            _iterationLimit = iterationLimit;
 
             _tempValidationFolder = Path.Combine(_tempPath, "validation");
             PathHelper.RecratePath(_tempValidationFolder);
@@ -40,6 +42,11 @@ namespace P10
             var refined = Strategy.Refine(domain, problems, OriginalMetaActionCandidate, OriginalMetaActionCandidate, _tempPath);
             while (refined != null)
             {
+                if (_iteration > _iterationLimit)
+                {
+                    ConsoleHelper.WriteLineColor($"\tIteration limit reached!", ConsoleColor.Yellow);
+                    return returnList;
+                }
                 ConsoleHelper.WriteLineColor($"\tRefining iteration {_iteration++}...", ConsoleColor.Magenta);
                 if (IsValid(domain, problems, refined))
                 {

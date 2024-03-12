@@ -16,6 +16,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
     public class GroundedPredicateAdditionsRefinement : IRefinementStrategy
     {
         public IHeuristic<PreconditionState> Heuristic { get; set; }
+
         private readonly PriorityQueue<PreconditionState, int> _openList = new PriorityQueue<PreconditionState, int>();
         private bool _isInitialized = false;
         private int _initialPossibilities = 0;

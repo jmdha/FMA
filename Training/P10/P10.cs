@@ -61,6 +61,9 @@ namespace P10
                 if (!File.Exists(problem))
                     throw new FileNotFoundException($"Problem file not found: {problem}");
 
+            if (opts.IterationLimit == -1)
+                opts.IterationLimit = int.MaxValue;
+
             PathHelper.RecratePath(opts.OutputPath);
             PathHelper.RecratePath(opts.TempPath);
             PathHelper.RecratePath(_candidateOutput);
@@ -110,7 +113,7 @@ namespace P10
                 ConsoleHelper.WriteLineColor($"", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"{codeGenerator.Generate(candidate)}", ConsoleColor.Cyan);
                 ConsoleHelper.WriteLineColor($"", ConsoleColor.Magenta);
-                var refiner = new MetaActionRefiner(candidate, GetRefinementStrategy(opts.RefinementStrategy), opts.TempPath);
+                var refiner = new MetaActionRefiner(candidate, GetRefinementStrategy(opts.RefinementStrategy), opts.TempPath, opts.IterationLimit);
                 var refined = refiner.Refine(domain, problems);
                 if (refined.Count > 0)
                 {
