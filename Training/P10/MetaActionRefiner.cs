@@ -35,7 +35,7 @@ namespace P10
             var returnList = new List<ActionDecl>();
             if (IsValid(domain, problems, OriginalMetaActionCandidate))
             {
-                ConsoleHelper.WriteLineColor($"\tOriginal meta action is valid!", ConsoleColor.Magenta);
+                ConsoleHelper.WriteLineColor($"\tOriginal meta action is valid!", ConsoleColor.Green);
                 returnList.Add(OriginalMetaActionCandidate);
                 return returnList;
             }
@@ -50,7 +50,7 @@ namespace P10
                 ConsoleHelper.WriteLineColor($"\tRefining iteration {_iteration++}...", ConsoleColor.Magenta);
                 if (IsValid(domain, problems, refined))
                 {
-                    ConsoleHelper.WriteLineColor($"\tRefined meta action is valid!", ConsoleColor.Magenta);
+                    ConsoleHelper.WriteLineColor($"\tRefined meta action is valid!", ConsoleColor.Green);
                     returnList.Add(refined);
                 }
                 refined = Strategy.Refine(domain, problems, refined, OriginalMetaActionCandidate, _tempPath);
