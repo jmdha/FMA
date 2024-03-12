@@ -37,7 +37,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                 {
                     if (statics.Any(x => x.Name == pred.Name))
                         continue;
-                    if (pred.Arguments.Count <= 1)
+                    if (pred.Arguments.Count == 0)
                         continue;
                     if (!CanPredicateBeSetToFalse(pddlDecl, pred))
                         continue;
@@ -45,8 +45,11 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                         continue;
 
                     var permutations = GeneratePermutations(pred.Arguments.Count);
-                    permutations.RemoveAll(x => x.All(y => y == true));
-                    permutations.RemoveAll(x => x.All(y => y == false));
+                    if (permutations.Count > 0 && permutations[0].Length > 1)
+                    {
+                        permutations.RemoveAll(x => x.All(y => y == true));
+                        permutations.RemoveAll(x => x.All(y => y == false));
+                    }
                     foreach (var permutation in permutations)
                     {
                         var newAction = new ActionDecl($"meta_{pred.Name}_{count++}");
@@ -56,6 +59,8 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                         newAction.Effects = effAnd;
                         var currentPre = pred;
                         var currentEff = GetMutatedPredicate(pred, permutation.ToList());
+                        if (currentPre.Equals(currentEff))
+                            continue;
                         preAnd.Add(currentPre);
                         var preReq = GetRequiredStatics(pddlDecl, currentPre);
                         foreach (var pre in preReq)

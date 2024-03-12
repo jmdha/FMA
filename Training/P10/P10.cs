@@ -1,6 +1,5 @@
 ﻿using CommandLine;
 using P10.RefinementStrategies;
-using P10.RefinementStrategies.ActionPrecondition;
 using P10.RefinementStrategies.GroundedPredicateAdditions;
 using P10.Verifiers;
 using PDDLSharp.CodeGenerators.PDDL;
@@ -17,6 +16,8 @@ namespace P10
 {
     public class P10 : BaseCLI
     {
+        private static string _candidateOutput = "initial-candidates";
+
         private static void Main(string[] args)
         {
             var parser = new Parser(with => with.HelpWriter = null);
@@ -48,9 +49,11 @@ namespace P10
             }
 
             opts.OutputPath = PathHelper.RootPath(opts.OutputPath);
+            opts.TempPath = PathHelper.RootPath(opts.TempPath);
             opts.DomainPath = PathHelper.RootPath(opts.DomainPath);
             for (int i = 0; i < problemsPath.Count; i++)
                 problemsPath[i] = PathHelper.RootPath(problemsPath[i]);
+            _candidateOutput = Path.Combine(opts.TempPath, _candidateOutput);
 
             if (!File.Exists(opts.DomainPath))
                 throw new FileNotFoundException($"Domain file not found: {opts.DomainPath}");
@@ -59,6 +62,8 @@ namespace P10
                     throw new FileNotFoundException($"Problem file not found: {problem}");
 
             PathHelper.RecratePath(opts.OutputPath);
+            PathHelper.RecratePath(opts.TempPath);
+            PathHelper.RecratePath(_candidateOutput);
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
             ConsoleHelper.WriteLineColor($"Parsing PDDL Files", ConsoleColor.Blue);
@@ -75,11 +80,15 @@ namespace P10
 
             ConsoleHelper.WriteLineColor($"Generating Initial Candidates", ConsoleColor.Blue);
             var candidates = new List<ActionDecl>();
-            foreach(var generator in opts.GeneratorStrategies)
+            var codeGenerator = new PDDLCodeGenerator(listener);
+            codeGenerator.Readable = true;
+            foreach (var generator in opts.GeneratorStrategies)
             {
                 ConsoleHelper.WriteLineColor($"\tGenerating with: {Enum.GetName(typeof(GeneratorStrategies), generator)}", ConsoleColor.Magenta);
                 candidates.AddRange(MetaActionCandidateGenerator.MetaActionCandidateGenerator.GetMetaActionCandidates(baseDecl, generator));
             }
+            foreach(var candidiate in candidates)
+                codeGenerator.Generate(candidiate, Path.Combine(_candidateOutput, $"{candidiate.Name}.pddl"));
             ConsoleHelper.WriteLineColor($"\tTotal candidates: {candidates.Count}", ConsoleColor.Magenta);
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
@@ -93,8 +102,6 @@ namespace P10
             }
 
             ConsoleHelper.WriteLineColor($"Begining refinement process", ConsoleColor.Blue);
-            var codeGenerator = new PDDLCodeGenerator(listener);
-            codeGenerator.Readable = true;
             int count = 1;
             var refinedCandidates = new List<ActionDecl>();
             foreach (var candidate in candidates)
@@ -103,14 +110,16 @@ namespace P10
                 ConsoleHelper.WriteLineColor($"\tCandidate Name: {candidate.Name}", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"\tCandidate Precondition: {codeGenerator.Generate(candidate.Preconditions)}", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"\tCandidate Effects: {codeGenerator.Generate(candidate.Effects)}", ConsoleColor.Magenta);
-                var refiner = new MetaActionRefiner(candidate, GetRefinementStrategy(opts.RefinementStrategy));
-                if (refiner.Refine(domain, problems))
+                var refiner = new MetaActionRefiner(candidate, GetRefinementStrategy(opts.RefinementStrategy), opts.TempPath);
+                var refined = refiner.Refine(domain, problems);
+                if (refined.Count > 0)
                 {
                     ConsoleHelper.WriteLineColor($"\tCandidate have been refined!", ConsoleColor.Magenta);
-                    refinedCandidates.Add(refiner.RefinedMetaActionCandidate);
+                    refinedCandidates.AddRange(refined);
 
                     ConsoleHelper.WriteLineColor($"\tOutputting refined candidate", ConsoleColor.Magenta);
-                    codeGenerator.Generate(refiner.RefinedMetaActionCandidate, Path.Combine(opts.OutputPath, $"{refiner.RefinedMetaActionCandidate.Name}.pddl"));
+                    foreach(var refinedCandidate in refined)
+                        codeGenerator.Generate(refinedCandidate, Path.Combine(opts.OutputPath, $"{refinedCandidate.Name}.pddl"));
                     ConsoleHelper.WriteLineColor($"\tDone!", ConsoleColor.Green);
                 }
                 else
@@ -138,7 +147,6 @@ namespace P10
         {
             switch (strategy)
             {
-                case Options.RefinementStrategies.ActionPrecondition: return new ActionPreconditionRefinement();
                 case Options.RefinementStrategies.GroundedPredicateAdditions: return new GroundedPredicateAdditionsRefinement();
                 default: throw new Exception("Unknown strategy!");
             }

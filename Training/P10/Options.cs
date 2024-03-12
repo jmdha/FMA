@@ -9,12 +9,13 @@ namespace P10
         public enum RefinementStrategies
         {
             None = 1,
-            ActionPrecondition = 2,
-            GroundedPredicateAdditions = 3
+            GroundedPredicateAdditions = 2
         }
 
-        [Option("output", Required = true, HelpText = "Where to output the meta actions")]
-        public string OutputPath { get; set; } = "";
+        [Option("output", Required = false, HelpText = "Where to output the meta actions")]
+        public string OutputPath { get; set; } = "output";
+        [Option("temp", Required = false, HelpText = "Where to put temporary files")]
+        public string TempPath { get; set; } = "temp";
         [Option("domain", Required = true, HelpText = "Path to the domain file")]
         public string DomainPath { get; set; } = "";
         [Option("pre-usefulness", Required = false, HelpText = "Check if meta action candidates seem to be useful, before refining them.")]

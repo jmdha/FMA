@@ -9,52 +9,58 @@ namespace P10
 {
     public class MetaActionRefiner
     {
-        private static readonly string _tempFolder = PathHelper.RootPath("temp");
-        private static readonly string _tempValidationFolder = Path.Combine(_tempFolder, "validation");
-
         public ActionDecl OriginalMetaActionCandidate { get; internal set; }
-        public ActionDecl RefinedMetaActionCandidate { get; internal set; }
         public IRefinementStrategy Strategy { get; }
         public IVerifier Verifier { get; } = new FrontierVerifier();
 
         private int _iteration = 0;
+        private string _tempPath = "";
+        private string _tempValidationFolder = "";
 
-        public MetaActionRefiner(ActionDecl metaActionCandidate, IRefinementStrategy strategy)
+        public MetaActionRefiner(ActionDecl metaActionCandidate, IRefinementStrategy strategy, string tempPath)
         {
             OriginalMetaActionCandidate = metaActionCandidate.Copy();
-            RefinedMetaActionCandidate = metaActionCandidate.Copy();
             Strategy = strategy;
+            _tempPath = tempPath;
 
-            PathHelper.RecratePath(_tempFolder);
+            _tempValidationFolder = Path.Combine(_tempPath, "validation");
             PathHelper.RecratePath(_tempValidationFolder);
         }
 
-        public bool Refine(DomainDecl domain, List<ProblemDecl> problems)
+        public List<ActionDecl> Refine(DomainDecl domain, List<ProblemDecl> problems)
         {
             _iteration = 0;
-            while (!IsValid(domain, problems))
+            var returnList = new List<ActionDecl>();
+            if (IsValid(domain, problems, OriginalMetaActionCandidate))
             {
-                _iteration++;
-                ConsoleHelper.WriteLineColor($"\tRefining iteration {_iteration}...", ConsoleColor.Magenta);
-                var refined = Strategy.Refine(domain, problems, RefinedMetaActionCandidate, OriginalMetaActionCandidate, _tempFolder);
-                if (refined == null)
-                    return false;
-                RefinedMetaActionCandidate = refined;
+                ConsoleHelper.WriteLineColor($"\tOriginal meta action is valid!", ConsoleColor.Magenta);
+                returnList.Add(OriginalMetaActionCandidate);
+                return returnList;
             }
-            return true;
+            var refined = Strategy.Refine(domain, problems, OriginalMetaActionCandidate, OriginalMetaActionCandidate, _tempPath);
+            while (refined != null)
+            {
+                ConsoleHelper.WriteLineColor($"\tRefining iteration {_iteration++}...", ConsoleColor.Magenta);
+                if (IsValid(domain, problems, refined))
+                {
+                    ConsoleHelper.WriteLineColor($"\tRefined meta action is valid!", ConsoleColor.Magenta);
+                    returnList.Add(refined);
+                }
+                refined = Strategy.Refine(domain, problems, refined, OriginalMetaActionCandidate, _tempPath);
+            }
+            return returnList;
         }
 
-        private bool IsValid(DomainDecl domain, List<ProblemDecl> problems)
+        private bool IsValid(DomainDecl domain, List<ProblemDecl> problems, ActionDecl metaAction)
         {
             ConsoleHelper.WriteLineColor($"\tValidating...", ConsoleColor.Magenta);
-            bool isValid = true;
             foreach (var problem in problems)
             {
-                var compiled = StackelbergCompiler.StackelbergCompiler.CompileToStackelberg(new PDDLDecl(domain, problem), RefinedMetaActionCandidate.Copy());
+                var compiled = StackelbergCompiler.StackelbergCompiler.CompileToStackelberg(new PDDLDecl(domain, problem), metaAction.Copy());
                 if (!Verifier.Verify(compiled.Domain, compiled.Problem, _tempValidationFolder))
-                    isValid = false;
+                    return false;
             }
-            return isValid;
+            return true;
         }
     }
 }
