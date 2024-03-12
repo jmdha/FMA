@@ -108,13 +108,13 @@ namespace P10
             {
                 ConsoleHelper.WriteLineColor($"\tCandidate: {count++} out of {candidates.Count}", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"", ConsoleColor.Magenta);
-                ConsoleHelper.WriteLineColor($"{codeGenerator.Generate(candidate)}", ConsoleColor.Magenta);
+                ConsoleHelper.WriteLineColor($"{codeGenerator.Generate(candidate)}", ConsoleColor.Cyan);
                 ConsoleHelper.WriteLineColor($"", ConsoleColor.Magenta);
                 var refiner = new MetaActionRefiner(candidate, GetRefinementStrategy(opts.RefinementStrategy), opts.TempPath);
                 var refined = refiner.Refine(domain, problems);
                 if (refined.Count > 0)
                 {
-                    ConsoleHelper.WriteLineColor($"\tCandidate have been refined!", ConsoleColor.Magenta);
+                    ConsoleHelper.WriteLineColor($"\tCandidate have been refined!", ConsoleColor.Green);
                     refinedCandidates.AddRange(refined);
 
                     ConsoleHelper.WriteLineColor($"\tOutputting refined candidate", ConsoleColor.Magenta);
@@ -123,7 +123,8 @@ namespace P10
                     ConsoleHelper.WriteLineColor($"\tDone!", ConsoleColor.Green);
                 }
                 else
-                    ConsoleHelper.WriteLineColor($"\tCandidate could not be refined!", ConsoleColor.Magenta);
+                    ConsoleHelper.WriteLineColor($"\tCandidate could not be refined!", ConsoleColor.Red);
+                ConsoleHelper.WriteLineColor($"", ConsoleColor.Magenta);
             }
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
