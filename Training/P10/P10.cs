@@ -11,6 +11,7 @@ using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers.PDDL;
 using Tools;
+using static MetaActionCandidateGenerator.Options;
 
 namespace P10
 {
@@ -73,7 +74,12 @@ namespace P10
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
             ConsoleHelper.WriteLineColor($"Generating Initial Candidates", ConsoleColor.Blue);
-            var candidates = MetaActionCandidateGenerator.MetaActionCandidateGenerator.GetMetaActionCandidates(baseDecl, opts.GeneratorStrategy);
+            var candidates = new List<ActionDecl>();
+            foreach(var generator in opts.GeneratorStrategy)
+            {
+                ConsoleHelper.WriteLineColor($"\tGenerating with: {Enum.GetName(typeof(GeneratorStrategies), generator)}", ConsoleColor.Magenta);
+                candidates.AddRange(MetaActionCandidateGenerator.MetaActionCandidateGenerator.GetMetaActionCandidates(baseDecl, generator));
+            }
             ConsoleHelper.WriteLineColor($"\tTotal candidates: {candidates.Count}", ConsoleColor.Magenta);
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 

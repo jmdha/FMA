@@ -24,7 +24,7 @@ namespace P10
         [Option("problems", Required = true, HelpText = "Path to the problem file")]
         public IEnumerable<string> ProblemsPath { get; set; } = new List<string>();
         [Option("generation-strategy", Required = true, HelpText = "The generator strategy")]
-        public GeneratorStrategies GeneratorStrategy { get; set; }
+        public IEnumerable<GeneratorStrategies> GeneratorStrategy { get; set; } = new List<GeneratorStrategies>();
         [Option("refinement-strategy", Required = true, HelpText = "The refinement strategy")]
         public RefinementStrategies RefinementStrategy { get; set; }
 
