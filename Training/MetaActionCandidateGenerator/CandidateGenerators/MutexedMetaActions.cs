@@ -11,11 +11,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PDDLSharp.Toolkit.MutexDetectors;
+using System.Threading;
 
 namespace MetaActionCandidateGenerator.CandidateGenerators
 {
     /// <summary>
-    /// Generates meta actions by taking normal actions that contain mutexes and removing all (non-static) preconditions from it.
+    /// Assumed every predicate can be a mutex, and constructs meta actions out of them
     /// </summary>
     public class MutexedMetaActions : ICandidateGenerator
     {
@@ -30,63 +31,67 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                 contextualiser.Contexturalise(pddlDecl);
             }
 
-            var mutexFinder = new EffectBalanceMutexes();
-            var mutexes = mutexFinder.FindMutexes(pddlDecl);
-            var statics = SimpleStaticPredicateDetector.FindStaticPredicates(pddlDecl);
-            statics.Add(new PredicateExp("="));
-            foreach (var mutex in mutexes)
+            if (pddlDecl.Domain.Predicates != null)
             {
-                foreach (var action in pddlDecl.Domain.Actions)
+                var statics = SimpleStaticPredicateDetector.FindStaticPredicates(pddlDecl);
+                statics.Add(new PredicateExp("="));
+                foreach (var pred in pddlDecl.Domain.Predicates.Predicates)
                 {
-                    var mutexPre = action.Preconditions.FindNames(mutex.Name);
-                    var mutexEff = action.Effects.FindNames(mutex.Name);
-                    if (mutexPre.Count == 0 || mutexEff.Count == 0)
+                    if (statics.Any(x => x.Name == pred.Name))
                         continue;
 
-                    var newAction = action.Copy();
-                    newAction.Name = $"meta_{mutex.Name}";
-                    newAction.Parameters = new ParameterExp();
-                    var preAnd = new AndExp(newAction);
-                    newAction.Preconditions = preAnd;
-                    foreach(var item in mutexPre)
+                    var count = 0;
+                    foreach (var action in pddlDecl.Domain.Actions)
                     {
-                        if (item.Parent is NotExp not)
-                            preAnd.Add(not);
-                        else
-                            preAnd.Add(item);
-                    }
-                    var effAnd = new AndExp(newAction);
-                    newAction.Effects = effAnd;
-                    foreach (var item in mutexEff)
-                    {
-                        if (item.Parent is NotExp not)
-                            effAnd.Add(not);
-                        else
-                            effAnd.Add(item);
-                    }
+                        var findTarget = action.FindNames(pred.Name).Cast<PredicateExp>().ToList();
+                        findTarget = findTarget.DistinctBy(x => GetArgString(x.Arguments)).ToList();
+                        if (findTarget.Count > 0)
+                        {
+                            foreach (var target in findTarget)
+                            {
+                                var newAction = action.Copy();
+                                newAction.Name = $"meta_{pred.Name}_{count++}";
+                                newAction.Parameters = new ParameterExp(newAction);
+                                newAction.Preconditions = new AndExp(newAction, new List<IExp>(GetRequiredStatics(action, target, statics)) { new NotExp(target) });
+                                newAction.Effects = new AndExp(newAction, new List<IExp>() { target });
 
-                    var requiredStatics = new HashSet<PredicateExp>();
-                    var effects = newAction.Effects.FindTypes<PredicateExp>();
-                    foreach (var effect in effects)
-                    {
-                        foreach (var arg in effect.Arguments)
-                            if (!newAction.Parameters.Values.Contains(arg))
-                                newAction.Parameters.Values.Add(arg.Copy());
-                        requiredStatics.AddRange(GetRequiredStatics(action, effect, statics).ToHashSet());
+                                var all = newAction.FindTypes<PredicateExp>();
+                                foreach (var item in all)
+                                    foreach (var arg in item.Arguments)
+                                        if (!newAction.Parameters.Values.Contains(arg))
+                                            newAction.Parameters.Values.Add(arg);
+
+                                candidates.Add(newAction);
+
+                                var newActionNegated = action.Copy();
+                                newActionNegated.Name = $"meta_{pred.Name}_{count++}";
+                                newActionNegated.Parameters = new ParameterExp(newActionNegated);
+                                newActionNegated.Preconditions = new AndExp(newActionNegated, new List<IExp>(GetRequiredStatics(action, target, statics)) { target });
+                                newActionNegated.Effects = new AndExp(newActionNegated, new List<IExp>() { new NotExp(target) });
+
+                                var all2 = newActionNegated.FindTypes<PredicateExp>();
+                                foreach (var item in all2)
+                                    foreach (var arg in item.Arguments)
+                                        if (!newActionNegated.Parameters.Values.Contains(arg))
+                                            newActionNegated.Parameters.Values.Add(arg);
+
+                                candidates.Add(newActionNegated);
+                            }
+                        }
                     }
-
-                    foreach (var requiredStatic in requiredStatics)
-                        foreach (var arg in requiredStatic.Arguments)
-                            if (!newAction.Parameters.Values.Contains(arg))
-                                newAction.Parameters.Values.Add(arg.Copy());
-
-                    foreach(var requiredStatic in requiredStatics)
-                        preAnd.Add(requiredStatic);
-                    candidates.Add(newAction);
                 }
             }
 
+
             return candidates;
+        }
+
+        private string GetArgString(List<NameExp> list)
+        {
+            var retStr = "";
+            foreach (var item in list)
+                retStr += item.Name;
+            return retStr;
         }
 
         private List<PredicateExp> GetRequiredStatics(ActionDecl baseActionDecl, PredicateExp predicate, List<PredicateExp> statics)

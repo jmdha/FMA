@@ -21,7 +21,7 @@ namespace P10
         {
             var usefulCandidates = new List<ActionDecl>();
 
-            var count = 0;
+            var count = 1;
             foreach (var candidate in candidates)
             {
                 ConsoleHelper.WriteLineColor($"\tChecking candidate {count++} out of {candidates.Count}", ConsoleColor.Magenta);

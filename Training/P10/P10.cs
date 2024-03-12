@@ -75,7 +75,7 @@ namespace P10
 
             ConsoleHelper.WriteLineColor($"Generating Initial Candidates", ConsoleColor.Blue);
             var candidates = new List<ActionDecl>();
-            foreach(var generator in opts.GeneratorStrategy)
+            foreach(var generator in opts.GeneratorStrategies)
             {
                 ConsoleHelper.WriteLineColor($"\tGenerating with: {Enum.GetName(typeof(GeneratorStrategies), generator)}", ConsoleColor.Magenta);
                 candidates.AddRange(MetaActionCandidateGenerator.MetaActionCandidateGenerator.GetMetaActionCandidates(baseDecl, generator));

@@ -23,8 +23,8 @@ namespace P10
         public bool PostCheckUsefullness { get; set; } = false;
         [Option("problems", Required = true, HelpText = "Path to the problem file")]
         public IEnumerable<string> ProblemsPath { get; set; } = new List<string>();
-        [Option("generation-strategy", Required = true, HelpText = "The generator strategy")]
-        public IEnumerable<GeneratorStrategies> GeneratorStrategy { get; set; } = new List<GeneratorStrategies>();
+        [Option("generation-strategies", Required = true, HelpText = "The generator strategies")]
+        public IEnumerable<GeneratorStrategies> GeneratorStrategies { get; set; } = new List<GeneratorStrategies>();
         [Option("refinement-strategy", Required = true, HelpText = "The refinement strategy")]
         public RefinementStrategies RefinementStrategy { get; set; }
 
