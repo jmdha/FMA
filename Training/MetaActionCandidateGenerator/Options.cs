@@ -10,7 +10,8 @@ namespace MetaActionCandidateGenerator
             None = 1,
             PredicateMetaActions = 2,
             StrippedMetaActions = 3,
-            AgressiveStrippedMetaActions = 4
+            AgressiveStrippedMetaActions = 4,
+            MutexedMetaActions = 5
         }
 
         [Option("output", Required = true, HelpText = "Where to output the meta actions")]
