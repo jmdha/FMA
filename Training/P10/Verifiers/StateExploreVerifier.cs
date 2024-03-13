@@ -20,6 +20,8 @@ namespace P10.Verifiers
 
         public void UpdateSearchString(PDDLDecl from)
         {
+            // Until the stackelberg planner works with this
+            return;
             var start = "--search \"state_explore(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false, ";
 
             var statics = SimpleStaticPredicateDetector.FindStaticPredicates(from);
