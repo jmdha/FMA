@@ -128,15 +128,24 @@ namespace P10
                 {
                     ConsoleHelper.WriteLineColor($"\tCandidate have been refined!", ConsoleColor.Green);
                     refinedCandidates.AddRange(refined);
-
-                    ConsoleHelper.WriteLineColor($"\tOutputting refined candidate", ConsoleColor.Magenta);
-                    foreach(var refinedCandidate in refined)
-                        codeGenerator.Generate(refinedCandidate, Path.Combine(opts.OutputPath, $"{refinedCandidate.Name}.pddl"));
-                    ConsoleHelper.WriteLineColor($"\tDone!", ConsoleColor.Green);
+                    break;
                 }
                 else
                     ConsoleHelper.WriteLineColor($"\tCandidate could not be refined!", ConsoleColor.Red);
                 ConsoleHelper.WriteLineColor($"", ConsoleColor.Magenta);
+            }
+            ConsoleHelper.WriteLineColor($"\tTotal refined candidates: {refinedCandidates.Count}", ConsoleColor.Magenta);
+            // Make sure names are unique
+            while (refinedCandidates.DistinctBy(x => x.Name).Count() != refinedCandidates.Count)
+            {
+                foreach (var action in refinedCandidates)
+                {
+                    var others = refinedCandidates.Where(x => x.Name == action.Name);
+                    int counter = 0;
+                    foreach (var other in others)
+                        if (action != other)
+                            other.Name = $"{other.Name}_{counter++}";
+                }
             }
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
@@ -156,6 +165,11 @@ namespace P10
                 ConsoleHelper.WriteLineColor($"\tTotal meta actions: {refinedCandidates.Count}", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
             }
+
+            ConsoleHelper.WriteLineColor($"Outputting all refined candidates", ConsoleColor.Magenta);
+            foreach (var refinedCandidate in refinedCandidates)
+                codeGenerator.Generate(refinedCandidate, Path.Combine(opts.OutputPath, $"{refinedCandidate.Name}.pddl"));
+            ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
             ConsoleHelper.WriteLineColor($"Outputting enhanced domain", ConsoleColor.Blue);
             var newDomain = domain.Copy();
