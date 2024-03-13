@@ -95,6 +95,15 @@ namespace P10
             ConsoleHelper.WriteLineColor($"\tTotal candidates: {candidates.Count}", ConsoleColor.Magenta);
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
+            if (opts.RemoveDuplicates)
+            {
+                ConsoleHelper.WriteLineColor($"Pruning for duplicate meta action candidates", ConsoleColor.Blue);
+                var duplicateRemover = new DuplicateRemover();
+                candidates = duplicateRemover.RemoveDuplicates(candidates, baseDecl.Domain);
+                ConsoleHelper.WriteLineColor($"\tTotal candidates: {candidates.Count}", ConsoleColor.Magenta);
+                ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
+            }
+
             if (opts.PreCheckUsefullness)
             {
                 ConsoleHelper.WriteLineColor($"Pruning for useful meta action candidates", ConsoleColor.Blue);
@@ -131,6 +140,14 @@ namespace P10
             }
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
+            if (opts.RemoveDuplicates)
+            {
+                ConsoleHelper.WriteLineColor($"Pruning for duplicate meta action refined candidates", ConsoleColor.Blue);
+                var duplicateRemover = new DuplicateRemover();
+                refinedCandidates = duplicateRemover.RemoveDuplicates(refinedCandidates, baseDecl.Domain);
+                ConsoleHelper.WriteLineColor($"\tTotal refined candidates: {refinedCandidates.Count}", ConsoleColor.Magenta);
+                ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
+            }
             if (opts.PostCheckUsefullness)
             {
                 ConsoleHelper.WriteLineColor($"Pruning for useful refined meta action", ConsoleColor.Blue);

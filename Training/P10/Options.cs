@@ -22,6 +22,8 @@ namespace P10
         public bool PreCheckUsefullness { get; set; } = false;
         [Option("post-usefulness", Required = false, HelpText = "Check if refined meta actions are useful before outputting them.")]
         public bool PostCheckUsefullness { get; set; } = false;
+        [Option("remove-duplicates", Required = false, HelpText = "If duplicate meta actions should be removed from candidates and output.")]
+        public bool RemoveDuplicates { get; set; } = false;
         [Option("problems", Required = true, HelpText = "Path to the problem file")]
         public IEnumerable<string> ProblemsPath { get; set; } = new List<string>();
         [Option("generation-strategies", Required = true, HelpText = "The generator strategies")]
