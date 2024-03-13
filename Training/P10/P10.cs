@@ -128,7 +128,6 @@ namespace P10
                 {
                     ConsoleHelper.WriteLineColor($"\tCandidate have been refined!", ConsoleColor.Green);
                     refinedCandidates.AddRange(refined);
-                    break;
                 }
                 else
                     ConsoleHelper.WriteLineColor($"\tCandidate could not be refined!", ConsoleColor.Red);
