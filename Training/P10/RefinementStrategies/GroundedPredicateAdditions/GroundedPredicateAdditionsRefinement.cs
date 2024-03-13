@@ -47,6 +47,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 var verifier = new StateExploreVerifier();
                 if (File.Exists(Path.Combine(searchWorkingDir, StateExploreVerifier.StateInfoFile)))
                     File.Delete(Path.Combine(searchWorkingDir, StateExploreVerifier.StateInfoFile));
+                verifier.UpdateSearchString(compiled);
                 verifier.Verify(compiled.Domain, compiled.Problem, Path.Combine(workingDir, "state-search"));
                 if (!UpdateOpenList(originalMetaAction, searchWorkingDir))
                     return null;
