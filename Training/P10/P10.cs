@@ -107,7 +107,7 @@ namespace P10
             if (opts.PreCheckUsefullness)
             {
                 ConsoleHelper.WriteLineColor($"Pruning for useful meta action candidates", ConsoleColor.Blue);
-                var checker = new UsefullnessChecker();
+                var checker = new UsefullnessChecker(opts.TempPath);
                 candidates = checker.GetUsefulCandidates(domain, problems, candidates);
                 ConsoleHelper.WriteLineColor($"\tTotal candidates: {candidates.Count}", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
@@ -159,7 +159,7 @@ namespace P10
             if (opts.PostCheckUsefullness)
             {
                 ConsoleHelper.WriteLineColor($"Pruning for useful refined meta action", ConsoleColor.Blue);
-                var checker = new UsefullnessChecker();
+                var checker = new UsefullnessChecker(opts.TempPath);
                 refinedCandidates = checker.GetUsefulCandidates(domain, problems, refinedCandidates);
                 ConsoleHelper.WriteLineColor($"\tTotal meta actions: {refinedCandidates.Count}", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);

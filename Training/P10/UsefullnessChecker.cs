@@ -9,11 +9,12 @@ namespace P10
 {
     public class UsefullnessChecker
     {
-        private static readonly string _tempFolder = PathHelper.RootPath("temp/usefullness");
+        private string _tempFolder = "usefullness";
         public static string FastDownwardPath = PathHelper.RootPath("../Dependencies/fast-downward/fast-downward.py");
 
-        public UsefullnessChecker()
+        public UsefullnessChecker(string workingDir)
         {
+            _tempFolder = Path.Combine(workingDir, _tempFolder);
             PathHelper.RecratePath(_tempFolder);
         }
 
