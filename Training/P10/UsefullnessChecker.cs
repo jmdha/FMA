@@ -64,10 +64,12 @@ namespace P10
                     fdCaller.Process.StartInfo.WorkingDirectory = _tempFolder;
                     if (fdCaller.Run() == 0)
                     {
-                        ConsoleHelper.WriteLineColor($"\t\tMeta action was used in problem {count}!", ConsoleColor.Magenta);
                         var plan = planParser.Parse(new FileInfo(Path.Combine(_tempFolder, "plan.plan")));
                         if (plan.Plan.Any(y => y.ActionName == candidate.Name))
+                        {
+                            ConsoleHelper.WriteLineColor($"\t\tMeta action was used in problem {count}!", ConsoleColor.Magenta);
                             return true;
+                        }
                     }
                 }
                 count++;
