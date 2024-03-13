@@ -67,7 +67,7 @@ namespace P10
                         var plan = planParser.Parse(new FileInfo(Path.Combine(_tempFolder, "plan.plan")));
                         if (plan.Plan.Any(y => y.ActionName == candidate.Name))
                         {
-                            ConsoleHelper.WriteLineColor($"\t\tMeta action was used in problem {count}!", ConsoleColor.Magenta);
+                            ConsoleHelper.WriteLineColor($"\t\tMeta action was used in problem {count}!", ConsoleColor.Green);
                             return true;
                         }
                     }
@@ -75,6 +75,7 @@ namespace P10
                 count++;
             }
 
+            ConsoleHelper.WriteLineColor($"\t\tMeta action does not appear useful...", ConsoleColor.Red);
             return false;
         }
     }
