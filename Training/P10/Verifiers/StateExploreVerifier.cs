@@ -12,17 +12,18 @@ namespace P10.Verifiers
     public class StateExploreVerifier : BaseVerifier
     {
         public static string StateInfoFile = "out";
+        public static int MaxPreconditionCombinations = 3;
 
         public StateExploreVerifier()
         {
-            SearchString = "--search \"state_explore(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false)\"";
+            SearchString = $"--search \"state_explore(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false, max_precondition_size={MaxPreconditionCombinations})\"";
         }
 
         public void UpdateSearchString(PDDLDecl from)
         {
             // Until the stackelberg planner works with this
             return;
-            var start = "--search \"state_explore(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false, ";
+            var start = $"--search \"state_explore(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false, max_precondition_size={MaxPreconditionCombinations}, ";
 
             var statics = SimpleStaticPredicateDetector.FindStaticPredicates(from);
             var staticsString = "statics=(";
