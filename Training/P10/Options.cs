@@ -12,6 +12,14 @@ namespace P10
             GroundedPredicateAdditions = 2
         }
 
+        [Flags]
+        public enum UsefulnessStrategies
+        {
+            None = 1,
+            UsedInPlans = 2,
+            ReducesMetaSearchTime = 3
+        }
+
         [Option("output", Required = false, HelpText = "Where to output the meta actions")]
         public string OutputPath { get; set; } = "output";
         [Option("temp", Required = false, HelpText = "Where to put temporary files")]
@@ -30,7 +38,8 @@ namespace P10
         public IEnumerable<GeneratorStrategies> GeneratorStrategies { get; set; } = new List<GeneratorStrategies>();
         [Option("refinement-strategy", Required = true, HelpText = "The refinement strategy")]
         public RefinementStrategies RefinementStrategy { get; set; }
-
+        [Option("usefulness-strategy", Required = false, HelpText = "The usefulness strategy")]
+        public UsefulnessStrategies UsefulnessStrategy { get; set; } = UsefulnessStrategies.None;
 
         [Option("fast-downward-path", Required = false, HelpText = "Path to Fast Downward")]
         public string FastDownwardPath { get; set; } = "";

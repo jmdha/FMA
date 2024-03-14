@@ -3,22 +3,26 @@ using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers.FastDownward.Plans;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Tools;
 
-namespace P10
+namespace P10.UsefulnessCheckers
 {
-    public class UsefullnessChecker
+    public class UsedInPlansUsefulness : IUsefulnessChecker
     {
-        private string _tempFolder = "usefullness";
-        public static string FastDownwardPath = PathHelper.RootPath("../Dependencies/fast-downward/fast-downward.py");
-
-        public UsefullnessChecker(string workingDir)
+        public string WorkingDir { get; } = "usefulness";
+        
+        public UsedInPlansUsefulness(string workingDir)
         {
-            _tempFolder = Path.Combine(workingDir, _tempFolder);
-            PathHelper.RecratePath(_tempFolder);
+            WorkingDir = Path.Combine(workingDir, WorkingDir);
+            PathHelper.RecratePath(WorkingDir);
         }
 
-        public List<ActionDecl> GetUsefulCandidates(DomainDecl domain, List<ProblemDecl> problems, List<ActionDecl> candidates)
+        public virtual List<ActionDecl> GetUsefulCandidates(DomainDecl domain, List<ProblemDecl> problems, List<ActionDecl> candidates)
         {
             var usefulCandidates = new List<ActionDecl>();
 
@@ -42,30 +46,30 @@ namespace P10
             var testDomain = domain.Copy();
             testDomain.Actions.Add(candidate);
 
-            var domainFile = new FileInfo(Path.Combine(_tempFolder, "usefulCheckDomain.pddl"));
+            var domainFile = new FileInfo(Path.Combine(WorkingDir, "usefulCheckDomain.pddl"));
             codeGenerator.Generate(testDomain, domainFile.FullName);
 
             int count = 1;
             foreach (var problem in problems)
             {
                 ConsoleHelper.WriteLineColor($"\t\tChecking usefulness in problem {count} out of {problems.Count}", ConsoleColor.Magenta);
-                var problemFile = new FileInfo(Path.Combine(_tempFolder, "usefulCheckProblem.pddl"));
+                var problemFile = new FileInfo(Path.Combine(WorkingDir, "usefulCheckProblem.pddl"));
                 codeGenerator.Generate(problem, problemFile.FullName);
 
                 using (ArgsCaller fdCaller = new ArgsCaller("python3"))
                 {
                     fdCaller.StdOut += (s, o) => { };
                     fdCaller.StdErr += (s, o) => { };
-                    fdCaller.Arguments.Add(FastDownwardPath, "");
+                    fdCaller.Arguments.Add(ExternalPaths.FastDownwardPath, "");
                     fdCaller.Arguments.Add("--alias", "lama-first");
                     fdCaller.Arguments.Add("--overall-time-limit", "5m");
                     fdCaller.Arguments.Add("--plan-file", "plan.plan");
                     fdCaller.Arguments.Add(domainFile.FullName, "");
                     fdCaller.Arguments.Add(problemFile.FullName, "");
-                    fdCaller.Process.StartInfo.WorkingDirectory = _tempFolder;
+                    fdCaller.Process.StartInfo.WorkingDirectory = WorkingDir;
                     if (fdCaller.Run() == 0)
                     {
-                        var plan = planParser.Parse(new FileInfo(Path.Combine(_tempFolder, "plan.plan")));
+                        var plan = planParser.Parse(new FileInfo(Path.Combine(WorkingDir, "plan.plan")));
                         if (plan.Plan.Any(y => y.ActionName == candidate.Name))
                         {
                             ConsoleHelper.WriteLineColor($"\t\tMeta action was used in problem {count}!", ConsoleColor.Green);

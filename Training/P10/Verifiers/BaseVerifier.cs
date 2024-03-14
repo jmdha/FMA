@@ -8,7 +8,6 @@ namespace P10.Verifiers
 {
     public abstract class BaseVerifier : IVerifier
     {
-        public static string StackelbergPath = PathHelper.RootPath("../Dependencies/stackelberg-planner/src/fast-downward.py");
         public string SearchString { get; set; } = "--search \"sym_stackelberg(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false)\"";
         private Process? _currentProcess;
 
@@ -41,7 +40,7 @@ namespace P10.Verifiers
         private int RunPlanner(string domainPath, string problemPath, string outputPath)
         {
             StringBuilder sb = new StringBuilder("");
-            sb.Append($"{StackelbergPath} ");
+            sb.Append($"{ExternalPaths.StackelbergPath} ");
             sb.Append($"\"{domainPath}\" ");
             sb.Append($"\"{problemPath}\" ");
             sb.Append($"{SearchString} ");

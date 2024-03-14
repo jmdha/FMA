@@ -1,6 +1,7 @@
 ﻿using CommandLine;
 using P10.RefinementStrategies;
 using P10.RefinementStrategies.GroundedPredicateAdditions;
+using P10.UsefulnessCheckers;
 using P10.Verifiers;
 using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.Contextualisers.PDDL;
@@ -38,14 +39,14 @@ namespace P10
                 opts.FastDownwardPath = PathHelper.RootPath(opts.FastDownwardPath);
                 if (!File.Exists(opts.FastDownwardPath))
                     throw new FileNotFoundException($"Fast Downward path not found: {opts.FastDownwardPath}");
-                UsefullnessChecker.FastDownwardPath = opts.FastDownwardPath;
+                ExternalPaths.FastDownwardPath = opts.FastDownwardPath;
             }
             if (opts.StackelbergPath != "")
             {
                 opts.StackelbergPath = PathHelper.RootPath(opts.StackelbergPath);
                 if (!File.Exists(opts.FastDownwardPath))
                     throw new FileNotFoundException($"Stackelberg Planner path not found: {opts.StackelbergPath}");
-                BaseVerifier.StackelbergPath = opts.StackelbergPath;
+                ExternalPaths.StackelbergPath = opts.StackelbergPath;
             }
 
             opts.OutputPath = PathHelper.RootPath(opts.OutputPath);
@@ -104,7 +105,7 @@ namespace P10
             if (opts.PreCheckUsefullness)
             {
                 ConsoleHelper.WriteLineColor($"Pruning for useful meta action candidates", ConsoleColor.Blue);
-                var checker = new UsefullnessChecker(opts.TempPath);
+                var checker = UsefulnessCheckerBuilder.GetUsefulnessChecker(opts.UsefulnessStrategy, opts.TempPath);
                 candidates = checker.GetUsefulCandidates(domain, problems, candidates);
                 ConsoleHelper.WriteLineColor($"\tTotal candidates: {candidates.Count}", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
@@ -156,7 +157,7 @@ namespace P10
             if (opts.PostCheckUsefullness)
             {
                 ConsoleHelper.WriteLineColor($"Pruning for useful refined meta action", ConsoleColor.Blue);
-                var checker = new UsefullnessChecker(opts.TempPath);
+                var checker = UsefulnessCheckerBuilder.GetUsefulnessChecker(opts.UsefulnessStrategy, opts.TempPath);
                 refinedCandidates = checker.GetUsefulCandidates(domain, problems, refinedCandidates);
                 ConsoleHelper.WriteLineColor($"\tTotal meta actions: {refinedCandidates.Count}", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
