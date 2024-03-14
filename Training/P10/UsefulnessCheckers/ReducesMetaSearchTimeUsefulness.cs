@@ -96,7 +96,7 @@ namespace P10.UsefulnessCheckers
             int count = 1;
             foreach (var problem in problems)
             {
-                ConsoleHelper.WriteLineColor($"\t\tChecking usefulness in problem {count} out of {problems.Count}", ConsoleColor.Magenta);
+                ConsoleHelper.WriteLineColor($"\t\tChecking if meta action reduces search time in problem {count} out of {problems.Count}", ConsoleColor.Magenta);
                 var problemFile = new FileInfo(Path.Combine(WorkingDir, "usefulCheckProblem.pddl"));
                 codeGenerator.Generate(problem, problemFile.FullName);
 
