@@ -61,9 +61,6 @@ namespace P10
                 if (!File.Exists(problem))
                     throw new FileNotFoundException($"Problem file not found: {problem}");
 
-            if (opts.IterationLimit == -1)
-                opts.IterationLimit = int.MaxValue;
-
             PathHelper.RecratePath(opts.OutputPath);
             PathHelper.RecratePath(opts.TempPath);
             PathHelper.RecratePath(_candidateOutput);
@@ -122,7 +119,7 @@ namespace P10
                 ConsoleHelper.WriteLineColor($"", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"{codeGenerator.Generate(candidate)}", ConsoleColor.Cyan);
                 ConsoleHelper.WriteLineColor($"", ConsoleColor.Magenta);
-                var refiner = new MetaActionRefiner(candidate, GetRefinementStrategy(opts.RefinementStrategy), opts.TempPath, opts.IterationLimit);
+                var refiner = new MetaActionRefiner(candidate, GetRefinementStrategy(opts.RefinementStrategy, opts.TimeLimitS), opts.TempPath, opts.TimeLimitS);
                 var refined = refiner.Refine(domain, problems);
                 if (refined.Count > 0)
                 {
@@ -177,11 +174,11 @@ namespace P10
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
         }
 
-        private static IRefinementStrategy GetRefinementStrategy(Options.RefinementStrategies strategy)
+        private static IRefinementStrategy GetRefinementStrategy(Options.RefinementStrategies strategy, int timeLimitS)
         {
             switch (strategy)
             {
-                case Options.RefinementStrategies.GroundedPredicateAdditions: return new GroundedPredicateAdditionsRefinement();
+                case Options.RefinementStrategies.GroundedPredicateAdditions: return new GroundedPredicateAdditionsRefinement(timeLimitS);
                 default: throw new Exception("Unknown strategy!");
             }
         }

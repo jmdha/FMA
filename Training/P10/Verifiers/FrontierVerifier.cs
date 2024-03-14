@@ -21,7 +21,7 @@ namespace P10.Verifiers
             return false;
         }
 
-        public override bool Verify(DomainDecl domain, ProblemDecl problem, string workingDir)
+        public override bool Verify(DomainDecl domain, ProblemDecl problem, string workingDir, int timeLimitS)
         {
             if (File.Exists(Path.Combine(workingDir, "pareto_frontier.json")))
                 File.Delete(Path.Combine(workingDir, "pareto_frontier.json"));
@@ -31,7 +31,7 @@ namespace P10.Verifiers
             var problemFile = Path.Combine(workingDir, $"tempProblem.pddl");
             codeGenerator.Generate(domain, domainFile);
             codeGenerator.Generate(problem, problemFile);
-            var exitCode = ExecutePlanner(domainFile, problemFile, workingDir);
+            var exitCode = ExecutePlanner(domainFile, problemFile, workingDir, timeLimitS);
             if (exitCode != 0)
                 return false;
             return IsFrontierValid(Path.Combine(workingDir, "pareto_frontier.json"));

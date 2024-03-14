@@ -12,18 +12,18 @@ namespace P10
         public ActionDecl OriginalMetaActionCandidate { get; internal set; }
         public IRefinementStrategy Strategy { get; }
         public IVerifier Verifier { get; } = new FrontierVerifier();
+        public int TimeLimitS { get; } = -1;
 
-        private int _iterationLimit;
         private int _iteration = 0;
         private string _tempPath = "";
         private string _tempValidationFolder = "";
 
-        public MetaActionRefiner(ActionDecl metaActionCandidate, IRefinementStrategy strategy, string tempPath, int iterationLimit)
+        public MetaActionRefiner(ActionDecl metaActionCandidate, IRefinementStrategy strategy, string tempPath, int timeLimitS)
         {
             OriginalMetaActionCandidate = metaActionCandidate.Copy();
             Strategy = strategy;
             _tempPath = tempPath;
-            _iterationLimit = iterationLimit;
+            TimeLimitS = timeLimitS;
 
             _tempValidationFolder = Path.Combine(_tempPath, "validation");
             PathHelper.RecratePath(_tempValidationFolder);
@@ -42,11 +42,6 @@ namespace P10
             var refined = Strategy.Refine(domain, problems, OriginalMetaActionCandidate, OriginalMetaActionCandidate, _tempPath);
             while (refined != null)
             {
-                if (_iteration > _iterationLimit)
-                {
-                    ConsoleHelper.WriteLineColor($"\tIteration limit reached!", ConsoleColor.Yellow);
-                    return returnList;
-                }
                 ConsoleHelper.WriteLineColor($"\tRefining iteration {_iteration++}...", ConsoleColor.Magenta);
                 if (IsValid(domain, problems, refined))
                 {
@@ -64,7 +59,7 @@ namespace P10
             foreach (var problem in problems)
             {
                 var compiled = StackelbergCompiler.StackelbergCompiler.CompileToStackelberg(new PDDLDecl(domain, problem), metaAction.Copy());
-                if (!Verifier.Verify(compiled.Domain, compiled.Problem, _tempValidationFolder))
+                if (!Verifier.Verify(compiled.Domain, compiled.Problem, _tempValidationFolder, TimeLimitS))
                     return false;
             }
             return true;

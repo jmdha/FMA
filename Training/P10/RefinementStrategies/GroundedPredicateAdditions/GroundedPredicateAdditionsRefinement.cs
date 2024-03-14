@@ -15,6 +15,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
 {
     public class GroundedPredicateAdditionsRefinement : IRefinementStrategy
     {
+        public int TimeLimitS { get; }
         public IHeuristic<PreconditionState> Heuristic { get; set; }
 
         private readonly PriorityQueue<PreconditionState, int> _openList = new PriorityQueue<PreconditionState, int>();
@@ -22,7 +23,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
         private int _initialPossibilities = 0;
         private readonly Stopwatch _watch = new Stopwatch();
 
-        public GroundedPredicateAdditionsRefinement()
+        public GroundedPredicateAdditionsRefinement(int timeLimitS)
         {
             Heuristic = new hSum<PreconditionState>(new List<IHeuristic<PreconditionState>>() {
                 new hMustBeApplicable(),
@@ -31,6 +32,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 new hWeighted<PreconditionState>(new hFewestPre(), 1000),
                 new hMostApplicable(),
             });
+            TimeLimitS = timeLimitS;
         }
 
         public ActionDecl? Refine(DomainDecl domain, List<ProblemDecl> problems, ActionDecl currentMetaAction, ActionDecl originalMetaAction, string workingDir)
@@ -48,7 +50,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 if (File.Exists(Path.Combine(searchWorkingDir, StateExploreVerifier.StateInfoFile)))
                     File.Delete(Path.Combine(searchWorkingDir, StateExploreVerifier.StateInfoFile));
                 verifier.UpdateSearchString(compiled);
-                verifier.Verify(compiled.Domain, compiled.Problem, Path.Combine(workingDir, "state-search"));
+                verifier.Verify(compiled.Domain, compiled.Problem, Path.Combine(workingDir, "state-search"), TimeLimitS);
                 if (!UpdateOpenList(originalMetaAction, searchWorkingDir))
                     return null;
                 ConsoleHelper.WriteLineColor($"\t\tExploration finished", ConsoleColor.Magenta);

@@ -30,13 +30,14 @@ namespace P10
         public IEnumerable<GeneratorStrategies> GeneratorStrategies { get; set; } = new List<GeneratorStrategies>();
         [Option("refinement-strategy", Required = true, HelpText = "The refinement strategy")]
         public RefinementStrategies RefinementStrategy { get; set; }
-        [Option("iteration-limit", Required = false, HelpText = "Limit how many iterations are allowed")]
-        public int IterationLimit { get; set; } = -1;
 
 
         [Option("fast-downward-path", Required = false, HelpText = "Path to Fast Downward")]
         public string FastDownwardPath { get; set; } = "";
         [Option("stackelberg-path", Required = false, HelpText = "Path to the Stackelberg Planner")]
         public string StackelbergPath { get; set; } = "";
+
+        [Option("refinement-time-limit", Required = false, HelpText = "Time limit in seconds that each refinement step is allowed to take.")]
+        public int TimeLimitS { get; set; } = -1;
     }
 }

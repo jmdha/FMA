@@ -77,7 +77,7 @@ namespace P10.Verifiers
             SearchString = $"{start}{staticsString}{typesString})\"";
         }
 
-        public override bool Verify(DomainDecl domain, ProblemDecl problem, string workingDir)
+        public override bool Verify(DomainDecl domain, ProblemDecl problem, string workingDir, int timeLimitS)
         {
             var listener = new ErrorListener();
             var codeGenerator = new PDDLCodeGenerator(listener);
@@ -85,7 +85,7 @@ namespace P10.Verifiers
             var problemFile = Path.Combine(workingDir, $"tempProblem.pddl");
             codeGenerator.Generate(domain, domainFile);
             codeGenerator.Generate(problem, problemFile);
-            var exitCode = ExecutePlanner(domainFile, problemFile, workingDir);
+            var exitCode = ExecutePlanner(domainFile, problemFile, workingDir, timeLimitS);
             if (exitCode != 0)
                 return false;
             if (File.Exists(Path.Combine(workingDir, StateInfoFile)))
