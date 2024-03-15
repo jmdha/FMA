@@ -67,6 +67,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
         private List<PredicateExp> GetStaticsForPredicate(PDDLDecl pddlDecl, ActionDecl act, PredicateExp pred)
         {
             var statics = SimpleStaticPredicateDetector.FindStaticPredicates(pddlDecl);
+            statics.RemoveAll(x => x.Arguments.Count > 1);
             var actionStatics = act.Preconditions.FindTypes<PredicateExp>().Where(x => statics.Any(y => y.Name == x.Name)).ToList();
 
             var requiredStatics = new List<PredicateExp>();

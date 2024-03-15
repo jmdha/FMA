@@ -13,38 +13,38 @@ namespace P10.Verifiers
     {
         public static string StateInfoFile = "out";
         public static int MaxPreconditionCombinations = 3;
+        public static int MaxParameters = 1;
 
         public StateExploreVerifier()
         {
-            SearchString = $"--search \"state_explore(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false, max_precondition_size={MaxPreconditionCombinations})\"";
+            SearchString = $"--search \"state_explorer(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false, max_precondition_size={MaxPreconditionCombinations}, max_parameters={MaxParameters})\"";
         }
 
         public void UpdateSearchString(PDDLDecl from)
         {
             // Until the stackelberg planner works with this
-            return;
-            var start = $"--search \"state_explore(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false, max_precondition_size={MaxPreconditionCombinations}, ";
+            var start = $"--search \"state_explorer(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false, max_precondition_size={MaxPreconditionCombinations}, max_parameters={MaxParameters}, ";
 
             var statics = SimpleStaticPredicateDetector.FindStaticPredicates(from);
-            var staticsString = "statics=(";
+            var staticsString = "statics=[";
             if (from.Problem.Init != null)
             {
                 foreach(var init in from.Problem.Init.Predicates)
                 {
                     if (init is PredicateExp pred && statics.Any(x => x.Name == pred.Name))
                     {
-                        staticsString += $"[{pred.Name} ";
+                        staticsString += $"{pred.Name}#";
                         var predString = "";
                         foreach (var arg in pred.Arguments)
-                            predString += $"{arg.Name} ";
+                            predString += $"{arg.Name}#";
                         predString = predString.Trim();
-                        staticsString += $"{predString}] ";
+                        staticsString += $"{predString},";
                     }
                 }
             }
-            staticsString += "), ";
+            staticsString += "], ";
 
-            var typesString = "types=(";
+            var typesString = "types=[";
             if (from.Problem.Objects != null)
             {
                 var typeDict = new Dictionary<string, HashSet<string>>();
@@ -64,15 +64,16 @@ namespace P10.Verifiers
                 }
                 foreach(var type in typeDict.Keys)
                 {
-                    typesString += $"[{type}: ";
+                    typesString += $"{type}";
                     var objStr = "";
                     foreach (var obj in typeDict[type])
-                        objStr += $"{obj} ";
+                        objStr += $"#{obj}";
                     objStr = objStr.Trim();
-                    typesString += $"{objStr}] ";
+                    typesString += $"{objStr},";
                 }
+                typesString = typesString.Remove(typesString.Length - 1);
             }
-            typesString += ")";
+            typesString += "]";
 
             SearchString = $"{start}{staticsString}{typesString})\"";
         }
