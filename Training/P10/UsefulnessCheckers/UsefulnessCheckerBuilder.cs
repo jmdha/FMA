@@ -12,7 +12,8 @@ namespace P10.UsefulnessCheckers
         private static Dictionary<UsefulnessStrategies, Func<string,IUsefulnessChecker>> _strategies = new Dictionary<UsefulnessStrategies, Func<string, IUsefulnessChecker>>()
         {
             { UsefulnessStrategies.UsedInPlans, (w) => new UsedInPlansUsefulness(w) },
-            { UsefulnessStrategies.ReducesMetaSearchTime, (w) => new ReducesMetaSearchTimeUsefulness(w) }
+            { UsefulnessStrategies.UsedInPlansCombined, (w) => new UsedInPlansCombinedUsefulness(w) },
+            { UsefulnessStrategies.ReducesMetaSearchTime, (w) => new UsedInPlansCombinedUsefulness(w) },
         };
 
         public static IUsefulnessChecker GetUsefulnessChecker(UsefulnessStrategies strategy, string workingDir) => _strategies[strategy](workingDir);

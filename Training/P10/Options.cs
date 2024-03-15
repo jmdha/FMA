@@ -17,7 +17,8 @@ namespace P10
         {
             None = 1,
             UsedInPlans = 2,
-            ReducesMetaSearchTime = 3
+            UsedInPlansCombined = 3,
+            ReducesMetaSearchTime = 4
         }
 
         [Option("output", Required = false, HelpText = "Where to output the meta actions")]
