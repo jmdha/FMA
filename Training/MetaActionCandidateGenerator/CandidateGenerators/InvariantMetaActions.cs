@@ -49,18 +49,11 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                     {
                         var mutated = GetMutatedPredicate(pred, permutation.ToList());
                         if (!mutated.Equals(pred))
-                        {
                             candidates.Add(GenerateMetaAction(
                                 $"meta_{pred.Name}_{action.Name}_{count++}",
                                 new List<IExp>() { pred },
                                 new List<IExp>() { GetMutatedPredicate(pred, permutation.ToList()), new NotExp(pred) },
                                 action));
-                            candidates.Add(GenerateMetaAction(
-                                $"meta_{pred.Name}_{action.Name}_{count++}",
-                                new List<IExp>() { new NotExp(pred) },
-                                new List<IExp>() { GetMutatedPredicate(pred, permutation.ToList()), new NotExp(pred) },
-                                action));
-                        }
                     }
                 }
             }
