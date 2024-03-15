@@ -93,14 +93,21 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
 
             var text = File.ReadAllText(targetFile.FullName);
             var lines = text.Split('\n').ToList();
-            lines.RemoveAll(x => x == "");
+            var checkedMetaActions = new HashSet<ActionDecl>();
             var totalValidStates = Convert.ToInt32(lines[0]);
             var totalInvalidStates = Convert.ToInt32(lines[1]);
-            for (int i = 2; i < lines.Count; i += 3)
+            for (int i = 2; i < lines.Count; i += 4)
             {
+                if (i + 4 > lines.Count)
+                    break;
+                var metaAction = currentMetaAction.Copy();
                 var preconditions = new List<IExp>();
 
-                var facts = lines[i].Split('|').ToList();
+                var typesStr = lines[i].Trim();
+                var types = typesStr.Split(' ').ToList();
+                types.RemoveAll(x => x == "");
+
+                var facts = lines[i + 1].Split('|').ToList();
                 facts.RemoveAll(x => x == "");
                 foreach (var fact in facts)
                 {
@@ -115,13 +122,17 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                     foreach (var item in paramStrings)
                     {
                         var index = Int32.Parse(item);
-                        if (index >= currentMetaAction.Parameters.Values.Count)
+                        if (index >= metaAction.Parameters.Values.Count)
                         {
-                            newPredicate.Arguments.Add(new NameExp(item));
+                            if (types.Count == 0)
+                                throw new Exception("Added precondition is trying to reference a added parameter, but said parameter have not been added! (Stackelberg Output Malformed)");
+                            var newNamed = new NameExp($"?{item}", new TypeExp(types[metaAction.Parameters.Values.Count - index]));
+                            metaAction.Parameters.Values.Add(newNamed);
+                            newPredicate.Arguments.Add(newNamed);
                         }
                         else
                         {
-                            var param = currentMetaAction.Parameters.Values[index];
+                            var param = metaAction.Parameters.Values[index];
                             newPredicate.Arguments.Add(new NameExp(param.Name));
                         }
                     }
@@ -131,10 +142,9 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                     else
                         preconditions.Add(newPredicate);
                 }
-                var invalidStates = Convert.ToInt32(lines[i + 2]);
-                var applicability = Convert.ToInt32(lines[i + 1]);
+                var invalidStates = Convert.ToInt32(lines[i + 3]);
+                var applicability = Convert.ToInt32(lines[i + 2]);
 
-                var metaAction = currentMetaAction.Copy();
                 if (metaAction.Preconditions is AndExp and)
                 {
                     // Remove preconditions that have the same effect
@@ -149,17 +159,21 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                     //    continue;
                 }
 
-                var newState = new PreconditionState(
-                    totalValidStates,
-                    totalInvalidStates,
-                    totalValidStates + totalInvalidStates - (totalInvalidStates - invalidStates),
-                    invalidStates,
-                    applicability,
-                    metaAction,
-                    preconditions);
-                var hValue = Heuristic.GetValue(newState);
-                if (hValue != int.MaxValue)
-                    _openList.Enqueue(newState, hValue);
+                if (!checkedMetaActions.Contains(metaAction))
+                {
+                    checkedMetaActions.Add(metaAction);
+                    var newState = new PreconditionState(
+                        totalValidStates,
+                        totalInvalidStates,
+                        totalValidStates + totalInvalidStates - (totalInvalidStates - invalidStates),
+                        invalidStates,
+                        applicability,
+                        metaAction,
+                        preconditions);
+                    var hValue = Heuristic.GetValue(newState);
+                    if (hValue != int.MaxValue)
+                        _openList.Enqueue(newState, hValue);
+                }
             }
             _initialPossibilities = _openList.Count;
 
