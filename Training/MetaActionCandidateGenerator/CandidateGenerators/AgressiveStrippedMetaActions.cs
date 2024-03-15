@@ -24,7 +24,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
             }
 
             var statics = SimpleStaticPredicateDetector.FindStaticPredicates(pddlDecl);
-            statics.Add(new PredicateExp("="));
+            statics.RemoveAll(x => x.Arguments.Count > 1);
             foreach (var action in pddlDecl.Domain.Actions)
             {
                 EnsureAnd(action);

@@ -51,22 +51,9 @@ namespace MetaActionCandidateGenerator
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
         }
 
-        private static ICandidateGenerator GetGenerator(GeneratorStrategies strategy)
-        {
-            switch (strategy)
-            {
-                case GeneratorStrategies.PredicateMetaActions: return new PredicateMetaActions();
-                case GeneratorStrategies.StrippedMetaActions: return new StrippedMetaActions();
-                case GeneratorStrategies.AgressiveStrippedMetaActions: return new AgressiveStrippedMetaActions();
-                case GeneratorStrategies.MutexedMetaActions: return new MutexedMetaActions();
-                case GeneratorStrategies.InvariantMetaActions: return new InvariantMetaActions();
-                default: throw new Exception("Unknown generator strategy!");
-            }
-        }
-
         public static List<ActionDecl> GetMetaActionCandidates(PDDLDecl pddlDecl, GeneratorStrategies strategy)
         {
-            var generator = GetGenerator(strategy);
+            var generator = CandidateGeneratorBuilder.GetGenerator(strategy);
             var candidates = generator.GenerateCandidates(pddlDecl);
             foreach (var candidate in candidates)
                 if (!candidate.Name.Contains('$'))

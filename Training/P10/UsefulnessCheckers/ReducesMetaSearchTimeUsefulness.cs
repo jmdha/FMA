@@ -15,6 +15,8 @@ namespace P10.UsefulnessCheckers
 {
     public class ReducesMetaSearchTimeUsefulness : UsedInPlansUsefulness
     {
+        public static int Rounds { get; set; } = 5;
+
         public ReducesMetaSearchTimeUsefulness(string workingDir) : base(workingDir)
         {
         }
@@ -56,25 +58,26 @@ namespace P10.UsefulnessCheckers
                 var problemFile = new FileInfo(Path.Combine(WorkingDir, "usefulCheckProblem.pddl"));
                 codeGenerator.Generate(problem, problemFile.FullName);
 
-                using (ArgsCaller fdCaller = new ArgsCaller("python3"))
+                var watch = new Stopwatch();
+                watch.Start();
+                for (int i = 0; i < Rounds; i++)
                 {
-                    fdCaller.StdOut += (s, o) => { };
-                    fdCaller.StdErr += (s, o) => { };
-                    fdCaller.Arguments.Add(ExternalPaths.FastDownwardPath, "");
-                    fdCaller.Arguments.Add("--alias", "lama-first");
-                    fdCaller.Arguments.Add("--overall-time-limit", "5m");
-                    fdCaller.Arguments.Add("--plan-file", "plan.plan");
-                    fdCaller.Arguments.Add(domainFile.FullName, "");
-                    fdCaller.Arguments.Add(problemFile.FullName, "");
-                    fdCaller.Process.StartInfo.WorkingDirectory = WorkingDir;
-                    var watch = new Stopwatch();
-                    watch.Start();
-                    if (fdCaller.Run() == 0)
+                    using (ArgsCaller fdCaller = new ArgsCaller("python3"))
                     {
-                        watch.Stop();
-                        returnList.Add(watch.ElapsedMilliseconds);
+                        fdCaller.StdOut += (s, o) => { };
+                        fdCaller.StdErr += (s, o) => { };
+                        fdCaller.Arguments.Add(ExternalPaths.FastDownwardPath, "");
+                        fdCaller.Arguments.Add("--alias", "lama-first");
+                        fdCaller.Arguments.Add("--overall-time-limit", "5m");
+                        fdCaller.Arguments.Add("--plan-file", "plan.plan");
+                        fdCaller.Arguments.Add(domainFile.FullName, "");
+                        fdCaller.Arguments.Add(problemFile.FullName, "");
+                        fdCaller.Process.StartInfo.WorkingDirectory = WorkingDir;
+                        fdCaller.Run();
                     }
                 }
+                watch.Stop();
+                returnList.Add(watch.ElapsedMilliseconds);
                 count++;
             }
 
@@ -100,28 +103,29 @@ namespace P10.UsefulnessCheckers
                 var problemFile = new FileInfo(Path.Combine(WorkingDir, "usefulCheckProblem.pddl"));
                 codeGenerator.Generate(problem, problemFile.FullName);
 
-                using (ArgsCaller fdCaller = new ArgsCaller("python3"))
+                var watch = new Stopwatch();
+                watch.Start();
+                for (int i = 0; i < Rounds; i++)
                 {
-                    fdCaller.StdOut += (s, o) => { };
-                    fdCaller.StdErr += (s, o) => { };
-                    fdCaller.Arguments.Add(ExternalPaths.FastDownwardPath, "");
-                    fdCaller.Arguments.Add("--alias", "lama-first");
-                    fdCaller.Arguments.Add("--overall-time-limit", "5m");
-                    fdCaller.Arguments.Add("--plan-file", "plan.plan");
-                    fdCaller.Arguments.Add(domainFile.FullName, "");
-                    fdCaller.Arguments.Add(problemFile.FullName, "");
-                    fdCaller.Process.StartInfo.WorkingDirectory = WorkingDir;
-                    var watch = new Stopwatch();
-                    watch.Start();
-                    if (fdCaller.Run() == 0)
+                    using (ArgsCaller fdCaller = new ArgsCaller("python3"))
                     {
-                        watch.Stop();
-                        if (watch.ElapsedMilliseconds < searchTimes[count - 1])
-                        {
-                            ConsoleHelper.WriteLineColor($"\t\tMeta action reduced search time in problem {count}!", ConsoleColor.Green);
-                            return true;
-                        }
+                        fdCaller.StdOut += (s, o) => { };
+                        fdCaller.StdErr += (s, o) => { };
+                        fdCaller.Arguments.Add(ExternalPaths.FastDownwardPath, "");
+                        fdCaller.Arguments.Add("--alias", "lama-first");
+                        fdCaller.Arguments.Add("--overall-time-limit", "5m");
+                        fdCaller.Arguments.Add("--plan-file", "plan.plan");
+                        fdCaller.Arguments.Add(domainFile.FullName, "");
+                        fdCaller.Arguments.Add(problemFile.FullName, "");
+                        fdCaller.Process.StartInfo.WorkingDirectory = WorkingDir;
+                        fdCaller.Run();
                     }
+                }
+                watch.Stop();
+                if (watch.ElapsedMilliseconds < searchTimes[count - 1])
+                {
+                    ConsoleHelper.WriteLineColor($"\t\tMeta action reduced search time in problem {count}!", ConsoleColor.Green);
+                    return true;
                 }
                 count++;
             }
