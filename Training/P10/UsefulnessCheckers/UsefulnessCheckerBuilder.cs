@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static P10.Options;
+﻿using static P10.Options;
 
 namespace P10.UsefulnessCheckers
 {
     public static class UsefulnessCheckerBuilder
     {
-        private static Dictionary<UsefulnessStrategies, Func<string,IUsefulnessChecker>> _strategies = new Dictionary<UsefulnessStrategies, Func<string, IUsefulnessChecker>>()
+        private static readonly Dictionary<UsefulnessStrategies, Func<string, IUsefulnessChecker>> _strategies = new Dictionary<UsefulnessStrategies, Func<string, IUsefulnessChecker>>()
         {
             { UsefulnessStrategies.UsedInPlans, (w) => new UsedInPlansUsefulness(w) },
             { UsefulnessStrategies.UsedInPlansCombined, (w) => new UsedInPlansCombinedUsefulness(w) },

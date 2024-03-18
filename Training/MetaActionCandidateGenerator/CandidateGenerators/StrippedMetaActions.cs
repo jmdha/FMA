@@ -1,11 +1,6 @@
-﻿using PDDLSharp.Contextualisers.PDDL;
-using PDDLSharp.ErrorListeners;
-using PDDLSharp.Models.PDDL;
+﻿using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
-using PDDLSharp.Tools;
-using PDDLSharp.Translators.StaticPredicateDetectors;
-using System;
 
 namespace MetaActionCandidateGenerator.CandidateGenerators
 {
@@ -25,9 +20,9 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                 EnsureAnd(action);
                 if (action.Effects is AndExp and)
                     candidates.Add(GenerateMetaAction(
-                        $"meta_{action.Name}", 
+                        $"meta_{action.Name}",
                         new List<IExp>(),
-                        and.Children, 
+                        and.Children,
                         action));
             }
 

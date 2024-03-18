@@ -1,15 +1,8 @@
-﻿using PDDLSharp.CodeGenerators;
-using PDDLSharp.CodeGenerators.PDDL;
+﻿using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers.FastDownward.Plans;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tools;
 
 namespace P10.UsefulnessCheckers
@@ -26,7 +19,7 @@ namespace P10.UsefulnessCheckers
             var errorListener = new ErrorListener();
             var codeGenerator = new PDDLCodeGenerator(errorListener);
             var planParser = new FDPlanParser(errorListener);
-            
+
             var testDomain = domain.Copy();
             var domainFile = new FileInfo(Path.Combine(WorkingDir, "usefulCheckDomain.pddl"));
             testDomain.Actions.AddRange(candidates);
@@ -53,7 +46,7 @@ namespace P10.UsefulnessCheckers
                     {
                         var plan = planParser.Parse(new FileInfo(Path.Combine(WorkingDir, "plan.plan")));
                         var allUsed = plan.Plan.Where(x => candidates.Any(y => y.Name == x.ActionName));
-                        foreach(var used in allUsed)
+                        foreach (var used in allUsed)
                         {
                             if (!usefulCandidates.Any(x => x.Name == used.ActionName))
                             {

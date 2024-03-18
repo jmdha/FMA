@@ -5,7 +5,6 @@ using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Translators.StaticPredicateDetectors;
-using System.Data;
 
 namespace P10.Verifiers
 {
@@ -29,7 +28,7 @@ namespace P10.Verifiers
             var staticsString = "statics=[";
             if (from.Problem.Init != null)
             {
-                foreach(var init in from.Problem.Init.Predicates)
+                foreach (var init in from.Problem.Init.Predicates)
                 {
                     if (init is PredicateExp pred && statics.Any(x => x.Name == pred.Name))
                     {
@@ -48,7 +47,7 @@ namespace P10.Verifiers
             if (from.Problem.Objects != null)
             {
                 var typeDict = new Dictionary<string, HashSet<string>>();
-                foreach(var obj in from.Problem.Objects.Objs)
+                foreach (var obj in from.Problem.Objects.Objs)
                 {
                     if (typeDict.ContainsKey(obj.Type.Name))
                         typeDict[obj.Type.Name].Add(obj.Name);
@@ -62,7 +61,7 @@ namespace P10.Verifiers
                             typeDict.Add(subtype, new HashSet<string>() { obj.Name });
                     }
                 }
-                foreach(var type in typeDict.Keys)
+                foreach (var type in typeDict.Keys)
                 {
                     typesString += $"{type}";
                     var objStr = "";

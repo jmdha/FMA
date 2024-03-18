@@ -1,14 +1,6 @@
-﻿using PDDLSharp.Contextualisers.PDDL;
-using PDDLSharp.ErrorListeners;
+﻿using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
-using PDDLSharp.Models.PDDL;
-using PDDLSharp.Translators.StaticPredicateDetectors;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MetaActionCandidateGenerator.CandidateGenerators
 {
@@ -45,7 +37,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                 }
                 foreach (var permutation in permutations)
                 {
-                    foreach(var action in pddlDecl.Domain.Actions)
+                    foreach (var action in pddlDecl.Domain.Actions)
                     {
                         var mutated = GetMutatedPredicate(pred, permutation.ToList());
                         if (!mutated.Equals(pred))
@@ -101,7 +93,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
         {
             var result = false;
 
-            foreach(var action in pddlDecl.Domain.Actions)
+            foreach (var action in pddlDecl.Domain.Actions)
             {
                 var effects = action.FindNames(pred.Name);
                 result = effects.Any(x => x.Parent is NotExp);

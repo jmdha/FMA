@@ -1,17 +1,6 @@
-﻿using PDDLSharp.Contextualisers.PDDL;
-using PDDLSharp.ErrorListeners;
+﻿using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
-using PDDLSharp.Models.PDDL;
-using PDDLSharp.Tools;
-using PDDLSharp.Translators.StaticPredicateDetectors;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PDDLSharp.Toolkit.MutexDetectors;
-using System.Threading;
 
 namespace MetaActionCandidateGenerator.CandidateGenerators
 {

@@ -3,11 +3,6 @@ using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers.FastDownward.Plans;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tools;
 
 namespace P10.UsefulnessCheckers
@@ -15,7 +10,7 @@ namespace P10.UsefulnessCheckers
     public class UsedInPlansUsefulness : IUsefulnessChecker
     {
         public string WorkingDir { get; } = "usefulness";
-        
+
         public UsedInPlansUsefulness(string workingDir)
         {
             WorkingDir = Path.Combine(workingDir, WorkingDir);

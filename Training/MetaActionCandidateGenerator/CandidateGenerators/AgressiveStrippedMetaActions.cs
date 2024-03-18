@@ -1,10 +1,6 @@
-﻿using PDDLSharp.Contextualisers.PDDL;
-using PDDLSharp.ErrorListeners;
-using PDDLSharp.Models.PDDL;
+﻿using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
-using PDDLSharp.Tools;
-using PDDLSharp.Translators.StaticPredicateDetectors;
 
 namespace MetaActionCandidateGenerator.CandidateGenerators
 {

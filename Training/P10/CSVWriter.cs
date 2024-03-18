@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace P10
+﻿namespace P10
 {
     public class CSVWriter
     {
         public string FileName { get; set; }
         public string WorkingDir { get; set; }
 
-        private Dictionary<string, List<string>> _csvData = new Dictionary<string, List<string>>();
+        private readonly Dictionary<string, List<string>> _csvData = new Dictionary<string, List<string>>();
 
         public CSVWriter(string fileName, string workingDir)
         {
@@ -25,7 +19,7 @@ namespace P10
                 var headers = lines[0].Split(',').ToList();
                 foreach (var header in headers)
                     _csvData.Add(header, new List<string>());
-                foreach(var line in lines.Skip(1))
+                foreach (var line in lines.Skip(1))
                 {
                     var split = line.Split(',').ToList();
                     for (int i = 0; i < split.Count; i++)
@@ -57,9 +51,9 @@ namespace P10
             text += Environment.NewLine;
 
             var maxRow = _csvData.Max(x => x.Value.Count);
-            for(int i = 0; i < maxRow; i++)
+            for (int i = 0; i < maxRow; i++)
             {
-                foreach(var col in _csvData.Keys)
+                foreach (var col in _csvData.Keys)
                 {
                     if (_csvData[col].Count > i)
                         text += $"{_csvData[col][i]},";

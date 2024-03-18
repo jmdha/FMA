@@ -1,15 +1,10 @@
-﻿using PDDLSharp.Models.PDDL.Domain;
-using PDDLSharp.Models.PDDL;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PDDLSharp.Models.PDDL.Expressions;
-using PDDLSharp.Translators.StaticPredicateDetectors;
-using PDDLSharp.Tools;
-using PDDLSharp.Contextualisers.PDDL;
+﻿using PDDLSharp.Contextualisers.PDDL;
 using PDDLSharp.ErrorListeners;
+using PDDLSharp.Models.PDDL;
+using PDDLSharp.Models.PDDL.Domain;
+using PDDLSharp.Models.PDDL.Expressions;
+using PDDLSharp.Tools;
+using PDDLSharp.Translators.StaticPredicateDetectors;
 
 namespace MetaActionCandidateGenerator.CandidateGenerators
 {
@@ -73,7 +68,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
 
             // Stitch parameters together
             var all = newAction.FindTypes<PredicateExp>();
-            foreach(var pred in all)
+            foreach (var pred in all)
                 foreach (var arg in pred.Arguments)
                     if (!newAction.Parameters.Values.Contains(arg))
                         newAction.Parameters.Values.Add(arg.Copy());

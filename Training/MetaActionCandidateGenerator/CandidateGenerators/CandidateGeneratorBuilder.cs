@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static MetaActionCandidateGenerator.Options;
+﻿using static MetaActionCandidateGenerator.Options;
 
 namespace MetaActionCandidateGenerator.CandidateGenerators
 {
     public static class CandidateGeneratorBuilder
     {
-        private static Dictionary<GeneratorStrategies, Func<ICandidateGenerator>> _generators = new Dictionary<GeneratorStrategies, Func<ICandidateGenerator>>()
+        private static readonly Dictionary<GeneratorStrategies, Func<ICandidateGenerator>> _generators = new Dictionary<GeneratorStrategies, Func<ICandidateGenerator>>()
         {
             { GeneratorStrategies.PredicateMetaActions, () => new PredicateMetaActions() },
             { GeneratorStrategies.StrippedMetaActions, () => new StrippedMetaActions() },

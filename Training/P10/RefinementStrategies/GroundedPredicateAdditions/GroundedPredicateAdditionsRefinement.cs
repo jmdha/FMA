@@ -26,8 +26,8 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
         private readonly PriorityQueue<PreconditionState, int> _openList = new PriorityQueue<PreconditionState, int>();
         private int _initialPossibilities = 0;
         private readonly Stopwatch _watch = new Stopwatch();
-        private CSVWriter _csv;
-        private string _tempValidationFolder = "";
+        private readonly CSVWriter _csv;
+        private readonly string _tempValidationFolder = "";
 
         public GroundedPredicateAdditionsRefinement(int timeLimitS, ActionDecl metaAction, int metaActionIndex, string tempDir, string outputDir)
         {
@@ -280,9 +280,9 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
 
         private bool IsCovered(PreconditionState check, List<PreconditionState> others)
         {
-            foreach(var state in others)
+            foreach (var state in others)
             {
-                if (state != check && 
+                if (state != check &&
                     state.Precondition.Count < check.Precondition.Count &&
                     state.ValidStates == check.ValidStates &&
                     state.Applicability == check.Applicability)

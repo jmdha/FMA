@@ -1,9 +1,5 @@
-﻿using PDDLSharp.Contextualisers.PDDL;
-using PDDLSharp.ErrorListeners;
-using PDDLSharp.Models.PDDL;
+﻿using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
-using PDDLSharp.Models.PDDL.Expressions;
-using PDDLSharp.Translators.StaticPredicateDetectors;
 
 namespace MetaActionCandidateGenerator.CandidateGenerators
 {
@@ -26,9 +22,9 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                 if (!Statics.Any(x => x.Name.ToUpper() == predicate.Name.ToUpper()))
                 {
                     int counter = 0;
-                    foreach(var action in pddlDecl.Domain.Actions)
+                    foreach (var action in pddlDecl.Domain.Actions)
                         candidates.Add(GenerateMetaAction(
-                            $"meta_{predicate.Name}_{counter++}", 
+                            $"meta_{predicate.Name}_{counter++}",
                             new List<IExp>(),
                             new List<IExp>() { predicate },
                             action));

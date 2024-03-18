@@ -1,9 +1,4 @@
 ﻿using PDDLSharp.Models.PDDL.Domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace P10
 {
@@ -16,7 +11,7 @@ namespace P10
             var annonymizedCandidates = GetAnnonymised(candidates);
             var annonymizedActions = GetAnnonymised(domain.Actions);
 
-            for(int i = 0; i < candidates.Count; i++)
+            for (int i = 0; i < candidates.Count; i++)
             {
                 if (!annonymizedActions.Any(x => x.Equals(annonymizedCandidates[i])) &&
                     !annonymizedCandidates.GetRange(i + 1, candidates.Count - i - 1).Any(x => x.Equals(annonymizedCandidates[i])))
@@ -39,7 +34,7 @@ namespace P10
                 int argIndex = 0;
                 var copy = action.Copy();
                 copy.Name = "Action";
-                foreach(var param in copy.Parameters.Values)
+                foreach (var param in copy.Parameters.Values)
                 {
                     var find = copy.FindNames(param.Name);
                     foreach (var found in find)

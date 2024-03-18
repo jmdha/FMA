@@ -1,8 +1,6 @@
 ﻿using CommandLine;
 using P10.RefinementStrategies;
-using P10.RefinementStrategies.GroundedPredicateAdditions;
 using P10.UsefulnessCheckers;
-using P10.Verifiers;
 using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.Contextualisers.PDDL;
 using PDDLSharp.ErrorListeners;
@@ -96,7 +94,7 @@ namespace P10
                 candidates.AddRange(newCandidates);
                 CSV.Append($"{Enum.GetName(typeof(GeneratorStrategies), generator)}_candidates", $"{newCandidates.Count}");
             }
-            foreach(var candidiate in candidates)
+            foreach (var candidiate in candidates)
                 codeGenerator.Generate(candidiate, Path.Combine(_candidateOutput, $"{candidiate.Name}.pddl"));
             ConsoleHelper.WriteLineColor($"\tTotal candidates: {candidates.Count}", ConsoleColor.Magenta);
             CSV.Append($"total_candidates", $"{candidates.Count}");
