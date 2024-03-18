@@ -20,14 +20,16 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
         public string TempDir { get; }
         public string OutputDir { get; }
         public IHeuristic<PreconditionState> Heuristic { get; set; }
+        public IVerifier Verifier { get; } = new FrontierVerifier();
+        public ActionDecl MetaAction { get; }
 
         private readonly PriorityQueue<PreconditionState, int> _openList = new PriorityQueue<PreconditionState, int>();
-        private bool _isInitialized = false;
         private int _initialPossibilities = 0;
         private readonly Stopwatch _watch = new Stopwatch();
         private CSVWriter _csv;
+        private string _tempValidationFolder = "";
 
-        public GroundedPredicateAdditionsRefinement(int timeLimitS, int metaActionIndex, string tempDir, string outputDir)
+        public GroundedPredicateAdditionsRefinement(int timeLimitS, ActionDecl metaAction, int metaActionIndex, string tempDir, string outputDir)
         {
             Heuristic = new hSum<PreconditionState>(new List<IHeuristic<PreconditionState>>() {
                 new hMustBeApplicable(),
@@ -37,54 +39,104 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 new hWeighted<PreconditionState>(new hFewestPre(), 1000),
                 new hWeighted<PreconditionState>(new hMostApplicable(), 100)
             });
+            MetaAction = metaAction;
             TimeLimitS = timeLimitS;
             TempDir = tempDir;
             OutputDir = outputDir;
             _csv = new CSVWriter("refinement.csv", outputDir);
             MetaActionIndex = metaActionIndex;
+            _tempValidationFolder = Path.Combine(tempDir, "validation");
+            PathHelper.RecratePath(_tempValidationFolder);
         }
 
-        public ActionDecl? Refine(DomainDecl domain, List<ProblemDecl> problems, ActionDecl currentMetaAction, ActionDecl originalMetaAction)
+        public List<ActionDecl> Refine(DomainDecl domain, List<ProblemDecl> problems)
         {
-            if (!_isInitialized)
+            _csv.Append("domain", domain.Name!.Name, MetaActionIndex);
+            _csv.Append("meta-action", MetaAction.Name, MetaActionIndex);
+            _watch.Start();
+            var returnList = Run(domain, problems);
+            _watch.Stop();
+            _csv.Append("total_refinement_time", $"{_watch.ElapsedMilliseconds}", MetaActionIndex);
+            _csv.Append("valid_refinements", $"{returnList.Count}", MetaActionIndex);
+            return returnList;
+        }
+
+        private List<ActionDecl> Run(DomainDecl domain, List<ProblemDecl> problems)
+        {
+            int iteration = 0;
+            var returnList = new List<ActionDecl>();
+            ConsoleHelper.WriteLineColor($"\t\tValidating...", ConsoleColor.Magenta);
+            if (VerificationHelper.IsValid(domain, problems, MetaAction, _tempValidationFolder, TimeLimitS))
             {
-                _csv.Append("domain", domain.Name!.Name, MetaActionIndex);
-                _csv.Append("meta-action", originalMetaAction.Name, MetaActionIndex);
+                _csv.Append("is_already_valid", "true", MetaActionIndex);
+                ConsoleHelper.WriteLineColor($"\tOriginal meta action is valid!", ConsoleColor.Green);
+                returnList.Add(MetaAction);
+                return returnList;
+            }
+            else
+                _csv.Append("is_already_valid", "false", MetaActionIndex);
 
-                var searchWorkingDir = Path.Combine(TempDir, "state-search");
-                PathHelper.RecratePath(searchWorkingDir);
-                ConsoleHelper.WriteLineColor($"\t\tInitial state space exploration started...", ConsoleColor.Magenta);
-                _isInitialized = true;
-                var pddlDecl = new PDDLDecl(domain, problems[0]);
-                var compiled = StackelbergCompiler.StackelbergCompiler.CompileToStackelberg(pddlDecl, originalMetaAction.Copy());
+            ConsoleHelper.WriteLineColor($"\t\tInitial state space exploration started...", ConsoleColor.Magenta);
+            if (!InitializeStateSearch(domain, problems[0]))
+            {
+                ConsoleHelper.WriteLineColor($"\t\tExploration failed", ConsoleColor.Magenta);
+                _csv.Append("state_space_search_failed", "true", MetaActionIndex);
+                return new List<ActionDecl>();
+            }
+            else
+            {
+                ConsoleHelper.WriteLineColor($"\t\tExploration finished", ConsoleColor.Magenta);
+                _csv.Append("state_space_search_failed", "false", MetaActionIndex);
+            }
 
-                var verifier = new StateExploreVerifier();
-                if (File.Exists(Path.Combine(searchWorkingDir, StateExploreVerifier.StateInfoFile)))
-                    File.Delete(Path.Combine(searchWorkingDir, StateExploreVerifier.StateInfoFile));
-                verifier.UpdateSearchString(compiled);
-                var searchWatch = new Stopwatch();
-                searchWatch.Start();
-                verifier.Verify(compiled.Domain, compiled.Problem, Path.Combine(TempDir, "state-search"), TimeLimitS);
-                searchWatch.Stop();
-                _csv.Append($"state_space_search_time", $"{searchWatch.ElapsedMilliseconds}", MetaActionIndex);
-                searchWatch.Restart();
-                if (!UpdateOpenList(originalMetaAction, searchWorkingDir))
+            var refined = GetNextRefined(domain, problems);
+            while (refined != null)
+            {
+                ConsoleHelper.WriteLineColor($"\tRefining iteration {iteration++}...", ConsoleColor.Magenta);
+                ConsoleHelper.WriteLineColor($"\t\tValidating...", ConsoleColor.Magenta);
+                if (VerificationHelper.IsValid(domain, problems, refined, _tempValidationFolder, TimeLimitS))
                 {
-                    searchWatch.Stop();
-                    _csv.Append($"stackelberg_output_parsing", $"{searchWatch.ElapsedMilliseconds}", MetaActionIndex);
-                    return null;
+                    ConsoleHelper.WriteLineColor($"\tRefined meta action is valid!", ConsoleColor.Green);
+                    returnList.Add(refined);
                 }
+                refined = GetNextRefined(domain, problems);
+            }
+            return returnList;
+        }
+
+        private bool InitializeStateSearch(DomainDecl domain, ProblemDecl problem)
+        {
+            var searchWorkingDir = Path.Combine(TempDir, "state-search");
+            PathHelper.RecratePath(searchWorkingDir);
+
+            var pddlDecl = new PDDLDecl(domain, problem);
+            var compiled = StackelbergCompiler.StackelbergCompiler.CompileToStackelberg(pddlDecl, MetaAction.Copy());
+
+            var verifier = new StateExploreVerifier();
+            if (File.Exists(Path.Combine(searchWorkingDir, StateExploreVerifier.StateInfoFile)))
+                File.Delete(Path.Combine(searchWorkingDir, StateExploreVerifier.StateInfoFile));
+            verifier.UpdateSearchString(compiled);
+            var searchWatch = new Stopwatch();
+            searchWatch.Start();
+            verifier.Verify(compiled.Domain, compiled.Problem, Path.Combine(TempDir, "state-search"), TimeLimitS);
+            searchWatch.Stop();
+            _csv.Append($"state_space_search_time", $"{searchWatch.ElapsedMilliseconds}", MetaActionIndex);
+            searchWatch.Restart();
+            if (!UpdateOpenList(MetaAction, searchWorkingDir))
+            {
                 searchWatch.Stop();
                 _csv.Append($"stackelberg_output_parsing", $"{searchWatch.ElapsedMilliseconds}", MetaActionIndex);
-                ConsoleHelper.WriteLineColor($"\t\tExploration finished", ConsoleColor.Magenta);
+                return false;
+            }
+            searchWatch.Stop();
+            _csv.Append($"stackelberg_output_parsing", $"{searchWatch.ElapsedMilliseconds}", MetaActionIndex);
+            return true;
+        }
 
-                _watch.Start();
-            }
+        private ActionDecl? GetNextRefined(DomainDecl domain, List<ProblemDecl> problems)
+        {
             if (_openList.Count == 0)
-            {
-                _csv.Append("total_refinement_time", $"{_watch.ElapsedMilliseconds}", MetaActionIndex);
                 return null;
-            }
 
             ConsoleHelper.WriteLineColor($"\t\t{_openList.Count} possibilities left [Est. {TimeSpan.FromMilliseconds((double)_openList.Count * ((double)(_watch.ElapsedMilliseconds + 1) / (double)(1 + (_initialPossibilities - _openList.Count)))).ToString("hh\\:mm\\:ss")} until finished]", ConsoleColor.Magenta);
             var state = _openList.Dequeue();
@@ -96,6 +148,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             return state.MetaAction;
         }
 
+#if DEBUG
         private string GetPreconText(List<IExp> precons)
         {
             var listener = new ErrorListener();
@@ -105,6 +158,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 preconStr += $"{codeGenerator.Generate(precon)}, ";
             return preconStr;
         }
+#endif
 
         private bool UpdateOpenList(ActionDecl currentMetaAction, string workingDir)
         {

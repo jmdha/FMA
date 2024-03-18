@@ -134,7 +134,7 @@ namespace P10
                 ConsoleHelper.WriteLineColor($"", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"{codeGenerator.Generate(candidate)}", ConsoleColor.Cyan);
                 ConsoleHelper.WriteLineColor($"", ConsoleColor.Magenta);
-                var refiner = new MetaActionRefiner(candidate, opts.RefinementStrategy, opts.TempPath, opts.OutputPath, opts.TimeLimitS, index++);
+                var refiner = RefinementStrategyBuilder.GetStrategy(opts.RefinementStrategy, opts.TimeLimitS, candidate, index++, opts.TempPath, opts.OutputPath);
                 var refined = refiner.Refine(domain, problems);
                 if (refined.Count > 0)
                 {
