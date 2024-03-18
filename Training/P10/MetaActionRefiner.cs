@@ -19,10 +19,10 @@ namespace P10
         private string _tempPath = "";
         private string _tempValidationFolder = "";
 
-        public MetaActionRefiner(ActionDecl metaActionCandidate, IRefinementStrategy strategy, string tempPath, int timeLimitS)
+        public MetaActionRefiner(ActionDecl metaActionCandidate, Options.RefinementStrategies strategy, string tempPath, string outPath, int timeLimitS, int metaActionIndex)
         {
             OriginalMetaActionCandidate = metaActionCandidate.Copy();
-            Strategy = strategy;
+            Strategy = RefinementStrategyBuilder.GetStrategy(strategy, timeLimitS, metaActionIndex, tempPath, outPath);
             _tempPath = tempPath;
             TimeLimitS = timeLimitS;
 
@@ -32,9 +32,6 @@ namespace P10
 
         public List<ActionDecl> Refine(DomainDecl domain, List<ProblemDecl> problems)
         {
-            var watch = new Stopwatch();
-            watch.Start();
-
             _iteration = 0;
             var returnList = new List<ActionDecl>();
             if (IsValid(domain, problems, OriginalMetaActionCandidate))
@@ -43,7 +40,7 @@ namespace P10
                 returnList.Add(OriginalMetaActionCandidate);
                 return returnList;
             }
-            var refined = Strategy.Refine(domain, problems, OriginalMetaActionCandidate, OriginalMetaActionCandidate, _tempPath);
+            var refined = Strategy.Refine(domain, problems, OriginalMetaActionCandidate, OriginalMetaActionCandidate);
             while (refined != null)
             {
                 ConsoleHelper.WriteLineColor($"\tRefining iteration {_iteration++}...", ConsoleColor.Magenta);
@@ -52,12 +49,8 @@ namespace P10
                     ConsoleHelper.WriteLineColor($"\tRefined meta action is valid!", ConsoleColor.Green);
                     returnList.Add(refined);
                 }
-                refined = Strategy.Refine(domain, problems, refined, OriginalMetaActionCandidate, _tempPath);
+                refined = Strategy.Refine(domain, problems, refined, OriginalMetaActionCandidate);
             }
-
-            watch.Stop();
-            P10.CSV.Append($"total_refinement_time", $"{watch.ElapsedMilliseconds}");
-
             return returnList;
         }
 

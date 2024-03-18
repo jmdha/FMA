@@ -6,6 +6,10 @@ namespace P10.RefinementStrategies
     public interface IRefinementStrategy
     {
         public int TimeLimitS { get; }
-        public ActionDecl? Refine(DomainDecl domain, List<ProblemDecl> problems, ActionDecl currentMetaAction, ActionDecl originalMetaAction, string workingDir);
+        public int MetaActionIndex { get; }
+        public string TempDir { get; }
+        public string OutputDir { get; }
+
+        public ActionDecl? Refine(DomainDecl domain, List<ProblemDecl> problems, ActionDecl currentMetaAction, ActionDecl originalMetaAction);
     }
 }

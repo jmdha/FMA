@@ -69,7 +69,7 @@ namespace P10
             PathHelper.RecratePath(_candidateOutput);
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
-            CSV = new CSVWriter("data.csv", opts.OutputPath);
+            CSV = new CSVWriter("general.csv", opts.OutputPath);
 
             ConsoleHelper.WriteLineColor($"Parsing PDDL Files", ConsoleColor.Blue);
             var listener = new ErrorListener();
@@ -126,6 +126,7 @@ namespace P10
 
             ConsoleHelper.WriteLineColor($"Begining refinement process", ConsoleColor.Blue);
             int count = 1;
+            var index = 0;
             var refinedCandidates = new List<ActionDecl>();
             foreach (var candidate in candidates)
             {
@@ -133,7 +134,7 @@ namespace P10
                 ConsoleHelper.WriteLineColor($"", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"{codeGenerator.Generate(candidate)}", ConsoleColor.Cyan);
                 ConsoleHelper.WriteLineColor($"", ConsoleColor.Magenta);
-                var refiner = new MetaActionRefiner(candidate, RefinementStrategyBuilder.GetStrategy(opts.RefinementStrategy, opts.TimeLimitS), opts.TempPath, opts.TimeLimitS);
+                var refiner = new MetaActionRefiner(candidate, opts.RefinementStrategy, opts.TempPath, opts.OutputPath, opts.TimeLimitS, index++);
                 var refined = refiner.Refine(domain, problems);
                 if (refined.Count > 0)
                 {

@@ -17,6 +17,21 @@ namespace P10
         {
             FileName = fileName;
             WorkingDir = workingDir;
+
+            var target = Path.Combine(workingDir, FileName);
+            if (File.Exists(target))
+            {
+                var lines = File.ReadAllLines(target);
+                var headers = lines[0].Split(',').ToList();
+                foreach (var header in headers)
+                    _csvData.Add(header, new List<string>());
+                foreach(var line in lines.Skip(1))
+                {
+                    var split = line.Split(',').ToList();
+                    for (int i = 0; i < split.Count; i++)
+                        _csvData[headers[i]].Add(split[i]);
+                }
+            }
         }
 
         public void Append(string col, string value, int row = 0)

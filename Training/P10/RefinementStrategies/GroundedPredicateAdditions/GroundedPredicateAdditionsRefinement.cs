@@ -16,14 +16,18 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
     public class GroundedPredicateAdditionsRefinement : IRefinementStrategy
     {
         public int TimeLimitS { get; }
+        public int MetaActionIndex { get; }
+        public string TempDir { get; }
+        public string OutputDir { get; }
         public IHeuristic<PreconditionState> Heuristic { get; set; }
 
         private readonly PriorityQueue<PreconditionState, int> _openList = new PriorityQueue<PreconditionState, int>();
         private bool _isInitialized = false;
         private int _initialPossibilities = 0;
         private readonly Stopwatch _watch = new Stopwatch();
+        private CSVWriter _csv;
 
-        public GroundedPredicateAdditionsRefinement(int timeLimitS)
+        public GroundedPredicateAdditionsRefinement(int timeLimitS, int metaActionIndex, string tempDir, string outputDir)
         {
             Heuristic = new hSum<PreconditionState>(new List<IHeuristic<PreconditionState>>() {
                 new hMustBeApplicable(),
@@ -34,13 +38,20 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 new hWeighted<PreconditionState>(new hMostApplicable(), 100)
             });
             TimeLimitS = timeLimitS;
+            TempDir = tempDir;
+            OutputDir = outputDir;
+            _csv = new CSVWriter("refinement.csv", outputDir);
+            MetaActionIndex = metaActionIndex;
         }
 
-        public ActionDecl? Refine(DomainDecl domain, List<ProblemDecl> problems, ActionDecl currentMetaAction, ActionDecl originalMetaAction, string workingDir)
+        public ActionDecl? Refine(DomainDecl domain, List<ProblemDecl> problems, ActionDecl currentMetaAction, ActionDecl originalMetaAction)
         {
             if (!_isInitialized)
             {
-                var searchWorkingDir = Path.Combine(workingDir, "state-search");
+                _csv.Append("domain", domain.Name!.Name, MetaActionIndex);
+                _csv.Append("meta-action", originalMetaAction.Name, MetaActionIndex);
+
+                var searchWorkingDir = Path.Combine(TempDir, "state-search");
                 PathHelper.RecratePath(searchWorkingDir);
                 ConsoleHelper.WriteLineColor($"\t\tInitial state space exploration started...", ConsoleColor.Magenta);
                 _isInitialized = true;
@@ -53,24 +64,27 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 verifier.UpdateSearchString(compiled);
                 var searchWatch = new Stopwatch();
                 searchWatch.Start();
-                verifier.Verify(compiled.Domain, compiled.Problem, Path.Combine(workingDir, "state-search"), TimeLimitS);
+                verifier.Verify(compiled.Domain, compiled.Problem, Path.Combine(TempDir, "state-search"), TimeLimitS);
                 searchWatch.Stop();
-                P10.CSV.Append($"state_space_search_time", $"{searchWatch.ElapsedMilliseconds}");
+                _csv.Append($"state_space_search_time", $"{searchWatch.ElapsedMilliseconds}", MetaActionIndex);
                 searchWatch.Restart();
                 if (!UpdateOpenList(originalMetaAction, searchWorkingDir))
                 {
                     searchWatch.Stop();
-                    P10.CSV.Append($"stackelberg_output_parsing", $"{searchWatch.ElapsedMilliseconds}");
+                    _csv.Append($"stackelberg_output_parsing", $"{searchWatch.ElapsedMilliseconds}", MetaActionIndex);
                     return null;
                 }
                 searchWatch.Stop();
-                P10.CSV.Append($"stackelberg_output_parsing", $"{searchWatch.ElapsedMilliseconds}");
+                _csv.Append($"stackelberg_output_parsing", $"{searchWatch.ElapsedMilliseconds}", MetaActionIndex);
                 ConsoleHelper.WriteLineColor($"\t\tExploration finished", ConsoleColor.Magenta);
 
                 _watch.Start();
             }
             if (_openList.Count == 0)
+            {
+                _csv.Append("total_refinement_time", $"{_watch.ElapsedMilliseconds}", MetaActionIndex);
                 return null;
+            }
 
             ConsoleHelper.WriteLineColor($"\t\t{_openList.Count} possibilities left [Est. {TimeSpan.FromMilliseconds((double)_openList.Count * ((double)(_watch.ElapsedMilliseconds + 1) / (double)(1 + (_initialPossibilities - _openList.Count)))).ToString("hh\\:mm\\:ss")} until finished]", ConsoleColor.Magenta);
             var state = _openList.Dequeue();
@@ -189,7 +203,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 }
             }
 
-            P10.CSV.Append($"stackelberg_refinement_possibilities", $"{toCheck.Count}");
+            _csv.Append($"stackelberg_refinement_possibilities", $"{toCheck.Count}", MetaActionIndex);
 
             ConsoleHelper.WriteLineColor($"\t\t\tChecks for covered meta actions", ConsoleColor.Magenta);
             ConsoleHelper.WriteLineColor($"\t\t\tTotal to check: {toCheck.Count}", ConsoleColor.Magenta);
@@ -204,7 +218,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             }
             ConsoleHelper.WriteLineColor($"\t\t\tTotal not covered: {_openList.Count}", ConsoleColor.Magenta);
 
-            P10.CSV.Append($"final_refinement_possibilities", $"{_openList.Count}");
+            _csv.Append($"final_refinement_possibilities", $"{_openList.Count}", MetaActionIndex);
             _initialPossibilities = _openList.Count;
 
             return true;
