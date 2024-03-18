@@ -174,11 +174,11 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                         metaAction,
                         preconditions);
                     toCheck.Add(newState);
-
                 }
             }
 
             ConsoleHelper.WriteLineColor($"\t\t\tChecks for covered meta actions", ConsoleColor.Magenta);
+            ConsoleHelper.WriteLineColor($"\t\t\tTotal to check: {toCheck.Count}", ConsoleColor.Magenta);
             foreach (var state in toCheck)
             {
                 if (!IsCovered(state, toCheck))
@@ -188,6 +188,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                         _openList.Enqueue(state, hValue);
                 }
             }
+            ConsoleHelper.WriteLineColor($"\t\t\tTotal not covered: {_openList.Count}", ConsoleColor.Magenta);
 
             _initialPossibilities = _openList.Count;
 
