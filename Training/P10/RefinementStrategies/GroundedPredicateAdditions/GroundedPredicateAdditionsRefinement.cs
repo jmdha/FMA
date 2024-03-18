@@ -29,8 +29,9 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 new hMustBeApplicable(),
                 new hMustBeValid(),
                 new hWeighted<PreconditionState>(new hMostValid(), 10000),
-                new hWeighted<PreconditionState>(new hFewestPre(), 1000),
-                new hMostApplicable(),
+                new hWeighted<PreconditionState>(new hFewestParameters(), 1000),
+                new hWeighted<PreconditionState>(new hFewestPre(), 100),
+                new hWeighted<PreconditionState>(new hMostApplicable(), 10)
             });
             TimeLimitS = timeLimitS;
         }

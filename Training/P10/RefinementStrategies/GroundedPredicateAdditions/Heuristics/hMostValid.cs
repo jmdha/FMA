@@ -6,7 +6,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions.Heuristics
     {
         public int GetValue(PreconditionState preconditions)
         {
-            return preconditions.InvalidStates;
+            return (int)((1 - ((double)preconditions.InvalidStates / (double)preconditions.TotalInvalidStates)) * 100);
         }
     }
 }
