@@ -28,10 +28,10 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             Heuristic = new hSum<PreconditionState>(new List<IHeuristic<PreconditionState>>() {
                 new hMustBeApplicable(),
                 new hMustBeValid(),
-                new hWeighted<PreconditionState>(new hMostValid(), 10000),
-                new hWeighted<PreconditionState>(new hFewestParameters(), 1000),
-                new hWeighted<PreconditionState>(new hFewestPre(), 100),
-                new hWeighted<PreconditionState>(new hMostApplicable(), 10)
+                new hWeighted<PreconditionState>(new hMostValid(), 100000),
+                new hWeighted<PreconditionState>(new hFewestParameters(), 10000),
+                new hWeighted<PreconditionState>(new hFewestPre(), 1000),
+                new hWeighted<PreconditionState>(new hMostApplicable(), 100)
             });
             TimeLimitS = timeLimitS;
         }
@@ -89,8 +89,10 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 return false;
             //throw new Exception("Stackelberg output does not exist!");
 
+            ConsoleHelper.WriteLineColor($"\t\t\tParsing stackelberg output", ConsoleColor.Magenta);
             var listener = new ErrorListener();
             var parser = new PDDLParser(listener);
+            var toCheck = new List<PreconditionState>();
 
             var text = File.ReadAllText(targetFile.FullName);
             var lines = text.Split('\n').ToList();
@@ -171,14 +173,41 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                         applicability,
                         metaAction,
                         preconditions);
-                    var hValue = Heuristic.GetValue(newState);
-                    if (hValue != int.MaxValue)
-                        _openList.Enqueue(newState, hValue);
+                    toCheck.Add(newState);
+
                 }
             }
+
+            ConsoleHelper.WriteLineColor($"\t\t\tChecks for covered meta actions", ConsoleColor.Magenta);
+            foreach (var state in toCheck)
+            {
+                if (!IsCovered(state, toCheck))
+                {
+                    var hValue = Heuristic.GetValue(state);
+                    if (hValue != int.MaxValue)
+                        _openList.Enqueue(state, hValue);
+                }
+            }
+
             _initialPossibilities = _openList.Count;
 
             return true;
+        }
+
+        private bool IsCovered(PreconditionState check, List<PreconditionState> others)
+        {
+            foreach(var state in others)
+            {
+                if (state != check && 
+                    state.Precondition.Count < check.Precondition.Count &&
+                    state.ValidStates == check.ValidStates &&
+                    state.Applicability == check.Applicability)
+                {
+                    if (state.Precondition.All(x => check.Precondition.Any(y => y.Equals(x))))
+                        return true;
+                }
+            }
+            return false;
         }
     }
 }

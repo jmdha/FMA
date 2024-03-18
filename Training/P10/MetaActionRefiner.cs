@@ -55,7 +55,7 @@ namespace P10
 
         private bool IsValid(DomainDecl domain, List<ProblemDecl> problems, ActionDecl metaAction)
         {
-            ConsoleHelper.WriteLineColor($"\tValidating...", ConsoleColor.Magenta);
+            ConsoleHelper.WriteLineColor($"\t\tValidating...", ConsoleColor.Magenta);
             foreach (var problem in problems)
             {
                 var compiled = StackelbergCompiler.StackelbergCompiler.CompileToStackelberg(new PDDLDecl(domain, problem), metaAction.Copy());
