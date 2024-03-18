@@ -3,6 +3,7 @@ using P10.Verifiers;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
+using System.Diagnostics;
 using Tools;
 
 namespace P10
@@ -31,6 +32,9 @@ namespace P10
 
         public List<ActionDecl> Refine(DomainDecl domain, List<ProblemDecl> problems)
         {
+            var watch = new Stopwatch();
+            watch.Start();
+
             _iteration = 0;
             var returnList = new List<ActionDecl>();
             if (IsValid(domain, problems, OriginalMetaActionCandidate))
@@ -50,6 +54,10 @@ namespace P10
                 }
                 refined = Strategy.Refine(domain, problems, refined, OriginalMetaActionCandidate, _tempPath);
             }
+
+            watch.Stop();
+            P10.CSV.Append($"total_refinement_time", $"{watch.ElapsedMilliseconds}");
+
             return returnList;
         }
 

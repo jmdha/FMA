@@ -51,10 +51,22 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 if (File.Exists(Path.Combine(searchWorkingDir, StateExploreVerifier.StateInfoFile)))
                     File.Delete(Path.Combine(searchWorkingDir, StateExploreVerifier.StateInfoFile));
                 verifier.UpdateSearchString(compiled);
+                var searchWatch = new Stopwatch();
+                searchWatch.Start();
                 verifier.Verify(compiled.Domain, compiled.Problem, Path.Combine(workingDir, "state-search"), TimeLimitS);
+                searchWatch.Stop();
+                P10.CSV.Append($"state_space_search_time", $"{searchWatch.ElapsedMilliseconds}");
+                searchWatch.Restart();
                 if (!UpdateOpenList(originalMetaAction, searchWorkingDir))
+                {
+                    searchWatch.Stop();
+                    P10.CSV.Append($"stackelberg_output_parsing", $"{searchWatch.ElapsedMilliseconds}");
                     return null;
+                }
+                searchWatch.Stop();
+                P10.CSV.Append($"stackelberg_output_parsing", $"{searchWatch.ElapsedMilliseconds}");
                 ConsoleHelper.WriteLineColor($"\t\tExploration finished", ConsoleColor.Magenta);
+
                 _watch.Start();
             }
             if (_openList.Count == 0)
@@ -177,6 +189,8 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 }
             }
 
+            P10.CSV.Append($"stackelberg_refinement_possibilities", $"{toCheck.Count}");
+
             ConsoleHelper.WriteLineColor($"\t\t\tChecks for covered meta actions", ConsoleColor.Magenta);
             ConsoleHelper.WriteLineColor($"\t\t\tTotal to check: {toCheck.Count}", ConsoleColor.Magenta);
             foreach (var state in toCheck)
@@ -190,6 +204,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             }
             ConsoleHelper.WriteLineColor($"\t\t\tTotal not covered: {_openList.Count}", ConsoleColor.Magenta);
 
+            P10.CSV.Append($"final_refinement_possibilities", $"{_openList.Count}");
             _initialPossibilities = _openList.Count;
 
             return true;
