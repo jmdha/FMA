@@ -1,6 +1,7 @@
 ﻿using CommandLine;
 using P10.RefinementStrategies;
 using P10.UsefulnessCheckers;
+using P10.Verifiers;
 using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.Contextualisers.PDDL;
 using PDDLSharp.ErrorListeners;
@@ -65,6 +66,7 @@ namespace P10
             PathHelper.RecratePath(opts.OutputPath);
             PathHelper.RecratePath(opts.TempPath);
             PathHelper.RecratePath(_candidateOutput);
+            BaseVerifier.ShowSTDOut = opts.StackelbergDebug;
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
             CSV = new CSVWriter("general.csv", opts.OutputPath);

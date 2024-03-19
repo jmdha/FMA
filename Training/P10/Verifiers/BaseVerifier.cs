@@ -8,6 +8,7 @@ namespace P10.Verifiers
 {
     public abstract class BaseVerifier : IVerifier
     {
+        public static bool ShowSTDOut { get; set; } = false;
         public string SearchString { get; set; } = "--search \"sym_stackelberg(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false)\"";
         private Process? _currentProcess;
         internal string _log = "";
@@ -62,15 +63,13 @@ namespace P10.Verifiers
             };
             _currentProcess.OutputDataReceived += (s, e) => { 
                 _log += e.Data;
-#if DEBUG
-                Console.WriteLine(e.Data);
-#endif
+                if (ShowSTDOut)
+                    Console.WriteLine(e.Data);
             };
             _currentProcess.ErrorDataReceived += (s, e) => {
                 _log += e.Data;
-#if DEBUG
-                Console.WriteLine($"ERROR: {e.Data}");
-#endif
+                if (ShowSTDOut)
+                    Console.WriteLine($"ERROR: {e.Data}");
             };
 
             _currentProcess.Start();

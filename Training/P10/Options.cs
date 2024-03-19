@@ -49,5 +49,8 @@ namespace P10
 
         [Option("refinement-time-limit", Required = false, HelpText = "Time limit in seconds that each refinement step is allowed to take.")]
         public int TimeLimitS { get; set; } = -1;
+
+        [Option("stackelberg-debug", Required = false, HelpText = "Show the stdout of the Stackelberg Planner")]
+        public bool StackelbergDebug { get; set; } = false;
     }
 }
