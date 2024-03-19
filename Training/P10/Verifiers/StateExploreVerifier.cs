@@ -21,60 +21,83 @@ namespace P10.Verifiers
 
         public void UpdateSearchString(PDDLDecl from)
         {
+            if (from.Problem.Objects == null)
+                throw new Exception("Problem objects was null!");
+            if (from.Problem.Init == null)
+                throw new Exception("Problem init was null!");
+
             // Until the stackelberg planner works with this
             var start = $"--search \"state_explorer(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false, max_precondition_size={MaxPreconditionCombinations}, max_parameters={MaxParameters}, ";
 
+            var staticNamesString = "static_names=[";
             var statics = SimpleStaticPredicateDetector.FindStaticPredicates(from);
-            var staticsString = "statics=[";
-            if (from.Problem.Init != null)
+            foreach (var staticPred in statics)
+                staticNamesString += $"{staticPred.Name},";
+            staticNamesString = staticNamesString.Remove(staticNamesString.Length - 1);
+            staticNamesString += "], ";
+
+            var staticFactsString = "static_facts=[";
+            foreach (var staticPred in statics)
             {
+                var forThisStatic = "[";
                 foreach (var init in from.Problem.Init.Predicates)
                 {
-                    if (init is PredicateExp pred && statics.Any(x => x.Name == pred.Name))
+                    if (init is PredicateExp pred && pred.Name == staticPred.Name)
                     {
-                        staticsString += $"{pred.Name}#";
-                        var predString = "";
+                        var items = "[";
                         foreach (var arg in pred.Arguments)
-                            predString += $"{arg.Name}#";
-                        predString = predString.Trim();
-                        staticsString += $"{predString},";
+                            items += $"{arg.Name},";
+                        items = items.Remove(items.Length - 1);
+                        items += "],";
+                        forThisStatic += items;
                     }
                 }
-            }
-            staticsString += "], ";
+                forThisStatic = forThisStatic.Remove(forThisStatic.Length - 1);
+                forThisStatic += "],";
 
-            var typesString = "types=[";
-            if (from.Problem.Objects != null)
+                staticFactsString += forThisStatic;
+            }
+            staticFactsString = staticFactsString.Remove(staticFactsString.Length - 1);
+            staticFactsString += "], ";
+
+            var typeDict = new Dictionary<string, HashSet<string>>();
+            foreach (var obj in from.Problem.Objects.Objs)
             {
-                var typeDict = new Dictionary<string, HashSet<string>>();
-                foreach (var obj in from.Problem.Objects.Objs)
+                if (typeDict.ContainsKey(obj.Type.Name))
+                    typeDict[obj.Type.Name].Add(obj.Name);
+                else
+                    typeDict.Add(obj.Type.Name, new HashSet<string>() { obj.Name });
+                foreach (var subtype in obj.Type.SuperTypes)
                 {
-                    if (typeDict.ContainsKey(obj.Type.Name))
-                        typeDict[obj.Type.Name].Add(obj.Name);
+                    if (typeDict.ContainsKey(subtype))
+                        typeDict[subtype].Add(obj.Name);
                     else
-                        typeDict.Add(obj.Type.Name, new HashSet<string>() { obj.Name });
-                    foreach (var subtype in obj.Type.SuperTypes)
-                    {
-                        if (typeDict.ContainsKey(subtype))
-                            typeDict[subtype].Add(obj.Name);
-                        else
-                            typeDict.Add(subtype, new HashSet<string>() { obj.Name });
-                    }
+                        typeDict.Add(subtype, new HashSet<string>() { obj.Name });
                 }
-                foreach (var type in typeDict.Keys)
-                {
-                    typesString += $"{type}";
-                    var objStr = "";
-                    foreach (var obj in typeDict[type])
-                        objStr += $"#{obj}";
-                    objStr = objStr.Trim();
-                    typesString += $"{objStr},";
-                }
-                typesString = typesString.Remove(typesString.Length - 1);
             }
-            typesString += "]";
 
-            SearchString = $"{start}{staticsString}{typesString})\"";
+            var typeNamesString = "type_names=[";
+            foreach(var key in typeDict.Keys)
+            {
+                typeNamesString += $"{key},";
+            }
+            typeNamesString = typeNamesString.Remove(typeNamesString.Length - 1);
+            typeNamesString += "], ";
+
+            var typeObjectsString = "type_objects=[";
+            foreach(var key in typeDict.Keys)
+            {
+                var forThisType = "[";
+                foreach (var item in typeDict[key])
+                    forThisType += $"{item},";
+                forThisType = forThisType.Remove(forThisType.Length - 1);
+                forThisType += "],";
+                typeObjectsString += forThisType;
+            }
+            typeObjectsString = typeObjectsString.Remove(typeObjectsString.Length - 1);
+            typeObjectsString += "]";
+
+            SearchString = $"{start}{staticNamesString}{staticFactsString}{typeNamesString}{typeObjectsString})\"";
         }
 
         public override bool Verify(DomainDecl domain, ProblemDecl problem, string workingDir, int timeLimitS)
