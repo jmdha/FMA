@@ -245,7 +245,8 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                         continue;
 
                     foreach (var precon in preconditions)
-                        and.Children.Add(precon);
+                        if (!and.Children.Contains(precon))
+                            and.Children.Add(precon);
 
                     //// Prune some nonsensical preconditions.
                     //if (andNode.Children.Any(x => andNode.Children.Contains(new NotExp(x))))
