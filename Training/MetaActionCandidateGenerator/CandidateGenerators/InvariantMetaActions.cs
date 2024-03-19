@@ -1,6 +1,7 @@
 ﻿using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
+using System;
 
 namespace MetaActionCandidateGenerator.CandidateGenerators
 {
@@ -39,6 +40,8 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                 {
                     foreach (var action in pddlDecl.Domain.Actions)
                     {
+                        if (action.FindNames(pred.Name).Count == 0)
+                            continue;
                         var mutated = GetMutatedPredicate(pred, permutation.ToList());
                         if (!mutated.Equals(pred))
                             candidates.Add(GenerateMetaAction(

@@ -24,7 +24,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                     int counter = 0;
                     foreach (var action in pddlDecl.Domain.Actions)
                     {
-                        if (action.FindNames(predicate.Name).Count == 0)
+                        if (action.Effects.FindNames(predicate.Name).Count == 0)
                             continue;
                         candidates.Add(GenerateMetaAction(
                             $"meta_{predicate.Name}_{counter++}",
