@@ -10,6 +10,7 @@ namespace P10.Verifiers
     {
         public string SearchString { get; set; } = "--search \"sym_stackelberg(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false)\"";
         private Process? _currentProcess;
+        internal string _log = "";
 
         internal int ExecutePlanner(string domainPath, string problemPath, string outputPath, int timeLimitS)
         {
@@ -39,6 +40,7 @@ namespace P10.Verifiers
 
         private int RunPlanner(string domainPath, string problemPath, string outputPath)
         {
+            _log = "";
             StringBuilder sb = new StringBuilder("");
             sb.Append($"{ExternalPaths.StackelbergPath} ");
             sb.Append($"\"{domainPath}\" ");
@@ -58,8 +60,22 @@ namespace P10.Verifiers
                     WorkingDirectory = outputPath
                 }
             };
+            _currentProcess.OutputDataReceived += (s, e) => { 
+                _log += e.Data;
+#if DEBUG
+                Console.WriteLine(e.Data);
+#endif
+            };
+            _currentProcess.ErrorDataReceived += (s, e) => {
+                _log += e.Data;
+#if DEBUG
+                Console.WriteLine($"ERROR: {e.Data}");
+#endif
+            };
 
             _currentProcess.Start();
+            _currentProcess.BeginOutputReadLine();
+            _currentProcess.BeginErrorReadLine();
             _currentProcess.WaitForExit();
             return _currentProcess.ExitCode;
         }

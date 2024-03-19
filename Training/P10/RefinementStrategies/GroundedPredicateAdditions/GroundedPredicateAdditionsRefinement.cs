@@ -118,9 +118,19 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             verifier.UpdateSearchString(compiled);
             var searchWatch = new Stopwatch();
             searchWatch.Start();
-            verifier.Verify(compiled.Domain, compiled.Problem, Path.Combine(TempDir, "state-search"), TimeLimitS);
+            var result = verifier.VerifyCode(compiled.Domain, compiled.Problem, Path.Combine(TempDir, "state-search"), TimeLimitS);
             searchWatch.Stop();
             _csv.Append($"state_space_search_time", $"{searchWatch.ElapsedMilliseconds}", MetaActionIndex);
+            if (result == StateExploreVerifier.StateExploreResult.InvariantError)
+            {
+                ConsoleHelper.WriteLineColor($"\t\t\tInvariant Error!", ConsoleColor.Red);
+                return false;
+            } else if (result == StateExploreVerifier.StateExploreResult.UnknownError)
+            {
+                ConsoleHelper.WriteLineColor($"\t\t\tUnknown error!", ConsoleColor.Red);
+                return false;
+            }
+
             searchWatch.Restart();
             if (!UpdateOpenList(MetaAction, searchWorkingDir))
             {

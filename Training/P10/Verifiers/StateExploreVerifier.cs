@@ -10,6 +10,7 @@ namespace P10.Verifiers
 {
     public class StateExploreVerifier : BaseVerifier
     {
+        public enum StateExploreResult { Success, InvariantError, UnknownError }
         public static string StateInfoFile = "out";
         public static int MaxPreconditionCombinations = 3;
         public static int MaxParameters = 1;
@@ -102,6 +103,10 @@ namespace P10.Verifiers
 
         public override bool Verify(DomainDecl domain, ProblemDecl problem, string workingDir, int timeLimitS)
         {
+            return VerifyCode(domain, problem, workingDir, timeLimitS) == StateExploreResult.Success;
+        }
+        public StateExploreResult VerifyCode(DomainDecl domain, ProblemDecl problem, string workingDir, int timeLimitS)
+        {
             var listener = new ErrorListener();
             var codeGenerator = new PDDLCodeGenerator(listener);
             var domainFile = Path.Combine(workingDir, $"tempDomain.pddl");
@@ -110,10 +115,14 @@ namespace P10.Verifiers
             codeGenerator.Generate(problem, problemFile);
             var exitCode = ExecutePlanner(domainFile, problemFile, workingDir, timeLimitS);
             if (exitCode != 0)
-                return false;
+            {
+                if (_log.Contains("There should be no goal defined for a non-attack var! Error in PDDL!") || _log.Contains("Mutex type changed to mutex_and because the domain has conditional effects"))
+                    return StateExploreResult.InvariantError;
+                return StateExploreResult.UnknownError;
+            }
             if (File.Exists(Path.Combine(workingDir, StateInfoFile)))
-                return false;
-            return true;
+                return StateExploreResult.UnknownError;
+            return StateExploreResult.Success;
         }
     }
 }
