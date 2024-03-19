@@ -81,13 +81,13 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
             var actionStatics = act.Preconditions.FindTypes<PredicateExp>().Where(x => SimpleStatics.Any(y => y.Name == x.Name)).ToList();
 
             var requiredStatics = new List<PredicateExp>();
-            var checkStatics = new List<PredicateExp>();
 
             var instances = act.FindNames(pred.Name);
             foreach (var instance in instances)
             {
                 if (instance is PredicateExp predicate && predicate.Arguments.Count == pred.Arguments.Count)
                 {
+                    var checkStatics = new List<PredicateExp>();
                     var nameMap = new Dictionary<string, string>();
                     for (int i = 0; i < predicate.Arguments.Count; i++)
                     {
