@@ -26,16 +26,18 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                     {
                         if (action.Effects.FindNames(predicate.Name).Count == 0)
                             continue;
-                        candidates.Add(GenerateMetaAction(
-                            $"meta_{predicate.Name}_{counter++}",
-                            new List<IExp>() { new NotExp(predicate) },
-                            new List<IExp>() { predicate },
-                            action));
-                        candidates.Add(GenerateMetaAction(
-                            $"meta_{predicate.Name}_{counter++}",
-                            new List<IExp>() { predicate },
-                            new List<IExp>() { new NotExp(predicate) },
-                            action));
+                        if (CanPredicateBeSetToTrue(pddlDecl, predicate))
+                            candidates.Add(GenerateMetaAction(
+                                $"meta_{predicate.Name}_{counter++}",
+                                new List<IExp>() { new NotExp(predicate) },
+                                new List<IExp>() { predicate },
+                                action));
+                        if (CanPredicateBeSetToFalse(pddlDecl, predicate))
+                            candidates.Add(GenerateMetaAction(
+                                $"meta_{predicate.Name}_{counter++}",
+                                new List<IExp>() { predicate },
+                                new List<IExp>() { new NotExp(predicate) },
+                                action));
                     }
                 }
             }
