@@ -30,12 +30,25 @@
 
         public void Append(string col, string value, int row = 0)
         {
+            if (_csvData.Keys.Count > 0)
+            {
+                if (_csvData[_csvData.Keys.ElementAt(0)].Count <= row)
+                {
+                    foreach(var key in _csvData.Keys)
+                    {
+                        while (_csvData[key].Count <= row)
+                            _csvData[key].Add("");
+                    }
+                }
+            }
+
             if (!_csvData.ContainsKey(col))
-                _csvData.Add(col, new List<string>());
-            if (_csvData[col].Count <= row)
-                _csvData[col].Add(value);
-            else
-                _csvData[col][row] = value;
+            {
+                _csvData.Add(col, new List<string>(row + 1));
+                while (_csvData[col].Count <= row)
+                    _csvData[col].Add("");
+            }
+            _csvData[col][row] = value;
             UpdateCSVFile();
         }
 
