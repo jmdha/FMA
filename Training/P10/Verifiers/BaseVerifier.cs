@@ -25,7 +25,7 @@ namespace P10.Verifiers
                     Thread.Sleep(1000);
                     if (_currentProcess != null && watch.ElapsedMilliseconds / 1000 > timeLimitS)
                     {
-                        ConsoleHelper.WriteLineColor("\tPlanner times out!", ConsoleColor.DarkYellow);
+                        ConsoleHelper.WriteLineColor("\tPlanner times out! Killing...", ConsoleColor.DarkYellow);
                         _currentProcess.Kill(true);
                     }
                 }
