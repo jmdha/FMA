@@ -91,35 +91,5 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                     copy.Arguments[i].Name = $"{copy.Arguments[i].Name}2";
             return copy;
         }
-
-        private bool CanPredicateBeSetToFalse(PDDLDecl pddlDecl, PredicateExp pred)
-        {
-            var result = false;
-
-            foreach (var action in pddlDecl.Domain.Actions)
-            {
-                var effects = action.FindNames(pred.Name);
-                result = effects.Any(x => x.Parent is NotExp);
-                if (result)
-                    return true;
-            }
-
-            return result;
-        }
-
-        private bool CanPredicateBeSetToTrue(PDDLDecl pddlDecl, PredicateExp pred)
-        {
-            var result = false;
-
-            foreach (var action in pddlDecl.Domain.Actions)
-            {
-                var effects = action.FindNames(pred.Name);
-                result = effects.Any(x => x.Parent is not NotExp);
-                if (result)
-                    return true;
-            }
-
-            return result;
-        }
     }
 }
