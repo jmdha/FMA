@@ -89,16 +89,17 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 _csv.Append("state_space_search_failed", "false", MetaActionIndex);
             }
 
+            ConsoleHelper.WriteLineColor($"\tRefining iteration {iteration++}...", ConsoleColor.Magenta);
             var refined = GetNextRefined(domain, problems);
             while (refined != null)
             {
-                ConsoleHelper.WriteLineColor($"\tRefining iteration {iteration++}...", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"\t\tValidating...", ConsoleColor.Magenta);
                 if (VerificationHelper.IsValid(domain, problems, refined, _tempValidationFolder, TimeLimitS))
                 {
                     ConsoleHelper.WriteLineColor($"\tRefined meta action is valid!", ConsoleColor.Green);
                     returnList.Add(refined);
                 }
+                ConsoleHelper.WriteLineColor($"\tRefining iteration {iteration++}...", ConsoleColor.Magenta);
                 refined = GetNextRefined(domain, problems);
             }
             return returnList;
