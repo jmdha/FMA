@@ -121,8 +121,8 @@ namespace P10.Verifiers
                 return StateExploreResult.UnknownError;
             }
             if (File.Exists(Path.Combine(workingDir, StateInfoFile)))
-                return StateExploreResult.UnknownError;
-            return StateExploreResult.Success;
+                return StateExploreResult.Success;
+            return StateExploreResult.UnknownError;
         }
     }
 }
