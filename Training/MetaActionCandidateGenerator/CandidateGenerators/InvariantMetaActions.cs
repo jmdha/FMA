@@ -51,7 +51,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                 }
             }
 
-            return candidates;
+            return candidates.Distinct(pddlDecl.Domain.Actions);
         }
 
         private List<bool[]> GeneratePermutations(int count)

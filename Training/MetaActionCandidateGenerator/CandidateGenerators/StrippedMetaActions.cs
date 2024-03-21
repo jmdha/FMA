@@ -27,7 +27,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                         action));
             }
 
-            return candidates;
+            return candidates.Distinct(pddlDecl.Domain.Actions);
         }
     }
 }
