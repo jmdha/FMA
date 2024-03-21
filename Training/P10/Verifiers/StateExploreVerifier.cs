@@ -10,7 +10,7 @@ namespace P10.Verifiers
 {
     public class StateExploreVerifier : BaseVerifier
     {
-        public enum StateExploreResult { Success, InvariantError, UnknownError }
+        public enum StateExploreResult { Success, InvariantError, UnknownError, MetaActionValid }
         public static string StateInfoFile = "out";
         public static int MaxPreconditionCombinations = 3;
         public static int MaxParameters = 1;
@@ -122,7 +122,7 @@ namespace P10.Verifiers
             }
             if (File.Exists(Path.Combine(workingDir, StateInfoFile)))
                 return StateExploreResult.Success;
-            return StateExploreResult.UnknownError;
+            return StateExploreResult.MetaActionValid;
         }
     }
 }

@@ -10,6 +10,7 @@ using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers.PDDL;
 using System.Diagnostics;
 using Tools;
+using static P10.Verifiers.StateExploreVerifier;
 
 namespace P10.RefinementStrategies.GroundedPredicateAdditions
 {
@@ -77,7 +78,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 _csv.Append("is_already_valid", "false", MetaActionIndex);
 
             ConsoleHelper.WriteLineColor($"\t\tInitial state space exploration started...", ConsoleColor.Magenta);
-            if (!InitializeStateSearch(domain, problems[0]))
+            if (!InitializeStateSearch(domain, problems))
             {
                 ConsoleHelper.WriteLineColor($"\t\tExploration failed", ConsoleColor.Magenta);
                 _csv.Append("state_space_search_failed", "true", MetaActionIndex);
@@ -105,31 +106,42 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             return returnList;
         }
 
-        private bool InitializeStateSearch(DomainDecl domain, ProblemDecl problem)
+        private bool InitializeStateSearch(DomainDecl domain, List<ProblemDecl> problems)
         {
             var searchWorkingDir = Path.Combine(TempDir, "state-search");
             PathHelper.RecratePath(searchWorkingDir);
 
-            var pddlDecl = new PDDLDecl(domain, problem);
-            var compiled = StackelbergCompiler.StackelbergCompiler.CompileToStackelberg(pddlDecl, MetaAction.Copy());
-
-            var verifier = new StateExploreVerifier();
-            if (File.Exists(Path.Combine(searchWorkingDir, StateExploreVerifier.StateInfoFile)))
-                File.Delete(Path.Combine(searchWorkingDir, StateExploreVerifier.StateInfoFile));
-            verifier.UpdateSearchString(compiled);
             var searchWatch = new Stopwatch();
             searchWatch.Start();
-            var result = verifier.VerifyCode(compiled.Domain, compiled.Problem, Path.Combine(TempDir, "state-search"), TimeLimitS);
+            bool success = false;
+            foreach (var problem in problems) { 
+                var pddlDecl = new PDDLDecl(domain, problem);
+                var compiled = StackelbergCompiler.StackelbergCompiler.CompileToStackelberg(pddlDecl, MetaAction.Copy());
+
+                var verifier = new StateExploreVerifier();
+                if (File.Exists(Path.Combine(searchWorkingDir, StateInfoFile)))
+                    File.Delete(Path.Combine(searchWorkingDir, StateInfoFile));
+                verifier.UpdateSearchString(compiled);
+                var result = verifier.VerifyCode(compiled.Domain, compiled.Problem, Path.Combine(TempDir, "state-search"), TimeLimitS);
+                if (result == StateExploreResult.UnknownError)
+                {
+                    ConsoleHelper.WriteLineColor($"\t\t\tUnknown error!", ConsoleColor.Red);
+                    return false;
+                }
+                if (result == StateExploreResult.MetaActionValid)
+                    ConsoleHelper.WriteLineColor($"\t\t\tMeta action valid in problem. Trying next problem...", ConsoleColor.Yellow);
+                if (result == StateExploreResult.Success)
+                {
+                    success = true;
+                    break;
+                }
+            }
             searchWatch.Stop();
             _csv.Append($"state_space_search_time", $"{searchWatch.ElapsedMilliseconds}", MetaActionIndex);
-            if (result == StateExploreVerifier.StateExploreResult.InvariantError)
+
+            if (!success)
             {
-                ConsoleHelper.WriteLineColor($"\t\t\tInvariant Error!", ConsoleColor.Red);
-                return false;
-            }
-            else if (result == StateExploreVerifier.StateExploreResult.UnknownError)
-            {
-                ConsoleHelper.WriteLineColor($"\t\t\tUnknown error!", ConsoleColor.Red);
+                ConsoleHelper.WriteLineColor($"\t\t\tMeta Action was valid in all problems???", ConsoleColor.Red);
                 return false;
             }
 
