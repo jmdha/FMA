@@ -6,7 +6,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions.Heuristics
     {
         public int GetValue(PreconditionState preconditions)
         {
-            if (preconditions.ValidStates == 0)
+            if (preconditions.InvalidStates == preconditions.TotalInvalidStates)
                 return int.MaxValue;
             return 0;
         }
