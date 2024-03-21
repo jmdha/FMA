@@ -277,8 +277,11 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                         invalidStates,
                         applicability,
                         metaAction,
-                        preconditions);
-                    toCheck.Add(newState);
+                        preconditions,
+                        0);
+                    newState.hValue = Heuristic.GetValue(newState);
+                    if (newState.hValue != int.MaxValue)
+                        toCheck.Add(newState);
                 }
             }
 
@@ -287,14 +290,8 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             ConsoleHelper.WriteLineColor($"\t\t\tChecks for covered meta actions", ConsoleColor.Magenta);
             ConsoleHelper.WriteLineColor($"\t\t\tTotal to check: {toCheck.Count}", ConsoleColor.Magenta);
             foreach (var state in toCheck)
-            {
                 if (!IsCovered(state, toCheck))
-                {
-                    var hValue = Heuristic.GetValue(state);
-                    if (hValue != int.MaxValue)
-                        _openList.Enqueue(state, hValue);
-                }
-            }
+                    _openList.Enqueue(state, state.hValue);
             ConsoleHelper.WriteLineColor($"\t\t\tTotal not covered: {_openList.Count}", ConsoleColor.Magenta);
 
             _csv.Append($"final_refinement_possibilities", $"{_openList.Count}", MetaActionIndex);

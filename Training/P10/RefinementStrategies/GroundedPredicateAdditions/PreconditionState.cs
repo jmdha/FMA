@@ -12,8 +12,9 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
         public int Applicability { get; set; }
         public ActionDecl MetaAction { get; set; }
         public List<IExp> Precondition { get; set; }
+        public int hValue { get; set; }
 
-        public PreconditionState(int totalValidStates, int totalInvalidStates, int validStates, int invalidStates, int applicability, ActionDecl metaAction, List<IExp> precondition)
+        public PreconditionState(int totalValidStates, int totalInvalidStates, int validStates, int invalidStates, int applicability, ActionDecl metaAction, List<IExp> precondition, int hValue)
         {
             TotalValidStates = totalValidStates;
             TotalInvalidStates = totalInvalidStates;
@@ -22,6 +23,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             InvalidStates = invalidStates;
             MetaAction = metaAction;
             Precondition = precondition;
+            this.hValue = hValue;
         }
 
         public override bool Equals(object? obj)
