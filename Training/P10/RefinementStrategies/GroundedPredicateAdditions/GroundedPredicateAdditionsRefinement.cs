@@ -261,7 +261,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                     var newState = new PreconditionState(
                         totalValidStates,
                         totalInvalidStates,
-                        totalValidStates + totalInvalidStates - (totalInvalidStates - invalidStates),
+                        totalValidStates - (totalInvalidStates - invalidStates),
                         invalidStates,
                         applicability,
                         metaAction,
@@ -290,6 +290,8 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
 
         private bool IsCovered(PreconditionState check, List<PreconditionState> others)
         {
+            if (check.ValidStates == check.TotalValidStates)
+                return false;
             foreach (var state in others)
             {
                 if (state != check &&
