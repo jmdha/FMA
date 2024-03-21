@@ -6,6 +6,7 @@ using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
+using PDDLSharp.Models.PDDL.Overloads;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers.PDDL;
 using System.Diagnostics;
@@ -174,6 +175,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
 
         private bool UpdateOpenList(ActionDecl currentMetaAction, string workingDir)
         {
+            currentMetaAction.EnsureAnd();
             ConsoleHelper.WriteLineColor($"\t\tUpdating open list...", ConsoleColor.Magenta);
             var targetFile = new FileInfo(Path.Combine(workingDir, StateExploreVerifier.StateInfoFile));
 
@@ -243,16 +245,31 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 if (metaAction.Preconditions is AndExp and)
                 {
                     // Remove preconditions that have the same effect
-                    if (metaAction.Effects is AndExp effAnd && preconditions.Any(x => effAnd.Children.Any(y => y.Equals(x))))
+                    if (metaAction.Effects is AndExp effAnd)
+                    {
+                        var cpy = effAnd.Copy();
+                        cpy.RemoveContext();
+                        cpy.RemoveTypes();
+                        bool stop = false;
+                        foreach (var child in cpy.Children)
+                        {
+                            if (preconditions.Any(x => child.Equals(x)))
+                            {
+                                stop = true;
+                                break;
+                            }
+                        }
+                        if (stop)
+                            continue;
+                    }
+
+                    // Prune some nonsensical preconditions.
+                    if (preconditions.Any(x => preconditions.Contains(new NotExp(x))))
                         continue;
 
                     foreach (var precon in preconditions)
                         if (!and.Children.Contains(precon))
                             and.Children.Add(precon);
-
-                    // Prune some nonsensical preconditions.
-                    if (and.Children.Any(x => and.Children.Contains(new NotExp(x))))
-                        continue;
                 }
 
                 if (!checkedMetaActions.Contains(metaAction))
