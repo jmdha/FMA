@@ -122,8 +122,8 @@ namespace P10
             {
                 ConsoleHelper.WriteLineColor($"Pruning for useful meta action candidates", ConsoleColor.Blue);
                 var checker = UsefulnessCheckerBuilder.GetUsefulnessChecker(opts.UsefulnessStrategy, opts.TempPath);
-                candidates = checker.GetUsefulCandidates(domain, problems, candidates);
                 var preCount = candidates.Count;
+                candidates = checker.GetUsefulCandidates(domain, problems, candidates);
                 ConsoleHelper.WriteLineColor($"\tRemoved {preCount - candidates.Count} candidates", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"\tTotal candidates: {candidates.Count}", ConsoleColor.Magenta);
                 csv.Append($"pre_not_useful", $"{preCount - candidates.Count}");
