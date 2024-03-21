@@ -35,7 +35,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
         {
             Heuristic = new hSum<PreconditionState>(new List<IHeuristic<PreconditionState>>() {
                 new hMustBeApplicable(),
-                new hMustBeValid(),
+                //new hMustBeValid(),
                 new hWeighted<PreconditionState>(new hMostValid(), 100000),
                 new hWeighted<PreconditionState>(new hFewestParameters(), 10000),
                 new hWeighted<PreconditionState>(new hFewestPre(), 1000),
