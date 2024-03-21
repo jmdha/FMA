@@ -250,16 +250,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                         var cpy = effAnd.Copy();
                         cpy.RemoveContext();
                         cpy.RemoveTypes();
-                        bool stop = false;
-                        foreach (var child in cpy.Children)
-                        {
-                            if (preconditions.Any(x => child.Equals(x)))
-                            {
-                                stop = true;
-                                break;
-                            }
-                        }
-                        if (stop)
+                        if (cpy.Children.All(x => preconditions.Any(y => y.Equals(x))))
                             continue;
                     }
 
