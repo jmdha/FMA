@@ -1,4 +1,6 @@
-﻿using PDDLSharp.Models.PDDL;
+﻿using PDDLSharp.CodeGenerators.PDDL;
+using PDDLSharp.ErrorListeners;
+using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 
 namespace P10.RefinementStrategies.GroundedPredicateAdditions
@@ -45,6 +47,16 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             foreach (var item in Precondition)
                 hash ^= item.GetHashCode();
             return hash;
+        }
+
+        public override string ToString()
+        {
+            var listener = new ErrorListener();
+            var codeGenerator = new PDDLCodeGenerator(listener);
+            var preconStr = "";
+            foreach (var precon in Precondition)
+                preconStr += $"{codeGenerator.Generate(precon)}, ";
+            return preconStr;
         }
     }
 }

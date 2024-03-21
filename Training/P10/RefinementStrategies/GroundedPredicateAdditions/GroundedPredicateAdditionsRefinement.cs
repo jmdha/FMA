@@ -167,22 +167,10 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
 #if DEBUG
             ConsoleHelper.WriteLineColor($"\t\tBest Validity: {Math.Round((1 - ((double)state.InvalidStates / (double)state.TotalInvalidStates)) * 100, 2)}%", ConsoleColor.Magenta);
             ConsoleHelper.WriteLineColor($"\t\tBest Applicability: {Math.Round(((double)state.Applicability / (double)(state.TotalValidStates + state.TotalInvalidStates)) * 100, 2)}%", ConsoleColor.Magenta);
-            ConsoleHelper.WriteLineColor($"\t\tPrecondition: {GetPreconText(state.Precondition)}", ConsoleColor.Magenta);
+            ConsoleHelper.WriteLineColor($"\t\tPrecondition: {state}", ConsoleColor.Magenta);
 #endif
             return state.MetaAction;
         }
-
-#if DEBUG
-        private string GetPreconText(List<IExp> precons)
-        {
-            var listener = new ErrorListener();
-            var codeGenerator = new PDDLCodeGenerator(listener);
-            var preconStr = "";
-            foreach (var precon in precons)
-                preconStr += $"{codeGenerator.Generate(precon)}, ";
-            return preconStr;
-        }
-#endif
 
         private bool UpdateOpenList(ActionDecl currentMetaAction, string workingDir)
         {
@@ -262,9 +250,9 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                         if (!and.Children.Contains(precon))
                             and.Children.Add(precon);
 
-                    //// Prune some nonsensical preconditions.
-                    //if (andNode.Children.Any(x => andNode.Children.Contains(new NotExp(x))))
-                    //    continue;
+                    // Prune some nonsensical preconditions.
+                    if (and.Children.Any(x => and.Children.Contains(new NotExp(x))))
+                        continue;
                 }
 
                 if (!checkedMetaActions.Contains(metaAction))

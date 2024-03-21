@@ -13,7 +13,7 @@ namespace P10.Verifiers
         public enum StateExploreResult { Success, InvariantError, UnknownError, MetaActionValid }
         public static string StateInfoFile = "out";
         public static int MaxPreconditionCombinations = 3;
-        public static int MaxParameters = 1;
+        public static int MaxParameters = 0;
 
         public StateExploreVerifier()
         {
