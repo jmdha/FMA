@@ -8,8 +8,8 @@ namespace P10
         {
             var returnList = new List<ActionDecl>();
             var nonDuplicateIndexes = new List<int>();
-            var annonymizedCandidates = GetAnnonymised(candidates);
-            var annonymizedActions = GetAnnonymised(domain.Actions);
+            var annonymizedCandidates = candidates.Annonymise();
+            var annonymizedActions = domain.Actions.Annonymise();
 
             for (int i = 0; i < candidates.Count; i++)
             {
@@ -29,9 +29,9 @@ namespace P10
         {
             var returnList = new List<ActionDecl>();
             var nonDuplicateIndexes = new List<int>();
-            var annonymizedCandidates = GetAnnonymised(candidates);
-            var annonymizedActions = GetAnnonymised(domain.Actions);
-            annonymizedActions.AddRange(GetAnnonymised(others));
+            var annonymizedCandidates = candidates.Annonymise();
+            var annonymizedActions = domain.Actions.Annonymise();
+            annonymizedActions.AddRange(others.Annonymise());
 
             for (int i = 0; i < candidates.Count; i++)
             {
@@ -47,17 +47,17 @@ namespace P10
             return returnList;
         }
 
-        private static List<ActionDecl> GetAnnonymised(List<ActionDecl> actions)
+        private static List<ActionDecl> Annonymise(this List<ActionDecl> actions)
         {
             var returnList = new List<ActionDecl>();
 
             foreach (var action in actions)
-                returnList.Add(Annonymise(action));
+                returnList.Add(action.Annonymise());
 
             return returnList;
         }
 
-        private static ActionDecl Annonymise(ActionDecl action)
+        private static ActionDecl Annonymise(this ActionDecl action)
         {
             int argIndex = 0;
             var copy = action.Copy();
