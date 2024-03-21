@@ -8,6 +8,7 @@ using PDDLSharp.Contextualisers.PDDL;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
+using PDDLSharp.Models.PDDL.Overloads;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers.PDDL;
 using Tools;
@@ -110,7 +111,7 @@ namespace P10
             {
                 ConsoleHelper.WriteLineColor($"Pruning for duplicate meta action candidates", ConsoleColor.Blue);
                 var preCount = candidates.Count;
-                candidates = candidates.Unique(baseDecl.Domain);
+                candidates = candidates.Distinct(baseDecl.Domain.Actions);
                 ConsoleHelper.WriteLineColor($"\tRemoved {preCount - candidates.Count} candidates", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"\tTotal candidates: {candidates.Count}", ConsoleColor.Magenta);
                 csv.Append($"pre_duplicates_removed", $"{preCount - candidates.Count}");
@@ -170,7 +171,7 @@ namespace P10
             {
                 ConsoleHelper.WriteLineColor($"Pruning for duplicate meta action refined candidates", ConsoleColor.Blue);
                 var preCount = refinedCandidates.Count;
-                refinedCandidates = refinedCandidates.Unique(baseDecl.Domain);
+                refinedCandidates = refinedCandidates.Distinct(baseDecl.Domain.Actions);
                 ConsoleHelper.WriteLineColor($"\tRemoved {preCount - refinedCandidates.Count} refined candidates", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"\tTotal refined candidates: {refinedCandidates.Count}", ConsoleColor.Magenta);
                 csv.Append($"post_duplicates_removed", $"{preCount - refinedCandidates.Count}");

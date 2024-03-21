@@ -1,6 +1,7 @@
 ﻿using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
+using PDDLSharp.Models.PDDL.Overloads;
 
 namespace MetaActionCandidateGenerator.CandidateGenerators
 {
@@ -17,7 +18,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
             var candidates = new List<ActionDecl>();
             foreach (var action in pddlDecl.Domain.Actions)
             {
-                EnsureAnd(action);
+                action.EnsureAnd();
                 if (action.Effects is AndExp andEff)
                 {
                     int count = 0;

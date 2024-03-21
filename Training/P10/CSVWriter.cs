@@ -34,7 +34,7 @@
             {
                 if (_csvData[_csvData.Keys.ElementAt(0)].Count <= row)
                 {
-                    foreach(var key in _csvData.Keys)
+                    foreach (var key in _csvData.Keys)
                     {
                         while (_csvData[key].Count <= row)
                             _csvData[key].Add("");

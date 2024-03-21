@@ -126,7 +126,8 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             {
                 ConsoleHelper.WriteLineColor($"\t\t\tInvariant Error!", ConsoleColor.Red);
                 return false;
-            } else if (result == StateExploreVerifier.StateExploreResult.UnknownError)
+            }
+            else if (result == StateExploreVerifier.StateExploreResult.UnknownError)
             {
                 ConsoleHelper.WriteLineColor($"\t\t\tUnknown error!", ConsoleColor.Red);
                 return false;

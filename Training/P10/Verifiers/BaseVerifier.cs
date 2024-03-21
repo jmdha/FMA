@@ -61,12 +61,14 @@ namespace P10.Verifiers
                     WorkingDirectory = outputPath
                 }
             };
-            _currentProcess.OutputDataReceived += (s, e) => { 
+            _currentProcess.OutputDataReceived += (s, e) =>
+            {
                 _log += e.Data;
                 if (ShowSTDOut)
                     Console.WriteLine(e.Data);
             };
-            _currentProcess.ErrorDataReceived += (s, e) => {
+            _currentProcess.ErrorDataReceived += (s, e) =>
+            {
                 _log += e.Data;
                 if (ShowSTDOut)
                     Console.WriteLine($"ERROR: {e.Data}");

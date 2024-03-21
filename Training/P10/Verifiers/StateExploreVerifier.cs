@@ -78,7 +78,7 @@ namespace P10.Verifiers
             }
 
             var typeNamesString = "type_names=[";
-            foreach(var key in typeDict.Keys)
+            foreach (var key in typeDict.Keys)
             {
                 typeNamesString += $"{key},";
             }
@@ -86,7 +86,7 @@ namespace P10.Verifiers
             typeNamesString += "], ";
 
             var typeObjectsString = "type_objects=[";
-            foreach(var key in typeDict.Keys)
+            foreach (var key in typeDict.Keys)
             {
                 var forThisType = "[";
                 foreach (var item in typeDict[key])

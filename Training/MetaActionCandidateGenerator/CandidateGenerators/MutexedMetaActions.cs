@@ -1,6 +1,7 @@
 ﻿using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
+using PDDLSharp.Models.PDDL.Overloads;
 
 namespace MetaActionCandidateGenerator.CandidateGenerators
 {
@@ -26,13 +27,13 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                     {
                         if (action.Effects.FindNames(predicate.Name).Count == 0)
                             continue;
-                        if (CanPredicateBeSetToTrue(pddlDecl, predicate))
+                        if (!predicate.CanOnlyBeSetToFalse(pddlDecl.Domain))
                             candidates.Add(GenerateMetaAction(
                                 $"meta_{predicate.Name}_{counter++}",
                                 new List<IExp>() { new NotExp(predicate) },
                                 new List<IExp>() { predicate },
                                 action));
-                        if (CanPredicateBeSetToFalse(pddlDecl, predicate))
+                        if (!predicate.CanOnlyBeSetToTrue(pddlDecl.Domain))
                             candidates.Add(GenerateMetaAction(
                                 $"meta_{predicate.Name}_{counter++}",
                                 new List<IExp>() { predicate },

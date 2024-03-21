@@ -44,14 +44,6 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
             }
         }
 
-        internal void EnsureAnd(ActionDecl action)
-        {
-            if (action.Preconditions is not AndExp)
-                action.Preconditions = new AndExp(action, new List<IExp>() { action.Preconditions });
-            if (action.Effects is not AndExp)
-                action.Effects = new AndExp(action, new List<IExp>() { action.Effects });
-        }
-
         internal ActionDecl GenerateMetaAction(string actionName, List<IExp> preconditions, List<IExp> effects, ActionDecl staticsReference)
         {
             var newAction = new ActionDecl(actionName);
@@ -129,36 +121,6 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
             }
 
             return requiredStatics;
-        }
-
-        internal bool CanPredicateBeSetToFalse(PDDLDecl pddlDecl, PredicateExp pred)
-        {
-            var result = false;
-
-            foreach (var action in pddlDecl.Domain.Actions)
-            {
-                var effects = action.FindNames(pred.Name);
-                result = effects.Any(x => x.Parent is NotExp);
-                if (result)
-                    return true;
-            }
-
-            return result;
-        }
-
-        internal bool CanPredicateBeSetToTrue(PDDLDecl pddlDecl, PredicateExp pred)
-        {
-            var result = false;
-
-            foreach (var action in pddlDecl.Domain.Actions)
-            {
-                var effects = action.FindNames(pred.Name);
-                result = effects.Any(x => x.Parent is not NotExp);
-                if (result)
-                    return true;
-            }
-
-            return result;
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
-using System;
+using PDDLSharp.Models.PDDL.Overloads;
 
 namespace MetaActionCandidateGenerator.CandidateGenerators
 {
@@ -25,9 +25,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                     continue;
                 if (pred.Arguments.Count == 0)
                     continue;
-                if (!CanPredicateBeSetToFalse(pddlDecl, pred))
-                    continue;
-                if (!CanPredicateBeSetToTrue(pddlDecl, pred))
+                if (pred.CanOnlyBeSetToTrue(pddlDecl.Domain) || pred.CanOnlyBeSetToFalse(pddlDecl.Domain))
                     continue;
 
                 var permutations = GeneratePermutations(pred.Arguments.Count);

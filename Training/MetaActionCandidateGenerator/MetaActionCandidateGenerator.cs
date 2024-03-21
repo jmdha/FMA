@@ -2,11 +2,8 @@
 using MetaActionCandidateGenerator.CandidateGenerators;
 using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.ErrorListeners;
-using PDDLSharp.Models.PDDL;
-using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Parsers.PDDL;
 using Tools;
-using static MetaActionCandidateGenerator.Options;
 
 namespace MetaActionCandidateGenerator
 {
