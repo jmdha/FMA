@@ -4,7 +4,7 @@ using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Tools;
-using PDDLSharp.Translators.StaticPredicateDetectors;
+using PDDLSharp.Translators.Tools;
 
 namespace MetaActionCandidateGenerator.CandidateGenerators
 {
