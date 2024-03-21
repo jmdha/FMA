@@ -9,7 +9,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
     /// </summary>
     public class MutexedMetaActions : BaseCandidateGenerator
     {
-        public override List<ActionDecl> GenerateCandidates(PDDLDecl pddlDecl)
+        internal override List<ActionDecl> GenerateCandidatesInner(PDDLDecl pddlDecl)
         {
             if (pddlDecl.Domain.Predicates == null)
                 throw new Exception("No predicates defined in domain!");

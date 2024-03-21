@@ -23,7 +23,16 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                     SimpleStatics.Add(staticItem);
         }
 
-        public abstract List<ActionDecl> GenerateCandidates(PDDLDecl pddl);
+        public List<ActionDecl> GenerateCandidates(PDDLDecl pddl)
+        {
+            var candidates = GenerateCandidatesInner(pddl);
+            foreach (var candidate in candidates)
+                if (!candidate.Name.Contains('$'))
+                    candidate.Name = $"${candidate.Name}";
+            return candidates;
+        }
+
+        internal abstract List<ActionDecl> GenerateCandidatesInner(PDDLDecl pddl);
 
         internal void ContextualizeIfNotAlready(PDDLDecl pddlDecl)
         {

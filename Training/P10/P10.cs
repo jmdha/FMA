@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using MetaActionCandidateGenerator.CandidateGenerators;
 using P10.RefinementStrategies;
 using P10.UsefulnessCheckers;
 using P10.Verifiers;
@@ -67,7 +68,7 @@ namespace P10
             BaseVerifier.ShowSTDOut = opts.StackelbergDebug;
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
-            CSVWriter csv = new CSVWriter("general.csv", opts.OutputPath);
+            var csv = new CSVWriter("general.csv", opts.OutputPath);
 
             ConsoleHelper.WriteLineColor($"Parsing PDDL Files", ConsoleColor.Blue);
             var listener = new ErrorListener();
@@ -87,12 +88,17 @@ namespace P10
             var candidates = new List<ActionDecl>();
             var codeGenerator = new PDDLCodeGenerator(listener);
             codeGenerator.Readable = true;
+            var candidateCSV = new CSVWriter("candidates.csv", opts.OutputPath);
+            int generatorIndex = 0;
             foreach (var generator in opts.GeneratorStrategies)
             {
                 ConsoleHelper.WriteLineColor($"\tGenerating with: {Enum.GetName(typeof(GeneratorStrategies), generator)}", ConsoleColor.Magenta);
-                var newCandidates = MetaActionCandidateGenerator.MetaActionCandidateGenerator.GetMetaActionCandidates(baseDecl, generator);
+                var newCandidates = CandidateGeneratorBuilder.GetGenerator(generator).GenerateCandidates(baseDecl);
                 candidates.AddRange(newCandidates);
-                csv.Append($"{Enum.GetName(typeof(GeneratorStrategies), generator)}_candidates", $"{newCandidates.Count}");
+                candidateCSV.Append("domain", domain.Name!.Name, generatorIndex);
+                candidateCSV.Append("generator", $"{Enum.GetName(typeof(GeneratorStrategies), generator)}", generatorIndex);
+                candidateCSV.Append("candidates", $"{newCandidates.Count}", generatorIndex);
+                generatorIndex++;
             }
             foreach (var candidiate in candidates)
                 codeGenerator.Generate(candidiate, Path.Combine(_candidateOutput, $"{candidiate.Name}.pddl"));
@@ -103,9 +109,9 @@ namespace P10
             if (opts.RemoveDuplicates)
             {
                 ConsoleHelper.WriteLineColor($"Pruning for duplicate meta action candidates", ConsoleColor.Blue);
-                var duplicateRemover = new DuplicateRemover();
                 var preCount = candidates.Count;
-                candidates = duplicateRemover.RemoveDuplicates(candidates, baseDecl.Domain);
+                candidates = candidates.Unique(baseDecl.Domain);
+                ConsoleHelper.WriteLineColor($"\tRemoved {preCount - candidates.Count} candidates", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"\tTotal candidates: {candidates.Count}", ConsoleColor.Magenta);
                 csv.Append($"pre_duplicates_removed", $"{preCount - candidates.Count}");
                 ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
@@ -117,6 +123,7 @@ namespace P10
                 var checker = UsefulnessCheckerBuilder.GetUsefulnessChecker(opts.UsefulnessStrategy, opts.TempPath);
                 candidates = checker.GetUsefulCandidates(domain, problems, candidates);
                 var preCount = candidates.Count;
+                ConsoleHelper.WriteLineColor($"\tRemoved {preCount - candidates.Count} candidates", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"\tTotal candidates: {candidates.Count}", ConsoleColor.Magenta);
                 csv.Append($"pre_not_useful", $"{preCount - candidates.Count}");
                 ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
@@ -162,9 +169,9 @@ namespace P10
             if (opts.RemoveDuplicates)
             {
                 ConsoleHelper.WriteLineColor($"Pruning for duplicate meta action refined candidates", ConsoleColor.Blue);
-                var duplicateRemover = new DuplicateRemover();
                 var preCount = refinedCandidates.Count;
-                refinedCandidates = duplicateRemover.RemoveDuplicates(refinedCandidates, baseDecl.Domain);
+                refinedCandidates = refinedCandidates.Unique(baseDecl.Domain);
+                ConsoleHelper.WriteLineColor($"\tRemoved {preCount - refinedCandidates.Count} refined candidates", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"\tTotal refined candidates: {refinedCandidates.Count}", ConsoleColor.Magenta);
                 csv.Append($"post_duplicates_removed", $"{preCount - refinedCandidates.Count}");
                 ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
@@ -175,6 +182,7 @@ namespace P10
                 var checker = UsefulnessCheckerBuilder.GetUsefulnessChecker(opts.UsefulnessStrategy, opts.TempPath);
                 var preCount = refinedCandidates.Count;
                 refinedCandidates = checker.GetUsefulCandidates(domain, problems, refinedCandidates);
+                ConsoleHelper.WriteLineColor($"\tRemoved {preCount - refinedCandidates.Count} refined candidates", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"\tTotal meta actions: {refinedCandidates.Count}", ConsoleColor.Magenta);
                 csv.Append($"post_not_useful", $"{preCount - refinedCandidates.Count}");
                 ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);

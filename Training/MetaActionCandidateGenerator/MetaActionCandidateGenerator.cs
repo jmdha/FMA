@@ -40,7 +40,8 @@ namespace MetaActionCandidateGenerator
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
             ConsoleHelper.WriteLineColor($"Generating Candidates", ConsoleColor.Blue);
-            var candidates = GetMetaActionCandidates(pddlDecl, opts.GeneratorStrategy);
+            var generator = CandidateGeneratorBuilder.GetGenerator(opts.GeneratorStrategy);
+            var candidates = generator.GenerateCandidates(pddlDecl);
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
             ConsoleHelper.WriteLineColor($"Outputting Files", ConsoleColor.Blue);
@@ -49,16 +50,6 @@ namespace MetaActionCandidateGenerator
             foreach (var candidate in candidates)
                 codeGenerator.Generate(candidate, Path.Combine(opts.OutputPath, $"{candidate.Name}.pddl"));
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
-        }
-
-        public static List<ActionDecl> GetMetaActionCandidates(PDDLDecl pddlDecl, GeneratorStrategies strategy)
-        {
-            var generator = CandidateGeneratorBuilder.GetGenerator(strategy);
-            var candidates = generator.GenerateCandidates(pddlDecl);
-            foreach (var candidate in candidates)
-                if (!candidate.Name.Contains('$'))
-                    candidate.Name = $"${candidate.Name}";
-            return candidates;
         }
     }
 }

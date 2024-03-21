@@ -6,7 +6,7 @@
     "WSL": {
       "commandName": "WSL2",
       "distributionName": "",
-      "commandLineArgs": "P10/bin/Debug/net7.0/P10.dll --output output/finished --domain ../Dependencies/downward-benchmarks/miconic/domain.pddl --problems ../Dependencies/downward-benchmarks/miconic/s3-1.pddl ../Dependencies/downward-benchmarks/miconic/s2-0.pddl ../Dependencies/downward-benchmarks/miconic/s3-1.pddl --generation-strategies PredicateMetaActions --refinement-strategy GroundedPredicateAdditions --post-usefulness --remove-duplicates --refinement-time-limit 120 --usefulness-strategy UsedInPlansCombined",
+      "commandLineArgs": "P10/bin/Debug/net7.0/P10.dll --output output --domain ../Dependencies/downward-benchmarks/miconic/domain.pddl --problems ../Dependencies/downward-benchmarks/miconic/s3-1.pddl ../Dependencies/downward-benchmarks/miconic/s2-0.pddl ../Dependencies/downward-benchmarks/miconic/s3-1.pddl --generation-strategies PredicateMetaActions --refinement-strategy GroundedPredicateAdditions --post-usefulness --remove-duplicates --refinement-time-limit 120 --usefulness-strategy UsedInPlansCombined",
       "workingDirectory": "/home/kris/P10/Training"
     }
   }

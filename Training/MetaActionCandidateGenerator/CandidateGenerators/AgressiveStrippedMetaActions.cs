@@ -9,7 +9,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
     /// </summary>
     public class AgressiveStrippedMetaActions : StrippedMetaActions
     {
-        public override List<ActionDecl> GenerateCandidates(PDDLDecl pddlDecl)
+        internal override List<ActionDecl> GenerateCandidatesInner(PDDLDecl pddlDecl)
         {
             Initialize(pddlDecl);
             ContextualizeIfNotAlready(pddlDecl);
