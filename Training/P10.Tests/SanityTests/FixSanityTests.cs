@@ -16,11 +16,10 @@ namespace P10.Tests.SanityTests
     public class FixSanityTests
     {
         [TestMethod]
-        [DataRow("TestData/satellite/domain.pddl", "TestData/satellite/p01.pddl", "switch_on")]
+        [DataRow("TestData/satellite/domain.pddl", "TestData/satellite/p10.pddl", "switch_on", "switch_off")]
         public void Can_RepairMetaActionsToNormalActions(string domain, string problem, params string[] expectedActions)
         {
             // ARRANGE
-            Trace.WriteLine($"Setting up for run with '{domain}' and '{problem}'");
             var stackelbergPath = new FileInfo("../../../../../Dependencies/stackelberg-planner/src/fast-downward.py");
             Assert.IsTrue(stackelbergPath.Exists);
             var errorLiistener = new ErrorListener();
@@ -40,11 +39,9 @@ namespace P10.Tests.SanityTests
             };
 
             // ACT
-            Trace.WriteLine("Running...");
             P10.Run(opts);
 
             // ASSERT
-            Trace.WriteLine("Asserting");
             var enhancedDomainFile = new FileInfo(Path.Combine(outPath, "enhancedDomain.pddl"));
             Assert.IsTrue(enhancedDomainFile.Exists);
             var enhancedDomain = pddlParser.ParseAs<DomainDecl>(enhancedDomainFile);
@@ -60,6 +57,8 @@ namespace P10.Tests.SanityTests
                 bool any = false;
                 foreach (var meta in metaActions)
                 {
+                    if (!meta.Name.Contains(expected))
+                        continue;
                     var metaAnonym = meta.Copy().Annonymise();
                     if (anonym.Equals(metaAnonym))
                     {
@@ -68,7 +67,10 @@ namespace P10.Tests.SanityTests
                     }
                 }
                 if (!any)
-                    Assert.Fail($"Expected a meta action to be equivalent to '{expected}'!");
+                {
+                    Console.WriteLine($"Expected a meta action to be equivalent to '{expected}'!");
+                    Assert.Fail();
+                }
             }
         }
     }
