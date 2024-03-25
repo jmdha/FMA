@@ -253,6 +253,8 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                         var cpy = effAnd.Copy();
                         cpy.RemoveContext();
                         cpy.RemoveTypes();
+                        if (cpy.Children.All(x => preconditions.Any(y => y.Equals(x))))
+                            continue;
                         if (IsSubset(preconditions, cpy.Children))
                             continue;
                     }
