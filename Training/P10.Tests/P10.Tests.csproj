@@ -32,9 +32,4 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="wsl cd /home/kris/P10/Training/P10.Tests/bin; cp -r /mnt/d/kris7/OneDrive/Programming/University/P10/Training/P10.Tests/bin/Debug .; echo Files Moved" />
-	</Target>
-
 </Project>
