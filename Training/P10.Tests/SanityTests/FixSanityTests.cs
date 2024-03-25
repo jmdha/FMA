@@ -1,8 +1,10 @@
 ﻿using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL.Domain;
+using PDDLSharp.Models.PDDL.Overloads;
 using PDDLSharp.Parsers.PDDL;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Resources;
 using System.Text;
@@ -14,10 +16,11 @@ namespace P10.Tests.SanityTests
     public class FixSanityTests
     {
         [TestMethod]
-        [DataRow("TestData/satellite/domain.pddl", "TestData/satellite/p01.pddl")]
-        public void Can_RepairMetaActionsToNormalActions(string domain, string problem)
+        [DataRow("TestData/satellite/domain.pddl", "TestData/satellite/p01.pddl", "switch_on")]
+        public void Can_RepairMetaActionsToNormalActions(string domain, string problem, params string[] expectedActions)
         {
             // ARRANGE
+            Trace.WriteLine($"Setting up for run with '{domain}' and '{problem}'");
             var stackelbergPath = new FileInfo("../../../../../Dependencies/stackelberg-planner/src/fast-downward.py");
             Assert.IsTrue(stackelbergPath.Exists);
             var errorLiistener = new ErrorListener();
@@ -37,17 +40,35 @@ namespace P10.Tests.SanityTests
             };
 
             // ACT
+            Trace.WriteLine("Running...");
             P10.Run(opts);
 
             // ASSERT
+            Trace.WriteLine("Asserting");
             var enhancedDomainFile = new FileInfo(Path.Combine(outPath, "enhancedDomain.pddl"));
             Assert.IsTrue(enhancedDomainFile.Exists);
             var enhancedDomain = pddlParser.ParseAs<DomainDecl>(enhancedDomainFile);
             Assert.IsNotNull(enhancedDomain);
-            
-            foreach(var targetAction in targetActions)
-            {
+            var metaActions = enhancedDomain.Actions.Where(x => x.Name.Contains('$'));
 
+            foreach (var expected in expectedActions)
+            {
+                var action = targetActions.First(x => x.Name == expected);
+                Assert.IsNotNull(action);
+
+                var anonym = action.Copy().Annonymise();
+                bool any = false;
+                foreach (var meta in metaActions)
+                {
+                    var metaAnonym = meta.Copy().Annonymise();
+                    if (anonym.Equals(metaAnonym))
+                    {
+                        any = true;
+                        break;
+                    }
+                }
+                if (!any)
+                    Assert.Fail($"Expected a meta action to be equivalent to '{expected}'!");
             }
         }
     }
