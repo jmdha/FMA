@@ -16,7 +16,8 @@ namespace P10.Tests.SanityTests
     public class FixSanityTests
     {
         [TestMethod]
-        [DataRow("TestData/satellite/domain.pddl", "TestData/satellite/p10.pddl", "switch_on", "switch_off")]
+        [DataRow("TestData/satellite/domain.pddl", "TestData/satellite/p10.pddl", "switch_off")]
+        [DataRow("TestData/ferry/domain.pddl", "TestData/ferry/p10.pddl", "board", "debark")]
         public void Can_RepairMetaActionsToNormalActions(string domain, string problem, params string[] expectedActions)
         {
             // ARRANGE
