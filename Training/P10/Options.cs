@@ -1,4 +1,6 @@
 ﻿using CommandLine;
+using System;
+using System.Net.Sockets;
 using static MetaActionCandidateGenerator.Options;
 
 namespace P10
@@ -20,7 +22,6 @@ namespace P10
             UsedInPlansCombined = 3,
             ReducesMetaSearchTime = 4
         }
-
         [Option("output", Required = false, HelpText = "Where to output the meta actions")]
         public string OutputPath { get; set; } = "output";
         [Option("temp", Required = false, HelpText = "Where to put temporary files")]
@@ -35,9 +36,14 @@ namespace P10
         public bool RemoveDuplicates { get; set; } = false;
         [Option("problems", Required = true, HelpText = "Path to the problem file")]
         public IEnumerable<string> ProblemsPath { get; set; } = new List<string>();
-        [Option("generation-strategies", Required = true, HelpText = "The generator strategies")]
+        [Option("generation-strategies", Required = true, HelpText = "The generator strategies. Valid values: " +
+            $"{nameof(MetaActionCandidateGenerator.Options.GeneratorStrategies.PredicateMetaActions)}," +
+            $"{nameof(MetaActionCandidateGenerator.Options.GeneratorStrategies.StrippedMetaActions)}," +
+            $"{nameof(MetaActionCandidateGenerator.Options.GeneratorStrategies.AgressiveStrippedMetaActions)}," +
+            $"{nameof(MetaActionCandidateGenerator.Options.GeneratorStrategies.MutexedMetaActions)}," +
+            $"{nameof(MetaActionCandidateGenerator.Options.GeneratorStrategies.InvariantMetaActions)}")]
         public IEnumerable<GeneratorStrategies> GeneratorStrategies { get; set; } = new List<GeneratorStrategies>();
-        [Option("refinement-strategy", Required = true, HelpText = "The refinement strategy")]
+        [Option("refinement-strategy", Required = true, HelpText = $"The refinement strategy")]
         public RefinementStrategies RefinementStrategy { get; set; }
         [Option("usefulness-strategy", Required = false, HelpText = "The usefulness strategy")]
         public UsefulnessStrategies UsefulnessStrategy { get; set; } = UsefulnessStrategies.None;
