@@ -6,7 +6,6 @@ namespace P10.RefinementStrategies
     public interface IRefinementStrategy
     {
         public int TimeLimitS { get; }
-        public int MetaActionIndex { get; }
         public string TempDir { get; }
         public string OutputDir { get; }
         public ActionDecl MetaAction { get; }

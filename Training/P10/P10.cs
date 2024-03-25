@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using CSVToolsSharp;
 using MetaActionCandidateGenerator.CandidateGenerators;
 using P10.RefinementStrategies;
 using P10.UsefulnessCheckers;
@@ -69,7 +70,7 @@ namespace P10
             BaseVerifier.ShowSTDOut = opts.StackelbergDebug;
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
-            var csv = new CSVWriter("general.csv", opts.OutputPath);
+            var csv = new CSVManager(new FileInfo(Path.Combine(opts.OutputPath, "general.csv")));
 
             ConsoleHelper.WriteLineColor($"Parsing PDDL Files", ConsoleColor.Blue);
             var listener = new ErrorListener();
@@ -81,30 +82,29 @@ namespace P10
                 problems.Add(parser.ParseAs<ProblemDecl>(new FileInfo(problem)));
             var baseDecl = new PDDLDecl(domain, problems[0]);
             contexturalizer.Contexturalise(baseDecl);
-            csv.Append("domain", domain.Name!.Name);
-            csv.Append("problems", $"{problems.Count}");
+            csv.AppendToFile("domain", domain.Name!.Name);
+            csv.AppendToFile("problems", $"{problems.Count}");
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
             ConsoleHelper.WriteLineColor($"Generating Initial Candidates", ConsoleColor.Blue);
             var candidates = new List<ActionDecl>();
             var codeGenerator = new PDDLCodeGenerator(listener);
             codeGenerator.Readable = true;
-            var candidateCSV = new CSVWriter("candidates.csv", opts.OutputPath);
-            int generatorIndex = 0;
+            var candidateCSV = new CSVManager(new FileInfo(Path.Combine(opts.OutputPath, "candidates.csv")));
             foreach (var generator in opts.GeneratorStrategies)
             {
                 ConsoleHelper.WriteLineColor($"\tGenerating with: {Enum.GetName(typeof(GeneratorStrategies), generator)}", ConsoleColor.Magenta);
                 var newCandidates = CandidateGeneratorBuilder.GetGenerator(generator).GenerateCandidates(baseDecl);
                 candidates.AddRange(newCandidates);
-                candidateCSV.Append("domain", domain.Name!.Name, generatorIndex);
-                candidateCSV.Append("generator", $"{Enum.GetName(typeof(GeneratorStrategies), generator)}", generatorIndex);
-                candidateCSV.Append("candidates", $"{newCandidates.Count}", generatorIndex);
-                generatorIndex++;
+                candidateCSV.AppendToFile("domain", domain.Name!.Name);
+                candidateCSV.AppendToFile("generator", $"{Enum.GetName(typeof(GeneratorStrategies), generator)}");
+                candidateCSV.AppendToFile("candidates", $"{newCandidates.Count}");
+                candidateCSV.Context.Row++;
             }
             foreach (var candidiate in candidates)
                 codeGenerator.Generate(candidiate, Path.Combine(_candidateOutput, $"{candidiate.Name}.pddl"));
             ConsoleHelper.WriteLineColor($"\tTotal candidates: {candidates.Count}", ConsoleColor.Magenta);
-            csv.Append($"total_candidates", $"{candidates.Count}");
+            csv.AppendToFile($"total_candidates", $"{candidates.Count}");
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
             if (opts.RemoveDuplicates)
@@ -114,7 +114,7 @@ namespace P10
                 candidates = candidates.Distinct(baseDecl.Domain.Actions);
                 ConsoleHelper.WriteLineColor($"\tRemoved {preCount - candidates.Count} candidates", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"\tTotal candidates: {candidates.Count}", ConsoleColor.Magenta);
-                csv.Append($"pre_duplicates_removed", $"{preCount - candidates.Count}");
+                csv.AppendToFile($"pre_duplicates_removed", $"{preCount - candidates.Count}");
                 ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
             }
 
@@ -126,7 +126,7 @@ namespace P10
                 candidates = checker.GetUsefulCandidates(domain, problems, candidates);
                 ConsoleHelper.WriteLineColor($"\tRemoved {preCount - candidates.Count} candidates", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"\tTotal candidates: {candidates.Count}", ConsoleColor.Magenta);
-                csv.Append($"pre_not_useful", $"{preCount - candidates.Count}");
+                csv.AppendToFile($"pre_not_useful", $"{preCount - candidates.Count}");
                 ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
             }
 
@@ -151,7 +151,7 @@ namespace P10
                     ConsoleHelper.WriteLineColor($"\tCandidate could not be refined!", ConsoleColor.Red);
                 ConsoleHelper.WriteLineColor($"", ConsoleColor.Magenta);
             }
-            csv.Append($"total_refined", $"{refinedCandidates.Count}");
+            csv.AppendToFile($"total_refined", $"{refinedCandidates.Count}");
             ConsoleHelper.WriteLineColor($"\tTotal refined candidates: {refinedCandidates.Count}", ConsoleColor.Magenta);
             // Make sure names are unique
             while (refinedCandidates.DistinctBy(x => x.Name).Count() != refinedCandidates.Count)
@@ -174,7 +174,7 @@ namespace P10
                 refinedCandidates = refinedCandidates.Distinct(baseDecl.Domain.Actions);
                 ConsoleHelper.WriteLineColor($"\tRemoved {preCount - refinedCandidates.Count} refined candidates", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"\tTotal refined candidates: {refinedCandidates.Count}", ConsoleColor.Magenta);
-                csv.Append($"post_duplicates_removed", $"{preCount - refinedCandidates.Count}");
+                csv.AppendToFile($"post_duplicates_removed", $"{preCount - refinedCandidates.Count}");
                 ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
             }
             if (opts.PostCheckUsefullness)
@@ -185,7 +185,7 @@ namespace P10
                 refinedCandidates = checker.GetUsefulCandidates(domain, problems, refinedCandidates);
                 ConsoleHelper.WriteLineColor($"\tRemoved {preCount - refinedCandidates.Count} refined candidates", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"\tTotal meta actions: {refinedCandidates.Count}", ConsoleColor.Magenta);
-                csv.Append($"post_not_useful", $"{preCount - refinedCandidates.Count}");
+                csv.AppendToFile($"post_not_useful", $"{preCount - refinedCandidates.Count}");
                 ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
             }
 

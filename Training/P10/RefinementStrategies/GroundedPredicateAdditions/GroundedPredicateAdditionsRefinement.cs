@@ -1,7 +1,7 @@
-﻿using P10.Models;
+﻿using CSVToolsSharp;
+using P10.Models;
 using P10.RefinementStrategies.GroundedPredicateAdditions.Heuristics;
 using P10.Verifiers;
-using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
@@ -18,7 +18,6 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
     public class GroundedPredicateAdditionsRefinement : IRefinementStrategy
     {
         public int TimeLimitS { get; }
-        public int MetaActionIndex { get; }
         public string TempDir { get; }
         public string OutputDir { get; }
         public IHeuristic<PreconditionState> Heuristic { get; set; }
@@ -28,7 +27,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
         private readonly PriorityQueue<PreconditionState, int> _openList = new PriorityQueue<PreconditionState, int>();
         private int _initialPossibilities = 0;
         private readonly Stopwatch _watch = new Stopwatch();
-        private readonly CSVWriter _csv;
+        private readonly CSVManager _csv;
         private readonly string _tempValidationFolder = "";
 
         public GroundedPredicateAdditionsRefinement(int timeLimitS, ActionDecl metaAction, int metaActionIndex, string tempDir, string outputDir)
@@ -45,21 +44,24 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             TimeLimitS = timeLimitS;
             TempDir = tempDir;
             OutputDir = outputDir;
-            _csv = new CSVWriter("refinement.csv", outputDir);
-            MetaActionIndex = metaActionIndex;
+            var targetFile = new FileInfo(Path.Combine(outputDir, "refinement.csv"));
+            _csv = new CSVManager(targetFile);
+            if (targetFile.Exists)
+                _csv.LoadFromFile(targetFile);
+            _csv.Context.Row = metaActionIndex;
             _tempValidationFolder = Path.Combine(tempDir, "validation");
             PathHelper.RecratePath(_tempValidationFolder);
         }
 
         public List<ActionDecl> Refine(DomainDecl domain, List<ProblemDecl> problems)
         {
-            _csv.Append("domain", domain.Name!.Name, MetaActionIndex);
-            _csv.Append("meta-action", MetaAction.Name, MetaActionIndex);
+            _csv.AppendToFile("domain", domain.Name!.Name);
+            _csv.AppendToFile("meta-action", MetaAction.Name);
             _watch.Start();
             var returnList = Run(domain, problems);
             _watch.Stop();
-            _csv.Append("total_refinement_time", $"{_watch.ElapsedMilliseconds}", MetaActionIndex);
-            _csv.Append("valid_refinements", $"{returnList.Count}", MetaActionIndex);
+            _csv.AppendToFile("total_refinement_time", $"{_watch.ElapsedMilliseconds}");
+            _csv.AppendToFile("valid_refinements", $"{returnList.Count}");
             return returnList;
         }
 
@@ -70,25 +72,25 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             ConsoleHelper.WriteLineColor($"\t\tValidating...", ConsoleColor.Magenta);
             if (VerificationHelper.IsValid(domain, problems, MetaAction, _tempValidationFolder, TimeLimitS))
             {
-                _csv.Append("is_already_valid", "true", MetaActionIndex);
+                _csv.AppendToFile("is_already_valid", "true");
                 ConsoleHelper.WriteLineColor($"\tOriginal meta action is valid!", ConsoleColor.Green);
                 returnList.Add(MetaAction);
                 return returnList;
             }
             else
-                _csv.Append("is_already_valid", "false", MetaActionIndex);
+                _csv.AppendToFile("is_already_valid", "false");
 
             ConsoleHelper.WriteLineColor($"\t\tInitial state space exploration started...", ConsoleColor.Magenta);
             if (!InitializeStateSearch(domain, problems))
             {
                 ConsoleHelper.WriteLineColor($"\t\tExploration failed", ConsoleColor.Magenta);
-                _csv.Append("state_space_search_failed", "true", MetaActionIndex);
+                _csv.AppendToFile("state_space_search_failed", "true");
                 return new List<ActionDecl>();
             }
             else
             {
                 ConsoleHelper.WriteLineColor($"\t\tExploration finished", ConsoleColor.Magenta);
-                _csv.Append("state_space_search_failed", "false", MetaActionIndex);
+                _csv.AppendToFile("state_space_search_failed", "false");
             }
 
             ConsoleHelper.WriteLineColor($"\tRefining iteration {iteration++}...", ConsoleColor.Magenta);
@@ -115,7 +117,8 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             var searchWatch = new Stopwatch();
             searchWatch.Start();
             bool success = false;
-            foreach (var problem in problems) { 
+            foreach (var problem in problems)
+            {
                 var pddlDecl = new PDDLDecl(domain, problem);
                 var compiled = StackelbergCompiler.StackelbergCompiler.CompileToStackelberg(pddlDecl, MetaAction.Copy());
 
@@ -138,7 +141,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 }
             }
             searchWatch.Stop();
-            _csv.Append($"state_space_search_time", $"{searchWatch.ElapsedMilliseconds}", MetaActionIndex);
+            _csv.AppendToFile($"state_space_search_time", $"{searchWatch.ElapsedMilliseconds}");
 
             if (!success)
             {
@@ -150,11 +153,11 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
             if (!UpdateOpenList(MetaAction, searchWorkingDir))
             {
                 searchWatch.Stop();
-                _csv.Append($"stackelberg_output_parsing", $"{searchWatch.ElapsedMilliseconds}", MetaActionIndex);
+                _csv.AppendToFile($"stackelberg_output_parsing", $"{searchWatch.ElapsedMilliseconds}");
                 return false;
             }
             searchWatch.Stop();
-            _csv.Append($"stackelberg_output_parsing", $"{searchWatch.ElapsedMilliseconds}", MetaActionIndex);
+            _csv.AppendToFile($"stackelberg_output_parsing", $"{searchWatch.ElapsedMilliseconds}");
             return true;
         }
 
@@ -281,7 +284,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 }
             }
 
-            _csv.Append($"stackelberg_refinement_possibilities", $"{toCheck.Count}", MetaActionIndex);
+            _csv.AppendToFile($"stackelberg_refinement_possibilities", $"{toCheck.Count}");
 
             ConsoleHelper.WriteLineColor($"\t\t\tChecks for covered meta actions", ConsoleColor.Magenta);
             ConsoleHelper.WriteLineColor($"\t\t\tTotal to check: {toCheck.Count}", ConsoleColor.Magenta);
@@ -290,7 +293,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                     _openList.Enqueue(state, state.hValue);
             ConsoleHelper.WriteLineColor($"\t\t\tTotal not covered: {_openList.Count}", ConsoleColor.Magenta);
 
-            _csv.Append($"final_refinement_possibilities", $"{_openList.Count}", MetaActionIndex);
+            _csv.AppendToFile($"final_refinement_possibilities", $"{_openList.Count}");
             _initialPossibilities = _openList.Count;
 
             return true;
@@ -316,7 +319,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
 
         private bool IsSubset(List<IExp> set1, List<IExp> set2)
         {
-            foreach(var item in set1)
+            foreach (var item in set1)
                 if (!set2.Contains(item))
                     return false;
             return true;
