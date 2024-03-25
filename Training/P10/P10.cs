@@ -29,7 +29,7 @@ namespace P10
             parserResult.WithParsed(Run);
         }
 
-        private static void Run(Options opts)
+        public static void Run(Options opts)
         {
             ConsoleHelper.WriteLineColor($"Checking files", ConsoleColor.Blue);
             var problemsPath = opts.ProblemsPath.ToList();
@@ -46,7 +46,7 @@ namespace P10
             if (opts.StackelbergPath != "")
             {
                 opts.StackelbergPath = PathHelper.RootPath(opts.StackelbergPath);
-                if (!File.Exists(opts.FastDownwardPath))
+                if (!File.Exists(opts.StackelbergPath))
                     throw new FileNotFoundException($"Stackelberg Planner path not found: {opts.StackelbergPath}");
                 ExternalPaths.StackelbergPath = opts.StackelbergPath;
             }

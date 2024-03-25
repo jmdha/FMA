@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tools", "Training\Tools\Too
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StackelbergCompiler", "Training\StackelbergCompiler\StackelbergCompiler.csproj", "{EE07C338-4B21-4212-A809-CE711A73F806}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P10.Tests", "Training\P10.Tests\P10.Tests.csproj", "{462C7DF5-54B8-4698-88B1-F608B1988F4F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{EE07C338-4B21-4212-A809-CE711A73F806}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE07C338-4B21-4212-A809-CE711A73F806}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE07C338-4B21-4212-A809-CE711A73F806}.Release|Any CPU.Build.0 = Release|Any CPU
+		{462C7DF5-54B8-4698-88B1-F608B1988F4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{462C7DF5-54B8-4698-88B1-F608B1988F4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{462C7DF5-54B8-4698-88B1-F608B1988F4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{462C7DF5-54B8-4698-88B1-F608B1988F4F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -56,6 +62,7 @@ Global
 		{33B2D7A8-E316-43D5-AE78-7CD8A23D2707} = {695C7306-A45B-4F6B-AA5D-C38AAF4A7BF2}
 		{E88819E5-DCCC-4558-AAEA-56F2211C7C42} = {695C7306-A45B-4F6B-AA5D-C38AAF4A7BF2}
 		{EE07C338-4B21-4212-A809-CE711A73F806} = {695C7306-A45B-4F6B-AA5D-C38AAF4A7BF2}
+		{462C7DF5-54B8-4698-88B1-F608B1988F4F} = {695C7306-A45B-4F6B-AA5D-C38AAF4A7BF2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F4F57ED2-152E-4BA0-80FE-40B53A4E29A5}
