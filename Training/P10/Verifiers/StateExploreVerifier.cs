@@ -34,13 +34,16 @@ namespace P10.Verifiers
             var statics = SimpleStaticPredicateDetector.FindStaticPredicates(from);
             foreach (var staticPred in statics)
                 staticNamesString += $"{staticPred.Name},";
-            staticNamesString = staticNamesString.Remove(staticNamesString.Length - 1);
+            if (statics.Count > 0)
+                staticNamesString = staticNamesString.Remove(staticNamesString.Length - 1);
             staticNamesString += "], ";
 
             var staticFactsString = "static_facts=[";
+            bool any = false;
             foreach (var staticPred in statics)
             {
                 var forThisStatic = "[";
+                bool anyInner = false;
                 foreach (var init in from.Problem.Init.Predicates)
                 {
                     if (init is PredicateExp pred && pred.Name == staticPred.Name)
@@ -51,14 +54,18 @@ namespace P10.Verifiers
                         items = items.Remove(items.Length - 1);
                         items += "],";
                         forThisStatic += items;
+                        anyInner = true;
+                        any = true;
                     }
                 }
-                forThisStatic = forThisStatic.Remove(forThisStatic.Length - 1);
+                if (anyInner)
+                    forThisStatic = forThisStatic.Remove(forThisStatic.Length - 1);
                 forThisStatic += "],";
 
                 staticFactsString += forThisStatic;
             }
-            staticFactsString = staticFactsString.Remove(staticFactsString.Length - 1);
+            if (any)
+                staticFactsString = staticFactsString.Remove(staticFactsString.Length - 1);
             staticFactsString += "], ";
 
             var typeDict = new Dictionary<string, HashSet<string>>();
@@ -82,7 +89,8 @@ namespace P10.Verifiers
             {
                 typeNamesString += $"{key},";
             }
-            typeNamesString = typeNamesString.Remove(typeNamesString.Length - 1);
+            if (typeDict.Keys.Count > 0)
+                typeNamesString = typeNamesString.Remove(typeNamesString.Length - 1);
             typeNamesString += "], ";
 
             var typeObjectsString = "type_objects=[";
@@ -95,7 +103,8 @@ namespace P10.Verifiers
                 forThisType += "],";
                 typeObjectsString += forThisType;
             }
-            typeObjectsString = typeObjectsString.Remove(typeObjectsString.Length - 1);
+            if (typeDict.Keys.Count > 0)
+                typeObjectsString = typeObjectsString.Remove(typeObjectsString.Length - 1);
             typeObjectsString += "]";
 
             SearchString = $"{start}{staticNamesString}{staticFactsString}{typeNamesString}{typeObjectsString})\"";
