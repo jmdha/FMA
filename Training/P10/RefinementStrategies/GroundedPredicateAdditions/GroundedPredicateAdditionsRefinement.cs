@@ -250,7 +250,7 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                         var cpy = effAnd.Copy();
                         cpy.RemoveContext();
                         cpy.RemoveTypes();
-                        if (cpy.Children.All(x => preconditions.Any(y => y.Equals(x))))
+                        if (IsSubset(preconditions, cpy.Children))
                             continue;
                     }
 
@@ -312,6 +312,14 @@ namespace P10.RefinementStrategies.GroundedPredicateAdditions
                 }
             }
             return false;
+        }
+
+        private bool IsSubset(List<IExp> set1, List<IExp> set2)
+        {
+            foreach(var item in set1)
+                if (!set2.Contains(item))
+                    return false;
+            return true;
         }
     }
 }
