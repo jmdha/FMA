@@ -3,7 +3,7 @@ using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 
-namespace P10.RefinementStrategies.GroundedPredicateAdditions
+namespace P10.PreconditionAdditionRefinements
 {
     public class PreconditionState
     {

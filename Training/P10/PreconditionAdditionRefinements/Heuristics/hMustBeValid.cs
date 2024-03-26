@@ -1,6 +1,6 @@
 ﻿using P10.Models;
 
-namespace P10.RefinementStrategies.GroundedPredicateAdditions.Heuristics
+namespace P10.PreconditionAdditionRefinements.Heuristics
 {
     public class hMustBeValid : IHeuristic<PreconditionState>
     {

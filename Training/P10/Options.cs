@@ -1,19 +1,10 @@
 ﻿using CommandLine;
-using System;
-using System.Net.Sockets;
 using static MetaActionCandidateGenerator.Options;
 
 namespace P10
 {
     public class Options
     {
-        [Flags]
-        public enum RefinementStrategies
-        {
-            None = 1,
-            GroundedPredicateAdditions = 2
-        }
-
         [Flags]
         public enum UsefulnessStrategies
         {
@@ -43,8 +34,6 @@ namespace P10
             $"{nameof(MetaActionCandidateGenerator.Options.GeneratorStrategies.MutexedMetaActions)}," +
             $"{nameof(MetaActionCandidateGenerator.Options.GeneratorStrategies.InvariantMetaActions)}")]
         public IEnumerable<GeneratorStrategies> GeneratorStrategies { get; set; } = new List<GeneratorStrategies>();
-        [Option("refinement-strategy", Required = true, HelpText = $"The refinement strategy")]
-        public RefinementStrategies RefinementStrategy { get; set; }
         [Option("usefulness-strategy", Required = false, HelpText = "The usefulness strategy")]
         public UsefulnessStrategies UsefulnessStrategy { get; set; } = UsefulnessStrategies.None;
 
