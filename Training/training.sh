@@ -6,4 +6,4 @@ DOMAIN="$3"
 PROBLEMS="$4"
 
 # Assumes that P10 exe is aliased as P10Train (temp name until something better is defined)
-P10/bin/Release/net8.0/P10 --domain ${DOMAIN} --problems ${PROBLEMS} --generation-strategies ${GENERATION_STRATEGY} --stackelberg-path ../Dependencies/stackelberg-planner/src/fast-downward.py --fast-downward-path ../Dependencies/fast-downward/fast-downward.py
+./P10/bin/Release/net8.0/P10 --domain ${DOMAIN} --problems ${PROBLEMS} --generation-strategies ${GENERATION_STRATEGY} --stackelberg-path ../Dependencies/stackelberg-planner/src/fast-downward.py --fast-downward-path ../Dependencies/fast-downward/fast-downward.py
