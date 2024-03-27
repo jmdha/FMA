@@ -125,6 +125,8 @@ namespace P10.PreconditionAdditionRefinements
             var problemFile = Path.Combine(workingDir, $"tempProblem.pddl");
             codeGenerator.Generate(domain, domainFile);
             codeGenerator.Generate(problem, problemFile);
+            if (File.Exists(Path.Combine(workingDir, StateInfoFile)))
+                File.Delete(Path.Combine(workingDir, StateInfoFile));
             var exitCode = ExecutePlanner(domainFile, problemFile, workingDir, timeLimitS);
             if (exitCode != 0)
             {

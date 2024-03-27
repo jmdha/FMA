@@ -31,7 +31,7 @@ namespace P10.Verifiers
             var problemFile = Path.Combine(workingDir, $"tempProblem.pddl");
             codeGenerator.Generate(domain, domainFile);
             codeGenerator.Generate(problem, problemFile);
-            var exitCode = ExecutePlanner(domainFile, problemFile, workingDir, timeLimitS);
+            var exitCode = ExecutePlanner(domainFile, problemFile, workingDir, timeLimitS   );
             if (exitCode != 0)
                 return false;
             return IsFrontierValid(Path.Combine(workingDir, "pareto_frontier.json"));

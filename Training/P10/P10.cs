@@ -70,6 +70,8 @@ namespace P10
             PathHelper.RecratePath(opts.TempPath);
             PathHelper.RecratePath(_candidateOutput);
             BaseVerifier.ShowSTDOut = opts.StackelbergDebug;
+            if (opts.LearningCache != "")
+                VerificationHelper.UseCache = true;
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
             var generalResult = new P10Result();

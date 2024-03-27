@@ -8,13 +8,18 @@ namespace P10.Verifiers
 {
     public static class VerificationHelper
     {
+        public static bool UseCache = false;
         public static bool IsValid(DomainDecl domain, List<ProblemDecl> problems, ActionDecl metaAction, string workingDir, int timeLimitS, string cachePath)
         {
-            var code = GetDeterministicHashCode(domain, problems, metaAction, timeLimitS);
-            if (File.Exists(Path.Combine(cachePath, $"{code}-valid.txt")))
-                return true;
-            if (File.Exists(Path.Combine(cachePath, $"{code}-invalid.txt")))
-                return false;
+            var code = 0;
+            if (UseCache)
+            {
+                code = GetDeterministicHashCode(domain, problems, metaAction, timeLimitS);
+                if (File.Exists(Path.Combine(cachePath, $"{code}-valid.txt")))
+                    return true;
+                if (File.Exists(Path.Combine(cachePath, $"{code}-invalid.txt")))
+                    return false;
+            }
 
             var verifier = new FrontierVerifier();
             foreach (var problem in problems)
@@ -22,11 +27,13 @@ namespace P10.Verifiers
                 var compiled = StackelbergCompiler.StackelbergCompiler.CompileToStackelberg(new PDDLDecl(domain, problem), metaAction.Copy());
                 if (!verifier.Verify(compiled.Domain, compiled.Problem, workingDir, timeLimitS))
                 {
-                    File.Create(Path.Combine(cachePath, $"{code}-invalid.txt"));
+                    if (UseCache)
+                        File.Create(Path.Combine(cachePath, $"{code}-invalid.txt"));
                     return false;
                 }
             }
-            File.Create(Path.Combine(cachePath, $"{code}-valid.txt"));
+            if (UseCache)
+                File.Create(Path.Combine(cachePath, $"{code}-valid.txt"));
             return true;
         }
 

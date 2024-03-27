@@ -54,6 +54,6 @@ namespace P10
         public int MaxAddedParameters { get; set; } = 0;
 
         [Option("learning-cache-path", Required = false, HelpText = "Path to the cross-run cache")]
-        public string LearningCache { get; set; } = ".cache";
+        public string LearningCache { get; set; } = "";
     }
 }
