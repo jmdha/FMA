@@ -1,9 +1,8 @@
 #!/bin/bash
 
 OUT="$1"
-LEARNER_DIRECTORY="$2"
-ALIAS="$3"
-DOMAIN="$4"
-PROBLEM="$5"
+ALIAS="$2"
+DOMAIN="$3"
+PROBLEM="$4"
 
 ../../../../Dependencies/fast-downward/fast-downward.py --plan-file ${OUT} --alias ${ALIAS} ${DOMAIN} ${PROBLEM}

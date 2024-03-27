@@ -20,7 +20,6 @@ name = "Fast Downward"
 path = "Testing/testing.sh"
 args = ["lama-first"]
 attributes = "downward"
-learner = "predicate"
 
 [[attributes]]
 name = "downward"
