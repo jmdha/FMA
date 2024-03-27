@@ -43,14 +43,14 @@ namespace P10
                 opts.FastDownwardPath = PathHelper.RootPath(opts.FastDownwardPath);
                 ExternalPaths.FastDownwardPath = opts.FastDownwardPath;
             }
-            if (!File.Exists(opts.FastDownwardPath))
+            if (!File.Exists(ExternalPaths.FastDownwardPath))
                 throw new FileNotFoundException($"Fast Downward path not found: {opts.FastDownwardPath}");
             if (opts.StackelbergPath != "")
             {
                 opts.StackelbergPath = PathHelper.RootPath(opts.StackelbergPath);
                 ExternalPaths.StackelbergPath = opts.StackelbergPath;
             }
-            if (!File.Exists(opts.StackelbergPath))
+            if (!File.Exists(ExternalPaths.StackelbergPath))
                 throw new FileNotFoundException($"Stackelberg Planner path not found: {opts.StackelbergPath}");
 
             opts.OutputPath = PathHelper.RootPath(opts.OutputPath);
