@@ -47,5 +47,10 @@ namespace P10
 
         [Option("stackelberg-debug", Required = false, HelpText = "Show the stdout of the Stackelberg Planner")]
         public bool StackelbergDebug { get; set; } = false;
+
+        [Option("max-precondition-combinations", Required = false, HelpText = "How many precondition combinations to try")]
+        public int MaxPreconditionCombinations { get; set; } = 3;
+        [Option("max-added-parameters", Required = false, HelpText = "How many additional parameters are allowed to add")]
+        public int MaxAddedParameters { get; set; } = 0;
     }
 }

@@ -20,13 +20,15 @@ namespace P10
     public class P10 : BaseCLI
     {
         private static string _candidateOutput = "initial-candidates";
+        private static int _returnCode = 0;
 
-        private static void Main(string[] args)
+        private static int Main(string[] args)
         {
             var parser = new Parser(with => with.HelpWriter = null);
             var parserResult = parser.ParseArguments<Options>(args);
             parserResult.WithNotParsed(errs => DisplayHelp(parserResult, errs));
             parserResult.WithParsed(Run);
+            return _returnCode;
         }
 
         public static void Run(Options opts)
@@ -143,7 +145,7 @@ namespace P10
                 ConsoleHelper.WriteLineColor($"", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"{codeGenerator.Generate(candidate)}", ConsoleColor.Cyan);
                 ConsoleHelper.WriteLineColor($"", ConsoleColor.Magenta);
-                var refiner = new PreconditionAdditionRefinement(opts.TimeLimitS, candidate, opts.TempPath, opts.OutputPath);
+                var refiner = new PreconditionAdditionRefinement(opts.TimeLimitS, candidate, opts.TempPath, opts.OutputPath, opts.MaxPreconditionCombinations, opts.MaxAddedParameters);
                 var refinedResult = refiner.Refine(domain, problems);
                 refinementResults.Add(refinedResult);
                 if (refinedResult.RefinedMetaActions.Count > 0)
@@ -216,6 +218,9 @@ namespace P10
             ConsoleHelper.WriteLineColor($"Refinement Results:", ConsoleColor.Blue);
             foreach (var refResult in refinementResults)
                 ConsoleHelper.WriteLineColor($"{refResult}", ConsoleColor.DarkGreen);
+
+            if (refinedCandidates.Count == 0)
+                _returnCode = 1;
         }
     }
 }

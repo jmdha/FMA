@@ -10,7 +10,7 @@ using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers.PDDL;
 using System.Diagnostics;
 using Tools;
-using static P10.Verifiers.StateExploreVerifier;
+using static P10.PreconditionAdditionRefinements.StateExploreVerifier;
 
 namespace P10.PreconditionAdditionRefinements
 {
@@ -28,8 +28,10 @@ namespace P10.PreconditionAdditionRefinements
         private readonly Stopwatch _watch = new Stopwatch();
         private readonly string _tempValidationFolder = "";
         private RefinementResult _result = new RefinementResult();
+        private int _maxPreconditionCombinations;
+        private int _maxAddedParameters;
 
-        public PreconditionAdditionRefinement(int timeLimitS, ActionDecl metaAction, string tempDir, string outputDir)
+        public PreconditionAdditionRefinement(int timeLimitS, ActionDecl metaAction, string tempDir, string outputDir, int maxPreconditionCombinations, int maxAddedParameters)
         {
             Heuristic = new hSum<PreconditionState>(new List<IHeuristic<PreconditionState>>() {
                 new hMustBeApplicable(),
@@ -45,6 +47,8 @@ namespace P10.PreconditionAdditionRefinements
             OutputDir = outputDir;
             _tempValidationFolder = Path.Combine(tempDir, "validation");
             PathHelper.RecratePath(_tempValidationFolder);
+            _maxPreconditionCombinations = maxPreconditionCombinations;
+            _maxAddedParameters = maxAddedParameters;
         }
 
         public RefinementResult Refine(DomainDecl domain, List<ProblemDecl> problems)
@@ -117,13 +121,14 @@ namespace P10.PreconditionAdditionRefinements
                 var pddlDecl = new PDDLDecl(domain, problem);
                 var compiled = StackelbergCompiler.StackelbergCompiler.CompileToStackelberg(pddlDecl, MetaAction.Copy());
 
-                var verifier = new StateExploreVerifier();
+                var verifier = new StateExploreVerifier(_maxPreconditionCombinations, _maxAddedParameters);
                 if (File.Exists(Path.Combine(searchWorkingDir, StateInfoFile)))
                     File.Delete(Path.Combine(searchWorkingDir, StateInfoFile));
                 verifier.UpdateSearchString(compiled);
                 var result = verifier.VerifyCode(compiled.Domain, compiled.Problem, Path.Combine(TempDir, "state-search"), TimeLimitS);
                 if (result == StateExploreResult.UnknownError)
                 {
+                    File.WriteAllText(Path.Combine(TempDir, $"{MetaAction.Name}-verification-log-{DateTime.Now.TimeOfDay}.txt"), verifier._log);
                     ConsoleHelper.WriteLineColor($"\t\t\tUnknown error!", ConsoleColor.Red);
                     return false;
                 }

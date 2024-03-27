@@ -1,4 +1,5 @@
-﻿using PDDLSharp.CodeGenerators.PDDL;
+﻿using P10.Verifiers;
+using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
@@ -6,18 +7,20 @@ using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Translators.Tools;
 
-namespace P10.Verifiers
+namespace P10.PreconditionAdditionRefinements
 {
     public class StateExploreVerifier : BaseVerifier
     {
         public enum StateExploreResult { Success, InvariantError, UnknownError, MetaActionValid }
         public static string StateInfoFile = "out";
-        public static int MaxPreconditionCombinations = 3;
-        public static int MaxParameters = 0;
+        public int MaxPreconditionCombinations = 3;
+        public int MaxParameters = 0;
 
-        public StateExploreVerifier()
+        public StateExploreVerifier(int maxPreconditionCombinations, int maxParameters)
         {
             SearchString = $"--search \"state_explorer(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false, max_precondition_size={MaxPreconditionCombinations}, max_parameters={MaxParameters})\"";
+            MaxPreconditionCombinations = maxPreconditionCombinations;
+            MaxParameters = maxParameters;
         }
 
         public void UpdateSearchString(PDDLDecl from)
