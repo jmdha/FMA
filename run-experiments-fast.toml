@@ -9,7 +9,14 @@ args = ["PredicateMetaActions"]
 attributes = ""
 
 [[solvers]]
-name = "predicate"
+name = "Fast Downward (Meta)"
+path = "Testing/testing-meta.sh"
+args = ["lama-first"]
+attributes = "downward"
+learner = "predicate"
+
+[[solvers]]
+name = "Fast Downward"
 path = "Testing/testing.sh"
 args = ["lama-first"]
 attributes = "downward"

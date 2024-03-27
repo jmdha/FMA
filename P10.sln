@@ -23,6 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Training", "Training", "{69
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{5A87B27E-1706-48C2-822C-8B3847F43DA1}"
 	ProjectSection(SolutionItems) = preProject
+		Testing\testing-meta.sh = Testing\testing-meta.sh
 		Testing\testing.sh = Testing\testing.sh
 	EndProjectSection
 EndProject
