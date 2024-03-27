@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1AF9A3E5-C34A-4DE3-8FF6-5DE4340A3F8B}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		readme.md = readme.md
+		run-experiments-fast.toml = run-experiments-fast.toml
+		run-experiments-full.toml = run-experiments-full.toml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{B69FF3BF-8010-4A04-99B4-8E994E1F9392}"
@@ -14,8 +17,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencie
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Training", "Training", "{695C7306-A45B-4F6B-AA5D-C38AAF4A7BF2}"
+	ProjectSection(SolutionItems) = preProject
+		Training\training.sh = Training\training.sh
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{5A87B27E-1706-48C2-822C-8B3847F43DA1}"
+	ProjectSection(SolutionItems) = preProject
+		Testing\testing-meta.sh = Testing\testing-meta.sh
+		Testing\testing.sh = Testing\testing.sh
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "P10", "Training\P10\P10.csproj", "{A283D523-F2BE-41B6-B16A-D1F0DF658713}"
 EndProject

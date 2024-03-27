@@ -1,6 +1,7 @@
 ﻿using P10.Models;
 using P10.PreconditionAdditionRefinements.Heuristics;
 using P10.Verifiers;
+using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
@@ -9,6 +10,8 @@ using PDDLSharp.Models.PDDL.Overloads;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers.PDDL;
 using System.Diagnostics;
+using System.Numerics;
+using System.Text;
 using Tools;
 using static P10.PreconditionAdditionRefinements.StateExploreVerifier;
 
@@ -128,7 +131,7 @@ namespace P10.PreconditionAdditionRefinements
                 var result = verifier.VerifyCode(compiled.Domain, compiled.Problem, Path.Combine(TempDir, "state-search"), TimeLimitS);
                 if (result == StateExploreResult.UnknownError)
                 {
-                    File.WriteAllText(Path.Combine(TempDir, $"{MetaAction.Name}-verification-log-{DateTime.Now.TimeOfDay}.txt"), verifier._log);
+                    GenerateErrorLogFile(verifier._log, compiled.Domain, compiled.Problem);
                     ConsoleHelper.WriteLineColor($"\t\t\tUnknown error!", ConsoleColor.Red);
                     return false;
                 }
@@ -144,10 +147,7 @@ namespace P10.PreconditionAdditionRefinements
             _result.StateSpaceSearchTime += TimeSpan.FromMilliseconds(searchWatch.ElapsedMilliseconds);
 
             if (!success)
-            {
-                ConsoleHelper.WriteLineColor($"\t\t\tMeta Action was valid in all problems???", ConsoleColor.Red);
-                return false;
-            }
+                throw new Exception("Meta Action was valid in all problems??? This should not be possible");
 
             searchWatch.Restart();
             if (!UpdateOpenList(MetaAction, searchWorkingDir))
@@ -159,6 +159,26 @@ namespace P10.PreconditionAdditionRefinements
             searchWatch.Stop();
             _result.StackelbergOutputParsingTime += TimeSpan.FromMilliseconds(searchWatch.ElapsedMilliseconds);
             return true;
+        }
+
+        private void GenerateErrorLogFile(string log, DomainDecl domain, ProblemDecl problem)
+        {
+            var file = Path.Combine(TempDir, $"{MetaAction.Name}-verification-log-{DateTime.Now.TimeOfDay}.txt");
+            var sb = new StringBuilder();
+            var codeGenerator = new PDDLCodeGenerator(new ErrorListener());
+
+            sb.AppendLine(" == Log ==");
+            sb.AppendLine(log);
+            sb.AppendLine();
+            sb.AppendLine();
+            sb.AppendLine(" == Domain ==");
+            sb.AppendLine(codeGenerator.Generate(domain));
+            sb.AppendLine();
+            sb.AppendLine();
+            sb.AppendLine(" == Problem ==");
+            sb.AppendLine(codeGenerator.Generate(problem));
+
+            File.WriteAllText(file, sb.ToString());
         }
 
         private ActionDecl? GetNextRefined(DomainDecl domain, List<ProblemDecl> problems)
