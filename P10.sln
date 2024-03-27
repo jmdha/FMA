@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencie
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Training", "Training", "{695C7306-A45B-4F6B-AA5D-C38AAF4A7BF2}"
 	ProjectSection(SolutionItems) = preProject
+		Training\training-fast.sh = Training\training-fast.sh
 		Training\training.sh = Training\training.sh
 	EndProjectSection
 EndProject
