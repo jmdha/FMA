@@ -3,5 +3,5 @@
 To run experiments (Requires rust package `labyr`):
 
 ```bash
-labyr run-experiments.toml --working-dir ./out
+labyr run-experiments.toml --working-dir .
 ```
