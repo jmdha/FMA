@@ -4,13 +4,13 @@ memory_limit_solve = 4000
 
 [[learners]]
 name = "predicate"
-path = "learners/P10.sh"
+path = "Training/training.sh"
 args = ["PredicateMetaActions"]
 attributes = ""
 
 [[solvers]]
 name = "predicate"
-path = "solvers/P10.sh"
+path = "Testing/testing.sh"
 args = ["lama-first"]
 attributes = "downward"
 learner = "predicate"
@@ -24,12 +24,12 @@ patterns = [
 
 [[tasks]]
 name = "ferry"
-domain = "~/PDDL/ferry/domain.pddl"
-problems_training = "~/PDDL/ferry/training/*/p0*.pddl"
-problems_testing = "~/PDDL/ferry/testing/*/*.pddl"
+domain = "Dependencies/learning-benchmarks/ferry/domain.pddl"
+problems_training = "Dependencies/learning-benchmarks/ferry/training/*/p0*.pddl"
+problems_testing = "Dependencies/learning-benchmarks/ferry/testing/*/*.pddl"
 
 [[tasks]]
 name = "miconic"
-domain = "~/PDDL/miconic/domain.pddl"
-problems_training = "~/PDDL/miconic/training/*/p0*.pddl"
-problems_testing = "~/PDDL/miconic/testing/*/*.pddl"
+domain = "Dependencies/learning-benchmarks/miconic/domain.pddl"
+problems_training = "Dependencies/learning-benchmarks/miconic/training/*/p0*.pddl"
+problems_testing = "Dependencies/learning-benchmarks/miconic/testing/*/*.pddl"
