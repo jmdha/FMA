@@ -32,58 +32,58 @@ patterns = [
 name = "blocksworld"
 domain = "Dependencies/learning-benchmarks/blocksworld/domain.pddl"
 problems_training = "Dependencies/learning-benchmarks/blocksworld/training/*/p0*.pddl"
-problems_testing = "Dependencies/learning-benchmarks/blocksworld/testing/*/p1*.pddl"
+problems_testing = "Dependencies/learning-benchmarks/blocksworld/testing/easy/p1*.pddl"
 
 [[tasks]]
 name = "childsnack"
 domain = "Dependencies/learning-benchmarks/childsnack/domain.pddl"
 problems_training = "Dependencies/learning-benchmarks/childsnack/training/*/p0*.pddl"
-problems_testing = "Dependencies/learning-benchmarks/childsnack/testing/*/p1*.pddl"
+problems_testing = "Dependencies/learning-benchmarks/childsnack/testing/easy/p1*.pddl"
 
 [[tasks]]
 name = "ferry"
 domain = "Dependencies/learning-benchmarks/ferry/domain.pddl"
 problems_training = "Dependencies/learning-benchmarks/ferry/training/*/p0*.pddl"
-problems_testing = "Dependencies/learning-benchmarks/ferry/testing/*/p1*.pddl"
+problems_testing = "Dependencies/learning-benchmarks/ferry/testing/easy/p1*.pddl"
 
 [[tasks]]
 name = "floortile"
 domain = "Dependencies/learning-benchmarks/floortile/domain.pddl"
 problems_training = "Dependencies/learning-benchmarks/floortile/training/*/p0*.pddl"
-problems_testing = "Dependencies/learning-benchmarks/floortile/testing/*/p1*.pddl"
+problems_testing = "Dependencies/learning-benchmarks/floortile/testing/easy/p1*.pddl"
 
 [[tasks]]
 name = "miconic"
 domain = "Dependencies/learning-benchmarks/miconic/domain.pddl"
 problems_training = "Dependencies/learning-benchmarks/miconic/training/*/p0*.pddl"
-problems_testing = "Dependencies/learning-benchmarks/miconic/testing/*/p1*.pddl"
+problems_testing = "Dependencies/learning-benchmarks/miconic/testing/easy/p1*.pddl"
 
 [[tasks]]
 name = "rovers"
 domain = "Dependencies/learning-benchmarks/rovers/domain.pddl"
 problems_training = "Dependencies/learning-benchmarks/rovers/training/*/p0*.pddl"
-problems_testing = "Dependencies/learning-benchmarks/rovers/testing/*/p1*.pddl"
+problems_testing = "Dependencies/learning-benchmarks/rovers/testing/easy/p1*.pddl"
 
 [[tasks]]
 name = "satellite"
 domain = "Dependencies/learning-benchmarks/satellite/domain.pddl"
 problems_training = "Dependencies/learning-benchmarks/satellite/training/*/p0*.pddl"
-problems_testing = "Dependencies/learning-benchmarks/satellite/testing/*/p1*.pddl"
+problems_testing = "Dependencies/learning-benchmarks/satellite/testing/easy/p1*.pddl"
 
 [[tasks]]
 name = "sokoban"
 domain = "Dependencies/learning-benchmarks/sokoban/domain.pddl"
 problems_training = "Dependencies/learning-benchmarks/sokoban/training/*/p0*.pddl"
-problems_testing = "Dependencies/learning-benchmarks/sokoban/testing/*/p1*.pddl"
+problems_testing = "Dependencies/learning-benchmarks/sokoban/testing/easy/p1*.pddl"
 
 [[tasks]]
 name = "spanner"
 domain = "Dependencies/learning-benchmarks/spanner/domain.pddl"
 problems_training = "Dependencies/learning-benchmarks/spanner/training/*/p0*.pddl"
-problems_testing = "Dependencies/learning-benchmarks/spanner/testing/*/p1*.pddl"
+problems_testing = "Dependencies/learning-benchmarks/spanner/testing/easy/p1*.pddl"
 
 [[tasks]]
 name = "transport"
 domain = "Dependencies/learning-benchmarks/transport/domain.pddl"
 problems_training = "Dependencies/learning-benchmarks/transport/training/*/p0*.pddl"
-problems_testing = "Dependencies/learning-benchmarks/transport/testing/*/p1*.pddl"
+problems_testing = "Dependencies/learning-benchmarks/transport/testing/easy/p1*.pddl"
