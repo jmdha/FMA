@@ -33,8 +33,9 @@ namespace P10.PreconditionAdditionRefinements
         private RefinementResult _result = new RefinementResult();
         private int _maxPreconditionCombinations;
         private int _maxAddedParameters;
+        private string _learningCache = ".cache";
 
-        public PreconditionAdditionRefinement(int timeLimitS, ActionDecl metaAction, string tempDir, string outputDir, int maxPreconditionCombinations, int maxAddedParameters)
+        public PreconditionAdditionRefinement(int timeLimitS, ActionDecl metaAction, string tempDir, string outputDir, int maxPreconditionCombinations, int maxAddedParameters, string learningCache)
         {
             Heuristic = new hSum<PreconditionState>(new List<IHeuristic<PreconditionState>>() {
                 new hMustBeApplicable(),
@@ -52,6 +53,9 @@ namespace P10.PreconditionAdditionRefinements
             PathHelper.RecratePath(_tempValidationFolder);
             _maxPreconditionCombinations = maxPreconditionCombinations;
             _maxAddedParameters = maxAddedParameters;
+            _learningCache = learningCache;
+            if (!Directory.Exists(learningCache))
+                Directory.CreateDirectory(learningCache);
         }
 
         public RefinementResult Refine(DomainDecl domain, List<ProblemDecl> problems)
@@ -74,7 +78,7 @@ namespace P10.PreconditionAdditionRefinements
             int iteration = 0;
             var returnList = new List<ActionDecl>();
             ConsoleHelper.WriteLineColor($"\t\tValidating...", ConsoleColor.Magenta);
-            if (VerificationHelper.IsValid(domain, problems, MetaAction, _tempValidationFolder, TimeLimitS))
+            if (VerificationHelper.IsValid(domain, problems, MetaAction, _tempValidationFolder, TimeLimitS, _learningCache))
             {
                 _result.AlreadyValid = true;
                 ConsoleHelper.WriteLineColor($"\tOriginal meta action is valid!", ConsoleColor.Green);
@@ -100,7 +104,7 @@ namespace P10.PreconditionAdditionRefinements
             while (refined != null)
             {
                 ConsoleHelper.WriteLineColor($"\t\tValidating...", ConsoleColor.Magenta);
-                if (VerificationHelper.IsValid(domain, problems, refined, _tempValidationFolder, TimeLimitS))
+                if (VerificationHelper.IsValid(domain, problems, refined, _tempValidationFolder, TimeLimitS, _learningCache))
                 {
                     ConsoleHelper.WriteLineColor($"\tRefined meta action is valid!", ConsoleColor.Green);
                     returnList.Add(refined);

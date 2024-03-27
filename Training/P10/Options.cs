@@ -52,5 +52,8 @@ namespace P10
         public int MaxPreconditionCombinations { get; set; } = 3;
         [Option("max-added-parameters", Required = false, HelpText = "How many additional parameters are allowed to add")]
         public int MaxAddedParameters { get; set; } = 0;
+
+        [Option("learning-cache-path", Required = false, HelpText = "Path to the cross-run cache")]
+        public string LearningCache { get; set; } = ".cache";
     }
 }
