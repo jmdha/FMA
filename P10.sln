@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1AF9A3E5-C34A-4DE3-8FF6-5DE4340A3F8B}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		readme.md = readme.md
 		run-experiments.toml = run-experiments.toml
 	EndProjectSection
 EndProject
