@@ -63,13 +63,13 @@ namespace P10.Verifiers
             };
             _currentProcess.OutputDataReceived += (s, e) =>
             {
-                _log += $"ERROR: {e.Data}{Environment.NewLine}";
+                _log += $"{e.Data}{Environment.NewLine}";
                 if (ShowSTDOut)
                     Console.WriteLine(e.Data);
             };
             _currentProcess.ErrorDataReceived += (s, e) =>
             {
-                _log += $"{e.Data}{Environment.NewLine}";
+                _log += $"ERROR: {e.Data}{Environment.NewLine}";
                 if (ShowSTDOut)
                     Console.WriteLine($"ERROR: {e.Data}");
             };

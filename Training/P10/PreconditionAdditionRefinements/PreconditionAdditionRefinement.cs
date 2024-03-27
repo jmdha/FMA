@@ -122,7 +122,7 @@ namespace P10.PreconditionAdditionRefinements
 
             var searchWatch = new Stopwatch();
             searchWatch.Start();
-            bool success = false;
+            bool invalidInSome = false;
             foreach (var problem in problems)
             {
                 var pddlDecl = new PDDLDecl(domain, problem);
@@ -139,18 +139,23 @@ namespace P10.PreconditionAdditionRefinements
                     ConsoleHelper.WriteLineColor($"\t\t\tUnknown error!", ConsoleColor.Red);
                     return false;
                 }
-                if (result == StateExploreResult.MetaActionValid)
+                else if (result == StateExploreResult.MetaActionValid)
                     ConsoleHelper.WriteLineColor($"\t\t\tMeta action valid in problem. Trying next problem...", ConsoleColor.Yellow);
-                if (result == StateExploreResult.Success)
+                if (result == StateExploreResult.InvariantError)
                 {
-                    success = true;
+                    ConsoleHelper.WriteLineColor($"\t\t\tInvariant error! Trying next problem...", ConsoleColor.Yellow);
+                    invalidInSome = true;
+                }
+                else if (result == StateExploreResult.Success)
+                {
+                    invalidInSome = true;
                     break;
                 }
             }
             searchWatch.Stop();
             _result.StateSpaceSearchTime += TimeSpan.FromMilliseconds(searchWatch.ElapsedMilliseconds);
 
-            if (!success)
+            if (!invalidInSome)
                 throw new Exception("Meta Action was valid in all problems??? This should not be possible");
 
             searchWatch.Restart();
