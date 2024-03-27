@@ -362,6 +362,10 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
+Dependencies/downward-benchmarks
+Dependencies/fast-downward
+Dependencies/stackelberg-planner
+
 /Training/output/**
 /Training/temp/**
 
