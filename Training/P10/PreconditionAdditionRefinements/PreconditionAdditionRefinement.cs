@@ -54,7 +54,7 @@ namespace P10.PreconditionAdditionRefinements
             _maxPreconditionCombinations = maxPreconditionCombinations;
             _maxAddedParameters = maxAddedParameters;
             _learningCache = learningCache;
-            if (!Directory.Exists(learningCache))
+            if (learningCache != "" && !Directory.Exists(learningCache))
                 Directory.CreateDirectory(learningCache);
         }
 
