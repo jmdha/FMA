@@ -11,7 +11,10 @@ namespace P10
             None = 1,
             UsedInPlans = 2,
             UsedInPlansCombined = 3,
-            ReducesMetaSearchTime = 4
+            ReducesMetaSearchTime = 4,
+            ReducesMetaSearchTimeTop1 = 5,
+            ReducesMetaSearchTimeTop2 = 6,
+            ReducesMetaSearchTimeTop5 = 7,
         }
         [Option("output", Required = false, HelpText = "Where to output the meta actions")]
         public string OutputPath { get; set; } = "output";
