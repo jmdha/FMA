@@ -6,7 +6,7 @@ source("Tools/scatterPlots.R")
 
 # Handle arguments
 args = commandArgs(trailingOnly=TRUE)
-args[1] <- "refinement.csv"
+args[1] <- "general.csv"
 if (length(args) != 1) {
   stop("1 arguments must be supplied! The source data file", call.=FALSE)
 }
@@ -16,9 +16,8 @@ data <- read.csv(
   header = T, 
   sep = ",", 
   colClasses = c(
-    'character','character',
+    'character','numeric',
     'numeric','numeric',
-    'character','character',
     'numeric','numeric',
     'numeric','numeric'
   )
@@ -26,25 +25,19 @@ data <- read.csv(
 
 tableData <- data %>% select(
   contains('domain'), 
-  contains('final.refinement.possibilities'), 
-  contains('valid.refinements'),
-  contains('succeded'))
-tableData$succeded[tableData$succeded == "True"] <- "0"
-tableData$succeded[tableData$succeded == "False"] <- "1"
-tableData
-
+  contains('total.candidates'), 
+  contains('total.refined'))
 tableData <- aggregate(. ~ domain, data=tableData, FUN=sum)
 generate_table(
   tableData,
-  paste("out/refinement.tex", sep = ""),
+  paste("out/general.tex", sep = ""),
   10,
   10,
   c(
     "$Domain$",
-    "$R$",
-    "$R_{valid}$",
-    "$Unrefinable$"
+    "$C$",
+    "$C_{valid}$"
   ),
-  "Refinement Process Info. $R$ is the initial refinement options for all the candidates for a domain. $R_{valid}$ is the valid refinement options.",
-  "tab:refinement"
+  "General Process Info. $C$ is the initial meta action candidates. $C_{valid}$ is the total valid meta actions either initially valid or refined.",
+  "tab:general"
 )

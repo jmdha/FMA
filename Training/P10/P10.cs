@@ -159,7 +159,7 @@ namespace P10
                     ConsoleHelper.WriteLineColor($"\tCandidate could not be refined!", ConsoleColor.Red);
                 ConsoleHelper.WriteLineColor($"", ConsoleColor.Magenta);
             }
-            File.WriteAllText(Path.Combine(opts.OutputPath, "refinement.csv"), CSVSerialiser.Serialise(refinementResults, new CSVSerialiserOptions() { PrettyOutput = true }));
+            File.WriteAllText(Path.Combine(opts.OutputPath, "refinement.csv"), CSVSerialiser.Serialise(refinementResults));
             generalResult.TotalRefinedCandidates = refinedCandidates.Count;
             ConsoleHelper.WriteLineColor($"\tTotal refined candidates: {refinedCandidates.Count}", ConsoleColor.Magenta);
             // Make sure names are unique
@@ -209,7 +209,7 @@ namespace P10
             codeGenerator.Generate(newDomain, Path.Combine(opts.OutputPath, "enhancedDomain.pddl"));
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
-            File.WriteAllText(Path.Combine(opts.OutputPath, "general.csv"), CSVSerialiser.Serialise(new List<P10Result>() { generalResult }, new CSVSerialiserOptions() { PrettyOutput = true }));
+            File.WriteAllText(Path.Combine(opts.OutputPath, "general.csv"), CSVSerialiser.Serialise(new List<P10Result>() { generalResult }));
 
             ConsoleHelper.WriteLineColor($"Final Report:", ConsoleColor.Blue);
             ConsoleHelper.WriteLineColor($"General Results:", ConsoleColor.Blue);
