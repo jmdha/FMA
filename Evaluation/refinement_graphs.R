@@ -29,10 +29,10 @@ tableData <- data %>% select(
   contains('final.refinement.possibilities'), 
   contains('valid.refinements'),
   contains('succeded'))
-tableData$succeded[tableData$succeded == "True"] <- "0"
-tableData$succeded[tableData$succeded == "False"] <- "1"
-tableData
-
+names(tableData)[names(tableData) == "succeded"] <- "unrefinable"
+tableData$unrefinable[tableData$unrefinable == "True"] <- 0
+tableData$unrefinable[tableData$unrefinable == "False"] <- 1
+tableData$unrefinable = as.numeric(as.character(tableData$unrefinable))
 tableData <- aggregate(. ~ domain, data=tableData, FUN=sum)
 generate_table(
   tableData,

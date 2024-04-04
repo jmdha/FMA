@@ -37,3 +37,12 @@ git clone https://github.com/ipc2023-learning/benchmarks learning-benchmarks
 echo 
 echo == Done! ==
 echo 
+
+echo == Installing R Packages ==
+echo 
+Rscript -e "install.packages(\"dplyr\");"
+Rscript -e "install.packages(\"ggplot2\");"
+Rscript -e "install.packages(\"xtable\");"
+echo 
+echo == Done! ==
+echo 
