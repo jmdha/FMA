@@ -12,7 +12,7 @@ name = "Fast Downward (Meta)"
 path = "Testing/testing-meta.sh"
 kind = "Solve"
 args = ["lama-first"]
-learner = "predicate"
+depends = "predicate"
 
 [[runners]]
 name = "Fast Downward"

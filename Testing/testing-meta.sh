@@ -1,8 +1,8 @@
 #!/bin/bash
 
 OUT="$1"
-LEARNER_DIRECTORY="$2"
-ALIAS="$3"
+ALIAS="$2"
+LEARNER_DIRECTORY="$3"
 DOMAIN="$4"
 PROBLEM="$5"
 
