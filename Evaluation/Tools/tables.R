@@ -1,7 +1,7 @@
 library(xtable)
 source("./Tools/latexTableHelpers.R")
 
-generate_table <- function(data, outName, width, height, colNames, caption, label) {
+generate_table <- function(data, outName, colNames, caption, label) {
   names(data) <- colNames
 	table <- xtable(
 	  data, 

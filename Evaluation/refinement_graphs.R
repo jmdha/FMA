@@ -28,23 +28,36 @@ tableData <- data %>% select(
   contains('domain'), 
   contains('final.refinement.possibilities'), 
   contains('valid.refinements'),
-  contains('succeded'))
+  contains('succeded'),
+  contains('total.refinement.time'))
 names(tableData)[names(tableData) == "succeded"] <- "unrefinable"
 tableData$unrefinable[tableData$unrefinable == "True"] <- 0
 tableData$unrefinable[tableData$unrefinable == "False"] <- 1
-tableData$unrefinable = as.numeric(as.character(tableData$unrefinable))
+tableData$unrefinable <- as.numeric(as.character(tableData$unrefinable))
 tableData <- aggregate(. ~ domain, data=tableData, FUN=sum)
+
+alreadyValid <- data %>% select(
+  contains('domain'),
+  contains('already.valid')
+)
+alreadyValid$already.valid[alreadyValid$already.valid == "True"] <- 1
+alreadyValid$already.valid[alreadyValid$already.valid == "False"] <- 0
+alreadyValid$already.valid <- as.numeric(as.character(alreadyValid$already.valid))
+alreadyValid <- aggregate(. ~ domain, data=alreadyValid, FUN=sum)
+
+for(domain in unique(tableData$domain)){
+  tableData$valid.refinements[tableData$domain == domain] <- tableData$valid.refinements[tableData$domain == domain] - alreadyValid$already.valid[alreadyValid$domain == domain]
+}
 generate_table(
   tableData,
   paste("out/refinement.tex", sep = ""),
-  10,
-  10,
   c(
     "$Domain$",
     "$R$",
     "$R_{valid}$",
-    "$Unrefinable$"
+    "$Unrefinable$",
+    "$Refinement Time$"
   ),
-  "Refinement Process Info. $R$ is the initial refinement options for all the candidates for a domain. $R_{valid}$ is the valid refinement options.",
+  "Refinement Process Info. $R$ is the initial refinement options for all the candidates for a domain. $R_{valid}$ is the valid refinement options. Unrefinables are failures. Refinement Time is in milliseconds",
   "tab:refinement"
 )

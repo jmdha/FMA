@@ -31,8 +31,6 @@ tableData <- aggregate(. ~ domain, data=tableData, FUN=sum)
 generate_table(
   tableData,
   paste("out/general.tex", sep = ""),
-  10,
-  10,
   c(
     "$Domain$",
     "$C$",
