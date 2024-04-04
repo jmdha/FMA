@@ -172,7 +172,7 @@ namespace P10.PreconditionAdditionRefinements
 
         private void GenerateErrorLogFile(string log, DomainDecl domain, ProblemDecl problem)
         {
-            var file = Path.Combine(TempDir, $"{MetaAction.Name}-verification-log-{DateTime.Now.TimeOfDay}.txt");
+            var file = Path.Combine(TempDir, $"{MetaAction.Name}_verification-log_{problem.Name}_{DateTime.Now.TimeOfDay}.txt");
             var sb = new StringBuilder();
             var codeGenerator = new PDDLCodeGenerator(new ErrorListener());
 
