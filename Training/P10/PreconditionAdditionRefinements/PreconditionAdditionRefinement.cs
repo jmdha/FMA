@@ -137,7 +137,7 @@ namespace P10.PreconditionAdditionRefinements
                 {
                     GenerateErrorLogFile(verifier._log, compiled.Domain, compiled.Problem);
                     ConsoleHelper.WriteLineColor($"\t\t\tUnknown error!", ConsoleColor.Red);
-                    return false;
+                    invalidInSome = true;
                 }
                 else if (result == StateExploreResult.MetaActionValid)
                     ConsoleHelper.WriteLineColor($"\t\t\tMeta action valid in problem. Trying next problem...", ConsoleColor.Yellow);
