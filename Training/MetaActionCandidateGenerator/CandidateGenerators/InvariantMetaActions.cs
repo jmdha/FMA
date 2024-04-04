@@ -44,14 +44,29 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                         if (!mutated.Equals(pred))
                             candidates.Add(GenerateMetaAction(
                                 $"meta_{pred.Name}_{action.Name}_{count++}",
-                                new List<IExp>() { pred },
-                                new List<IExp>() { GetMutatedPredicate(pred, permutation.ToList()), new NotExp(pred) },
+                                new List<IExp>() { pred, new NotExp(GetEqualsPredicate(pred, mutated)) },
+                                new List<IExp>() { mutated, new NotExp(pred) },
                                 action));
                     }
                 }
             }
 
             return candidates.Distinct(pddlDecl.Domain.Actions);
+        }
+
+        private PredicateExp GetEqualsPredicate(PredicateExp pred1, PredicateExp pred2)
+        {
+            var args = new List<NameExp>();
+            for (int i = 0; i < pred1.Arguments.Count; i++)
+            {
+                if (pred1.Arguments[i].Name != pred2.Arguments[i].Name)
+                {
+                    args.Add(pred1.Arguments[i]);
+                    args.Add(pred2.Arguments[i]);
+                }
+            }
+
+            return new PredicateExp("=", args);
         }
 
         private List<bool[]> GeneratePermutations(int count)

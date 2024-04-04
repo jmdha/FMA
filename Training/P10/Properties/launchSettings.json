@@ -6,7 +6,7 @@
     "WSL": {
       "commandName": "WSL2",
       "distributionName": "",
-      "commandLineArgs": "P10/bin/Debug/net8.0/P10.dll --output output --domain ../Dependencies/learning-benchmarks/ferry/domain.pddl --problems ../Dependencies/learning-benchmarks/ferry/training/easy/p01.pddl ../Dependencies/learning-benchmarks/ferry/training/easy/p05.pddl ../Dependencies/learning-benchmarks/ferry/training/easy/p07.pddl --generation-strategies StrippedMetaActions --remove-duplicates --refinement-time-limit 60 --usefulness-strategy ReducesMetaSearchTimeTop2 --pre-usefulness",
+      "commandLineArgs": "P10/bin/Debug/net8.0/P10.dll --output output --domain ../Dependencies/learning-benchmarks/ferry/domain.pddl --problems ../Dependencies/learning-benchmarks/ferry/training/easy/p01.pddl ../Dependencies/learning-benchmarks/ferry/training/easy/p05.pddl ../Dependencies/learning-benchmarks/ferry/training/easy/p07.pddl --generation-strategies InvariantMetaActions --remove-duplicates --refinement-time-limit 60",
       "workingDirectory": "/home/kris/P10/Training"
     }
   }
