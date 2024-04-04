@@ -1,5 +1,8 @@
+library(dplyr) 
 
 source("Tools/style.R")
+source("Tools/tables.R")
+source("Tools/scatterPlots.R")
 
 # Handle arguments
 args = commandArgs(trailingOnly=TRUE)
@@ -19,4 +22,23 @@ data <- read.csv(
     'numeric','numeric',
     'numeric','numeric'
   )
+)
+
+tableData <- data %>% select(
+  contains('domain'), 
+  contains('final.refinement.possibilities'), 
+  contains('valid.refinements'))
+tableData <- aggregate(. ~ domain, data=tableData, FUN=sum)
+generate_table(
+  tableData,
+  paste("out/test.text", sep = ""),
+  10,
+  10,
+  c(
+    "$Domain$",
+    "$R$",
+    "$R_{valid}$"
+  ),
+  "something",
+  "lab"
 )
