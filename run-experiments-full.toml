@@ -4,7 +4,7 @@ memory_limit_solve = 4000
 [[learners]]
 name = "predicate"
 path = "Training/training.sh"
-args = ["PredicateMetaActions"]
+args = ["InvariantMetaActions"]
 attributes = ""
 
 [[solvers]]
