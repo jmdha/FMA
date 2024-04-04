@@ -371,3 +371,5 @@ Dependencies/stackelberg-planner
 
 /Results/**
 Dependencies/learning-benchmarks
+
+/Evaluation/**.csv

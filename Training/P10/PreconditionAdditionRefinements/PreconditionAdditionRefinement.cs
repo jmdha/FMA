@@ -68,7 +68,7 @@ namespace P10.PreconditionAdditionRefinements
             _watch.Start();
             _result.RefinedMetaActions = Run(domain, problems);
             _watch.Stop();
-            _result.RefinementTime = TimeSpan.FromMilliseconds(_watch.ElapsedMilliseconds);
+            _result.RefinementTime = _watch.ElapsedMilliseconds;
             _result.ValidRefinements = _result.RefinedMetaActions.Count;
             return _result;
         }
@@ -153,7 +153,7 @@ namespace P10.PreconditionAdditionRefinements
                 }
             }
             searchWatch.Stop();
-            _result.StateSpaceSearchTime += TimeSpan.FromMilliseconds(searchWatch.ElapsedMilliseconds);
+            _result.StateSpaceSearchTime += searchWatch.ElapsedMilliseconds;
 
             if (!invalidInSome)
                 throw new Exception("Meta Action was valid in all problems??? This should not be possible");
@@ -162,11 +162,11 @@ namespace P10.PreconditionAdditionRefinements
             if (!UpdateOpenList(MetaAction, searchWorkingDir))
             {
                 searchWatch.Stop();
-                _result.StackelbergOutputParsingTime += TimeSpan.FromMilliseconds(searchWatch.ElapsedMilliseconds);
+                _result.StackelbergOutputParsingTime += searchWatch.ElapsedMilliseconds;
                 return false;
             }
             searchWatch.Stop();
-            _result.StackelbergOutputParsingTime += TimeSpan.FromMilliseconds(searchWatch.ElapsedMilliseconds);
+            _result.StackelbergOutputParsingTime += searchWatch.ElapsedMilliseconds;
             return true;
         }
 

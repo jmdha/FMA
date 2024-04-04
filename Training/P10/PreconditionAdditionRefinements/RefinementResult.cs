@@ -11,7 +11,7 @@ namespace P10.PreconditionAdditionRefinements
         [CSVColumn("meta-action")]
         public string MetaAction { get; set; } = "";
         [CSVColumn("total-refinement-time")]
-        public TimeSpan RefinementTime { get; set; } = TimeSpan.Zero;
+        public float RefinementTime { get; set; } = 0;
         [CSVColumn("valid-refinements")]
         public int ValidRefinements { get; set; } = 0;
         [CSVColumn("already-valid")]
@@ -19,9 +19,9 @@ namespace P10.PreconditionAdditionRefinements
         [CSVColumn("succeded")]
         public bool Succeded { get; set; } = true;
         [CSVColumn("state-space-search-time")]
-        public TimeSpan StateSpaceSearchTime { get; set; } = TimeSpan.Zero;
+        public float StateSpaceSearchTime { get; set; } = 0;
         [CSVColumn("stackelberg-output-parsing")]
-        public TimeSpan StackelbergOutputParsingTime { get; set; } = TimeSpan.Zero;
+        public float StackelbergOutputParsingTime { get; set; } = 0;
         [CSVColumn("initial-refinement-possibilities")]
         public int InitialRefinementPossibilities { get; set; } = 0;
         [CSVColumn("final-refinement-possibilities")]
