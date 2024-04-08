@@ -6,9 +6,9 @@ using PDDLSharp.Models.PDDL.Overloads;
 namespace MetaActionCandidateGenerator.CandidateGenerators
 {
     /// <summary>
-    /// Assumed every predicate can be a mutex, and constructs meta actions out of them
+    /// Assumed every predicate can be a flipped, and constructs meta actions out of them
     /// </summary>
-    public class MutexedMetaActions : BaseCandidateGenerator
+    public class FlipMetaActions : BaseCandidateGenerator
     {
         internal override List<ActionDecl> GenerateCandidatesInner(PDDLDecl pddlDecl)
         {

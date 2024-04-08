@@ -11,7 +11,7 @@ namespace MetaActionCandidateGenerator
             PredicateMetaActions = 2,
             StrippedMetaActions = 3,
             AgressiveStrippedMetaActions = 4,
-            MutexedMetaActions = 5,
+            FlipMetaActions = 5,
             InvariantMetaActions = 6
         }
 

@@ -9,7 +9,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
             { GeneratorStrategies.PredicateMetaActions, () => new PredicateMetaActions() },
             { GeneratorStrategies.StrippedMetaActions, () => new StrippedMetaActions() },
             { GeneratorStrategies.AgressiveStrippedMetaActions, () => new AgressiveStrippedMetaActions() },
-            { GeneratorStrategies.MutexedMetaActions, () => new MutexedMetaActions() },
+            { GeneratorStrategies.FlipMetaActions, () => new FlipMetaActions() },
             { GeneratorStrategies.InvariantMetaActions, () => new InvariantMetaActions() },
         };
 

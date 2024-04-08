@@ -34,7 +34,7 @@ namespace P10
             $"{nameof(MetaActionCandidateGenerator.Options.GeneratorStrategies.PredicateMetaActions)}," +
             $"{nameof(MetaActionCandidateGenerator.Options.GeneratorStrategies.StrippedMetaActions)}," +
             $"{nameof(MetaActionCandidateGenerator.Options.GeneratorStrategies.AgressiveStrippedMetaActions)}," +
-            $"{nameof(MetaActionCandidateGenerator.Options.GeneratorStrategies.MutexedMetaActions)}," +
+            $"{nameof(MetaActionCandidateGenerator.Options.GeneratorStrategies.FlipMetaActions)}," +
             $"{nameof(MetaActionCandidateGenerator.Options.GeneratorStrategies.InvariantMetaActions)}")]
         public IEnumerable<GeneratorStrategies> GeneratorStrategies { get; set; } = new List<GeneratorStrategies>();
         [Option("usefulness-strategy", Required = false, HelpText = "The usefulness strategy")]
