@@ -1,4 +1,5 @@
-﻿using P10.Models;
+﻿using P10.Helpers;
+using P10.Models;
 using P10.PreconditionAdditionRefinements.Heuristics;
 using P10.Verifiers;
 using PDDLSharp.CodeGenerators.PDDL;
@@ -126,7 +127,7 @@ namespace P10.PreconditionAdditionRefinements
             foreach (var problem in problems)
             {
                 var pddlDecl = new PDDLDecl(domain, problem);
-                var compiled = StackelbergCompiler.StackelbergCompiler.CompileToStackelberg(pddlDecl, MetaAction.Copy());
+                var compiled = StackelbergHelper.CompileToStackelberg(pddlDecl, MetaAction.Copy());
 
                 var verifier = new StateExploreVerifier(_maxPreconditionCombinations, _maxAddedParameters);
                 if (File.Exists(Path.Combine(searchWorkingDir, StateInfoFile)))
@@ -136,18 +137,19 @@ namespace P10.PreconditionAdditionRefinements
                 if (result == StateExploreResult.UnknownError)
                 {
                     GenerateErrorLogFile(verifier._log, compiled.Domain, compiled.Problem);
-                    ConsoleHelper.WriteLineColor($"\t\t\tUnknown error!", ConsoleColor.Red);
+                    ConsoleHelper.WriteLineColor($"\t\t\tUnknown error! Trying next problem...", ConsoleColor.Yellow);
                     invalidInSome = true;
                 }
                 else if (result == StateExploreResult.MetaActionValid)
                     ConsoleHelper.WriteLineColor($"\t\t\tMeta action valid in problem. Trying next problem...", ConsoleColor.Yellow);
-                if (result == StateExploreResult.InvariantError)
+                else if (result == StateExploreResult.InvariantError)
                 {
                     ConsoleHelper.WriteLineColor($"\t\t\tInvariant error! Trying next problem...", ConsoleColor.Yellow);
                     invalidInSome = true;
                 }
                 else if (result == StateExploreResult.Success)
                 {
+                    ConsoleHelper.WriteLineColor($"\t\t\tExploration successful!", ConsoleColor.Green);
                     invalidInSome = true;
                     break;
                 }

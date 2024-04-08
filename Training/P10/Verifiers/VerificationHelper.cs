@@ -1,4 +1,5 @@
-﻿using PDDLSharp.CodeGenerators.PDDL;
+﻿using P10.Helpers;
+using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
@@ -24,7 +25,7 @@ namespace P10.Verifiers
             var verifier = new FrontierVerifier();
             foreach (var problem in problems)
             {
-                var compiled = StackelbergCompiler.StackelbergCompiler.CompileToStackelberg(new PDDLDecl(domain, problem), metaAction.Copy());
+                var compiled = StackelbergHelper.CompileToStackelberg(new PDDLDecl(domain, problem), metaAction.Copy());
                 if (!verifier.Verify(compiled.Domain, compiled.Problem, workingDir, timeLimitS))
                 {
                     if (UseCache)
