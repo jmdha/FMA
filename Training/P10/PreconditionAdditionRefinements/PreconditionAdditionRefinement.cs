@@ -116,8 +116,11 @@ namespace P10.PreconditionAdditionRefinements
             return returnList;
         }
 
-        private bool InitializeStateSearch(DomainDecl domain, List<ProblemDecl> problems)
+        private bool InitializeStateSearch(DomainDecl domain, List<ProblemDecl> problems, int offset = 0)
         {
+            if (problems.Count <= offset)
+                return false;
+
             var searchWorkingDir = Path.Combine(TempDir, "state-search");
             PathHelper.RecratePath(searchWorkingDir);
 
@@ -149,9 +152,20 @@ namespace P10.PreconditionAdditionRefinements
                 }
                 else if (result == StateExploreResult.Success)
                 {
-                    ConsoleHelper.WriteLineColor($"\t\t\tExploration successful!", ConsoleColor.Green);
+                    var parseWatch = new Stopwatch();
+                    parseWatch.Start();
+                    UpdateOpenList(MetaAction, searchWorkingDir);
+                    parseWatch.Stop();
+                    _result.StackelbergOutputParsingTime += parseWatch.ElapsedMilliseconds;
                     invalidInSome = true;
-                    break;
+
+                    if (_openList.Count != 0)
+                    {
+                        ConsoleHelper.WriteLineColor($"\t\t\tExploration successful!", ConsoleColor.Green);
+                        break;
+                    }
+                    else
+                        ConsoleHelper.WriteLineColor($"\t\t\tExploration resulted in no candidates! Trying next problem!", ConsoleColor.Green);
                 }
             }
             searchWatch.Stop();
@@ -160,15 +174,9 @@ namespace P10.PreconditionAdditionRefinements
             if (!invalidInSome)
                 throw new Exception("Meta Action was valid in all problems??? This should not be possible");
 
-            searchWatch.Restart();
-            if (!UpdateOpenList(MetaAction, searchWorkingDir))
-            {
-                searchWatch.Stop();
-                _result.StackelbergOutputParsingTime += searchWatch.ElapsedMilliseconds;
+            if (_openList.Count == 0)
                 return false;
-            }
-            searchWatch.Stop();
-            _result.StackelbergOutputParsingTime += searchWatch.ElapsedMilliseconds;
+
             return true;
         }
 
@@ -207,15 +215,11 @@ namespace P10.PreconditionAdditionRefinements
             return state.MetaAction;
         }
 
-        private bool UpdateOpenList(ActionDecl currentMetaAction, string workingDir)
+        private void UpdateOpenList(ActionDecl currentMetaAction, string workingDir)
         {
             currentMetaAction.EnsureAnd();
             ConsoleHelper.WriteLineColor($"\t\tUpdating open list...", ConsoleColor.Magenta);
             var targetFile = new FileInfo(Path.Combine(workingDir, StateExploreVerifier.StateInfoFile));
-
-            if (!targetFile.Exists)
-                return false;
-            //throw new Exception("Stackelberg output does not exist!");
 
             ConsoleHelper.WriteLineColor($"\t\t\tParsing stackelberg output", ConsoleColor.Magenta);
             var listener = new ErrorListener();
@@ -328,8 +332,6 @@ namespace P10.PreconditionAdditionRefinements
 
             _result.FinalRefinementPossibilities += _openList.Count;
             _initialPossibilities = _openList.Count;
-
-            return true;
         }
 
         private bool IsCovered(PreconditionState check, List<PreconditionState> others)
