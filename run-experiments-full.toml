@@ -6,6 +6,7 @@ name = "predicate"
 path = "Training/training.sh"
 kind = "Learn"
 args = ["StrippedMetaActions"]
+attribute = "P10"
 
 [[runners]]
 name = "Fast Downward (Meta)"
@@ -13,12 +14,27 @@ path = "Testing/testing-meta.sh"
 kind = "Solve"
 args = ["lama-first"]
 depends = "predicate"
+attribute = "downward"
 
 [[runners]]
 name = "Fast Downward"
 path = "Testing/testing.sh"
 kind = "Solve"
 args = ["lama-first"]
+attribute = "downward"
+
+[[attributes]]
+name = "downward"
+patterns = [
+    { name = "total_time", pattern = "Total time: ([0-9.]*)" },
+    { name = "search_time", pattern = "Search time: ([0-9.]*)" },
+]
+
+[[attributes]]
+name = "P10"
+patterns = [
+    { name = "total_candidates", pattern = "Total candidates: ([0-9]*)" },
+]
 
 [[tasks]]
 name = "blocksworld"
