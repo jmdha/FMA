@@ -100,9 +100,11 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
 
             foreach(var line in File.ReadLines(Path.Combine(TempFolder, "output.txt")))
             {
-                if (line.Contains(":=1") && !line.Contains(','))
+                if (line.Contains(":=1"))
                 {
                     var inner = line.Substring(line.IndexOf('{') + 1, line.IndexOf('}') - line.IndexOf('{') - 1);
+                    if (inner.Contains(','))
+                        continue;
                     var predName = inner.Substring(0, inner.IndexOf(' '));
                     var fix = new List<int>();
                     var count = new List<int>();
@@ -110,10 +112,10 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                     args.RemoveAll(x => x == "");
                     for (int i = 0; i < args.Count; i++) 
                     {
-                        if (args[i].StartsWith('V'))
-                            fix.Add(i);
-                        else if(args[i].StartsWith('C'))
+                        if (args[i].StartsWith('C'))
                             count.Add(i);
+                        else
+                            fix.Add(i);
                     }
 
                     rules.Add(new PredicateRule(predName, fix, count));
