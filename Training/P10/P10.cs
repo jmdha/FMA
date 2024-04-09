@@ -84,7 +84,7 @@ namespace P10
             var problems = new List<ProblemDecl>();
             foreach (var problem in opts.ProblemsPath)
                 problems.Add(parser.ParseAs<ProblemDecl>(new FileInfo(problem)));
-            var baseDecl = new PDDLDecl(domain, problems[0]);
+            var baseDecl = new PDDLDecl(domain, problems[problems.Count - 1]);
             contexturalizer.Contexturalise(baseDecl);
             generalResult.Domain = domain.Name!.Name;
             generalResult.Problems = problems.Count;

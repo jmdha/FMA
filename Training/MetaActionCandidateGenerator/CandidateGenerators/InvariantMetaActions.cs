@@ -54,22 +54,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
             return candidates.Distinct(pddlDecl.Domain.Actions);
         }
 
-        private PredicateExp GetEqualsPredicate(PredicateExp pred1, PredicateExp pred2)
-        {
-            var args = new List<NameExp>();
-            for (int i = 0; i < pred1.Arguments.Count; i++)
-            {
-                if (pred1.Arguments[i].Name != pred2.Arguments[i].Name)
-                {
-                    args.Add(pred1.Arguments[i]);
-                    args.Add(pred2.Arguments[i]);
-                }
-            }
-
-            return new PredicateExp("=", args);
-        }
-
-        private List<bool[]> GeneratePermutations(int count)
+        internal List<bool[]> GeneratePermutations(int count)
         {
             var returnQueue = new List<bool[]>();
             GeneratePermutations(count, new bool[count], 0, returnQueue);
@@ -96,7 +81,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                 returnQueue.Add(falseSource);
         }
 
-        private PredicateExp GetMutatedPredicate(PredicateExp from, List<bool> indexes)
+        internal PredicateExp GetMutatedPredicate(PredicateExp from, List<bool> indexes)
         {
             var copy = from.Copy();
             for (int i = 0; i < copy.Arguments.Count; i++)

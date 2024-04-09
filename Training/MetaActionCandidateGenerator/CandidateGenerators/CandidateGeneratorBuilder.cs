@@ -11,6 +11,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
             { GeneratorStrategies.AgressiveStrippedMetaActions, () => new AgressiveStrippedMetaActions() },
             { GeneratorStrategies.FlipMetaActions, () => new FlipMetaActions() },
             { GeneratorStrategies.InvariantMetaActions, () => new InvariantMetaActions() },
+            { GeneratorStrategies.CPDDLInvariantMetaActions, () => new CPDDLInvariantMetaActions() },
         };
 
         public static ICandidateGenerator GetGenerator(GeneratorStrategies strategy) => _generators[strategy]();

@@ -122,5 +122,20 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
 
             return requiredStatics;
         }
+
+        internal PredicateExp GetEqualsPredicate(PredicateExp pred1, PredicateExp pred2)
+        {
+            var args = new List<NameExp>();
+            for (int i = 0; i < pred1.Arguments.Count; i++)
+            {
+                if (pred1.Arguments[i].Name != pred2.Arguments[i].Name)
+                {
+                    args.Add(pred1.Arguments[i]);
+                    args.Add(pred2.Arguments[i]);
+                }
+            }
+
+            return new PredicateExp("=", args);
+        }
     }
 }

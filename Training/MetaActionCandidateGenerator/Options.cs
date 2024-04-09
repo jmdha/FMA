@@ -12,7 +12,8 @@ namespace MetaActionCandidateGenerator
             StrippedMetaActions = 3,
             AgressiveStrippedMetaActions = 4,
             FlipMetaActions = 5,
-            InvariantMetaActions = 6
+            InvariantMetaActions = 6,
+            CPDDLInvariantMetaActions = 7
         }
 
         [Option("output", Required = true, HelpText = "Where to output the meta actions")]

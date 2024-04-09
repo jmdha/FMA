@@ -31,6 +31,17 @@ echo
 echo == Done! ==
 echo 
 
+echo == Installing CPPDL ==
+echo 
+git clone https://gitlab.com/danfis/cpddl.git
+cd cppdl
+cp Makefile.config.tpl Makefile.config
+./scripts/build.sh
+cd ..
+echo 
+echo == Done! ==
+echo 
+
 echo == Installing Benchmarks ==
 echo 
 git clone https://github.com/ipc2023-learning/benchmarks learning-benchmarks
