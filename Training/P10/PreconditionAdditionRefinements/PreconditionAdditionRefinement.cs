@@ -27,6 +27,7 @@ namespace P10.PreconditionAdditionRefinements
         public ActionDecl MetaAction { get; }
 
         private readonly PriorityQueue<PreconditionState, int> _openList = new PriorityQueue<PreconditionState, int>();
+        private readonly List<PreconditionState> _closedList = new List<PreconditionState>();
         private int _initialPossibilities = 0;
         private readonly Stopwatch _watch = new Stopwatch();
         private readonly string _tempValidationFolder = "";
@@ -225,6 +226,7 @@ namespace P10.PreconditionAdditionRefinements
 
             ConsoleHelper.WriteLineColor($"\t\t{_openList.Count} possibilities left [Est. {TimeSpan.FromMilliseconds((double)_openList.Count * ((double)(_watch.ElapsedMilliseconds + 1) / (double)(1 + (_initialPossibilities - _openList.Count)))).ToString("hh\\:mm\\:ss")} until finished]", ConsoleColor.Magenta);
             var state = _openList.Dequeue();
+            _closedList.Add(state);
 #if DEBUG
             ConsoleHelper.WriteLineColor($"\t\tBest Validity: {Math.Round((1 - ((double)state.InvalidStates / (double)state.TotalInvalidStates)) * 100, 2)}%", ConsoleColor.Magenta);
             ConsoleHelper.WriteLineColor($"\t\tBest Applicability: {Math.Round(((double)state.Applicability / (double)(state.TotalValidStates + state.TotalInvalidStates)) * 100, 2)}%", ConsoleColor.Magenta);
@@ -333,9 +335,12 @@ namespace P10.PreconditionAdditionRefinements
                         metaAction,
                         preconditions,
                         0);
-                    newState.hValue = Heuristic.GetValue(newState);
-                    if (newState.hValue != int.MaxValue)
-                        toCheck.Add(newState);
+                    if (!_closedList.Contains(newState))
+                    {
+                        newState.hValue = Heuristic.GetValue(newState);
+                        if (newState.hValue != int.MaxValue)
+                            toCheck.Add(newState);
+                    }
                 }
             }
 
