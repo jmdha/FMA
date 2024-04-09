@@ -1,4 +1,5 @@
-﻿using P10.Helpers;
+﻿using Microsoft.VisualBasic;
+using P10.Helpers;
 using P10.Models;
 using P10.PreconditionAdditionRefinements.Heuristics;
 using P10.Verifiers;
@@ -87,19 +88,40 @@ namespace P10.PreconditionAdditionRefinements
                 return returnList;
             }
 
-            ConsoleHelper.WriteLineColor($"\t\tInitial state space exploration started...", ConsoleColor.Magenta);
-            if (!InitializeStateSearch(domain, problems))
+            var refined = false;
+            int offset = 0;
+            while (!refined)
             {
-                ConsoleHelper.WriteLineColor($"\t\tExploration failed", ConsoleColor.Magenta);
-                _result.Succeded = false;
-                return new List<ActionDecl>();
-            }
-            else
-            {
-                ConsoleHelper.WriteLineColor($"\t\tExploration finished", ConsoleColor.Magenta);
-                _result.Succeded = true;
+                ConsoleHelper.WriteLineColor($"\t\tInitial state space exploration started...", ConsoleColor.Magenta);
+                var refineProblem = InitializeStateSearch(domain, problems, offset);
+                if (refineProblem == -1)
+                {
+                    ConsoleHelper.WriteLineColor($"\t\tExploration failed", ConsoleColor.Magenta);
+                    _result.Succeded = false;
+                    return new List<ActionDecl>();
+                }
+                offset = refineProblem + 1;
+                var refinedCandidates = RefineIterate(domain, problems);
+                if (refinedCandidates.Count != 0)
+                {
+                    returnList = refinedCandidates;
+                    refined = true;
+                }
+                else
+                {
+                    ConsoleHelper.WriteLineColor($"\t\tNo valid refinements for state explored problem! Trying next problem.", ConsoleColor.Magenta);
+                    if (offset >= problems.Count)
+                        break;
+                }
             }
 
+            return returnList;
+        }
+
+        private List<ActionDecl> RefineIterate(DomainDecl domain, List<ProblemDecl> problems)
+        {
+            int iteration = 0;
+            var returnList = new List<ActionDecl>();
             ConsoleHelper.WriteLineColor($"\tRefining iteration {iteration++}...", ConsoleColor.Magenta);
             var refined = GetNextRefined(domain, problems);
             while (refined != null)
@@ -116,18 +138,16 @@ namespace P10.PreconditionAdditionRefinements
             return returnList;
         }
 
-        private bool InitializeStateSearch(DomainDecl domain, List<ProblemDecl> problems, int offset = 0)
+        private int InitializeStateSearch(DomainDecl domain, List<ProblemDecl> problems, int offset)
         {
-            if (problems.Count <= offset)
-                return false;
-
             var searchWorkingDir = Path.Combine(TempDir, "state-search");
             PathHelper.RecratePath(searchWorkingDir);
 
             var searchWatch = new Stopwatch();
             searchWatch.Start();
             bool invalidInSome = false;
-            foreach (var problem in problems)
+            var count = offset;
+            foreach (var problem in problems.Skip(offset))
             {
                 var pddlDecl = new PDDLDecl(domain, problem);
                 var compiled = StackelbergHelper.CompileToStackelberg(pddlDecl, MetaAction.Copy());
@@ -167,6 +187,7 @@ namespace P10.PreconditionAdditionRefinements
                     else
                         ConsoleHelper.WriteLineColor($"\t\t\tExploration resulted in no candidates! Trying next problem!", ConsoleColor.Green);
                 }
+                count++;
             }
             searchWatch.Stop();
             _result.StateSpaceSearchTime += searchWatch.ElapsedMilliseconds;
@@ -175,9 +196,9 @@ namespace P10.PreconditionAdditionRefinements
                 throw new Exception("Meta Action was valid in all problems??? This should not be possible");
 
             if (_openList.Count == 0)
-                return false;
+                return -1;
 
-            return true;
+            return count;
         }
 
         private void GenerateErrorLogFile(string log, DomainDecl domain, ProblemDecl problem)

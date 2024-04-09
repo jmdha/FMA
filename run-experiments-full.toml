@@ -5,7 +5,7 @@ memory_limit_solve = 4000
 name = "predicate"
 path = "Training/training.sh"
 kind = "Learn"
-args = ["InvariantMetaActions"]
+args = ["StrippedMetaActions"]
 
 [[runners]]
 name = "Fast Downward (Meta)"
