@@ -16,7 +16,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
 {
     public class CPDDLInvariantMetaActions : InvariantMetaActions
     {
-        public static readonly string CPDDLExecutable = PathHelper.RootPath("../Dependencies/cpddl/bin/pddl");
+        public static string CPDDLExecutable = PathHelper.RootPath("../Dependencies/cpddl/bin/pddl");
         public static string TempFolder = PathHelper.RootPath("temp/cpddl");
 
         internal override List<ActionDecl> GenerateCandidatesInner(PDDLDecl pddlDecl)

@@ -72,6 +72,17 @@ namespace P10
             BaseVerifier.ShowSTDOut = opts.StackelbergDebug;
             if (opts.LearningCache != "")
                 VerificationHelper.UseCache = true;
+            if (opts.GeneratorStrategies.Contains(GeneratorStrategies.CPDDLInvariantMetaActions))
+            {
+                if (opts.CPDDLPath != "")
+                {
+                    opts.CPDDLPath = PathHelper.RootPath(opts.CPDDLPath);
+                    CPDDLInvariantMetaActions.CPDDLExecutable = opts.CPDDLPath;
+                }
+                if (!File.Exists(CPDDLInvariantMetaActions.CPDDLExecutable))
+                    throw new FileNotFoundException($"CPDDL executable not found: {CPDDLInvariantMetaActions.CPDDLExecutable}");
+                CPDDLInvariantMetaActions.TempFolder = Path.Combine(opts.TempPath, "cpddl");
+            }
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
             var generalResult = new P10Result();
