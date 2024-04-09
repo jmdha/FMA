@@ -1,16 +1,11 @@
-﻿using PDDLSharp.Models.PDDL.Domain;
-using PDDLSharp.Models.PDDL.Expressions;
-using PDDLSharp.Models.PDDL;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PDDLSharp.Models.PDDL.Overloads;
-using Tools;
-using System.Diagnostics;
-using PDDLSharp.CodeGenerators.PDDL;
+﻿using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.ErrorListeners;
+using PDDLSharp.Models.PDDL;
+using PDDLSharp.Models.PDDL.Domain;
+using PDDLSharp.Models.PDDL.Expressions;
+using PDDLSharp.Models.PDDL.Overloads;
+using System.Diagnostics;
+using Tools;
 
 namespace MetaActionCandidateGenerator.CandidateGenerators
 {
@@ -48,9 +43,9 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                     permutations.RemoveAll(x => x.All(y => y == false));
                 }
 
-                foreach(var rule in rules)
+                foreach (var rule in rules)
                     if (rule.Predicate == pred.Name)
-                        foreach(var fix in rule.Fixed)
+                        foreach (var fix in rule.Fixed)
                             permutations.RemoveAll(x => x[fix] == true);
 
                 foreach (var permutation in permutations)
@@ -77,8 +72,8 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
         {
             PathHelper.RecratePath(TempFolder);
             var codeGenerator = new PDDLCodeGenerator(new ErrorListener());
-            codeGenerator.Generate(pddlDecl.Domain, Path.Combine(TempFolder,"domain.pddl"));
-            codeGenerator.Generate(pddlDecl.Problem, Path.Combine(TempFolder,"problem.pddl"));
+            codeGenerator.Generate(pddlDecl.Domain, Path.Combine(TempFolder, "domain.pddl"));
+            codeGenerator.Generate(pddlDecl.Problem, Path.Combine(TempFolder, "problem.pddl"));
 
             var process = new Process
             {
@@ -98,7 +93,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
 
             var rules = new List<PredicateRule>();
 
-            foreach(var line in File.ReadLines(Path.Combine(TempFolder, "output.txt")))
+            foreach (var line in File.ReadLines(Path.Combine(TempFolder, "output.txt")))
             {
                 if (line.Contains(":=1"))
                 {
@@ -110,7 +105,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                     var count = new List<int>();
                     var args = inner.Substring(inner.IndexOf(' ')).Split(' ').ToList();
                     args.RemoveAll(x => x == "");
-                    for (int i = 0; i < args.Count; i++) 
+                    for (int i = 0; i < args.Count; i++)
                     {
                         if (args[i].StartsWith('C'))
                             count.Add(i);

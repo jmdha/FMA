@@ -38,7 +38,7 @@ namespace P10.Verifiers
             return true;
         }
 
-        private static Dictionary<INode, string> _textCache = new Dictionary<INode, string>();
+        private static readonly Dictionary<INode, string> _textCache = new Dictionary<INode, string>();
         private static string GetCached(INode node)
         {
             if (_textCache.ContainsKey(node))

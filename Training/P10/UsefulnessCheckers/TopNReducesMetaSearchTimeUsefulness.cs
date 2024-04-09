@@ -4,7 +4,6 @@ using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers.FastDownward.Plans;
 using System.Diagnostics;
-using System.Linq;
 using Tools;
 
 namespace P10.UsefulnessCheckers
@@ -34,7 +33,7 @@ namespace P10.UsefulnessCheckers
             var ordered = metaSearchTimes.OrderBy(x => x.Value).ToList();
 
             var usefull = new List<ActionDecl>();
-            for(int n = 0; n < N; n++)
+            for (int n = 0; n < N; n++)
             {
                 if (ordered.Count == 0)
                     break;

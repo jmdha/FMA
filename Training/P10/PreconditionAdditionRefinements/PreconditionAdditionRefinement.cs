@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualBasic;
-using P10.Helpers;
+﻿using P10.Helpers;
 using P10.Models;
 using P10.PreconditionAdditionRefinements.Heuristics;
 using P10.Verifiers;
@@ -12,7 +11,6 @@ using PDDLSharp.Models.PDDL.Overloads;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers.PDDL;
 using System.Diagnostics;
-using System.Numerics;
 using System.Text;
 using Tools;
 using static P10.PreconditionAdditionRefinements.StateExploreVerifier;
@@ -33,9 +31,9 @@ namespace P10.PreconditionAdditionRefinements
         private readonly Stopwatch _watch = new Stopwatch();
         private readonly string _tempValidationFolder = "";
         private RefinementResult _result = new RefinementResult();
-        private int _maxPreconditionCombinations;
-        private int _maxAddedParameters;
-        private string _learningCache = ".cache";
+        private readonly int _maxPreconditionCombinations;
+        private readonly int _maxAddedParameters;
+        private readonly string _learningCache = ".cache";
 
         public PreconditionAdditionRefinement(int timeLimitS, ActionDecl metaAction, string tempDir, string outputDir, int maxPreconditionCombinations, int maxAddedParameters, string learningCache)
         {
@@ -77,7 +75,6 @@ namespace P10.PreconditionAdditionRefinements
 
         private List<ActionDecl> Run(DomainDecl domain, List<ProblemDecl> problems)
         {
-            int iteration = 0;
             var returnList = new List<ActionDecl>();
             ConsoleHelper.WriteLineColor($"\t\tValidating...", ConsoleColor.Magenta);
             if (VerificationHelper.IsValid(domain, problems, MetaAction, _tempValidationFolder, TimeLimitS, _learningCache))

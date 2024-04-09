@@ -132,7 +132,7 @@ namespace P10.PreconditionAdditionRefinements
                 return StateExploreResult.Success;
             else
             {
-                if (_log.Contains("There should be no goal defined for a non-attack var! Error in PDDL!") || 
+                if (_log.Contains("There should be no goal defined for a non-attack var! Error in PDDL!") ||
                     _log.Contains("Mutex type changed to mutex_and because the domain has conditional effects"))
                     return StateExploreResult.InvariantError;
                 if (exitCode == 0)
