@@ -4,6 +4,7 @@ using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
+using Tools;
 
 namespace P10.Verifiers
 {
@@ -19,7 +20,10 @@ namespace P10.Verifiers
                 if (File.Exists(Path.Combine(cachePath, $"{code}-valid.txt")))
                     return true;
                 if (File.Exists(Path.Combine(cachePath, $"{code}-invalid.txt")))
+                {
+                    ConsoleHelper.WriteLineColor($"Meta action invalid in a cached problem", ConsoleColor.Red);
                     return false;
+                }
             }
 
             var verifier = new FrontierVerifier();
@@ -30,6 +34,7 @@ namespace P10.Verifiers
                 {
                     if (UseCache)
                         File.Create(Path.Combine(cachePath, $"{code}-invalid.txt"));
+                    ConsoleHelper.WriteLineColor($"Meta action invalid in problem {problem.Name}", ConsoleColor.Red);
                     return false;
                 }
             }
