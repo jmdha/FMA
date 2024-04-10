@@ -1,16 +1,9 @@
 ﻿using PDDLSharp.ErrorListeners;
+using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
-using PDDLSharp.Models.PDDL;
-using PDDLSharp.Parsers.PDDL;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Stackelberg.MetaAction.Compiler.Helpers;
 using PDDLSharp.Models.PDDL.Overloads;
-using P10.Models;
+using PDDLSharp.Parsers.PDDL;
 
 namespace P10.PreconditionAdditionRefinements
 {
