@@ -2,6 +2,7 @@
 using CSVToolsSharp;
 using MetaActionCandidateGenerator.CandidateGenerators;
 using P10.PreconditionAdditionRefinements;
+using P10.PreconditionAdditionRefinements.Heuristics;
 using P10.UsefulnessCheckers;
 using P10.Verifiers;
 using PDDLSharp.CodeGenerators.PDDL;

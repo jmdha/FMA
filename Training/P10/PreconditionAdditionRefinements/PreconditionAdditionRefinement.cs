@@ -237,114 +237,13 @@ namespace P10.PreconditionAdditionRefinements
 
         private void UpdateOpenList(ActionDecl currentMetaAction, string workingDir)
         {
-            currentMetaAction.EnsureAnd();
-            ConsoleHelper.WriteLineColor($"\t\tUpdating open list...", ConsoleColor.Magenta);
-            var targetFile = new FileInfo(Path.Combine(workingDir, StateExploreVerifier.StateInfoFile));
-
             ConsoleHelper.WriteLineColor($"\t\t\tParsing stackelberg output", ConsoleColor.Magenta);
-            var listener = new ErrorListener();
-            var parser = new PDDLParser(listener);
-            var toCheck = new List<PreconditionState>();
-
-            var text = File.ReadAllText(targetFile.FullName);
-            var lines = text.Split('\n').ToList();
-            var checkedMetaActions = new HashSet<ActionDecl>();
-            var totalValidStates = Convert.ToInt32(lines[0]);
-            var totalInvalidStates = Convert.ToInt32(lines[1]);
-            for (int i = 2; i < lines.Count; i += 4)
-            {
-                if (i + 4 > lines.Count)
-                    break;
-                var metaAction = currentMetaAction.Copy();
-                var preconditions = new List<IExp>();
-
-                var typesStr = lines[i].Trim();
-                var types = typesStr.Split(' ').ToList();
-                types.RemoveAll(x => x == "");
-
-                var facts = lines[i + 1].Split('|').ToList();
-                facts.RemoveAll(x => x == "");
-                foreach (var fact in facts)
-                {
-                    bool isNegative = fact.Contains("NegatedAtom");
-                    var predText = fact.Replace("NegatedAtom", "").Replace("Atom", "").Trim();
-                    var predName = predText.Substring(0, predText.IndexOf('[')).Trim();
-                    var paramString = predText.Substring(predText.IndexOf('[')).Replace("[", "").Replace("]", "").Trim();
-                    var paramStrings = paramString.Split(',').ToList();
-                    paramStrings.RemoveAll(x => x == "");
-
-                    var newPredicate = new PredicateExp(predName);
-                    foreach (var item in paramStrings)
-                    {
-                        var index = Int32.Parse(item);
-                        if (index >= metaAction.Parameters.Values.Count)
-                        {
-                            if (types.Count == 0)
-                                throw new Exception("Added precondition is trying to reference a added parameter, but said parameter have not been added! (Stackelberg Output Malformed)");
-                            var newNamed = new NameExp($"?{item}", new TypeExp(types[metaAction.Parameters.Values.Count - index]));
-                            metaAction.Parameters.Values.Add(newNamed);
-                            newPredicate.Arguments.Add(newNamed);
-                        }
-                        else
-                        {
-                            var param = metaAction.Parameters.Values[index];
-                            newPredicate.Arguments.Add(new NameExp(param.Name));
-                        }
-                    }
-
-                    if (isNegative)
-                        preconditions.Add(new NotExp(newPredicate));
-                    else
-                        preconditions.Add(newPredicate);
-                }
-                var invalidStates = Convert.ToInt32(lines[i + 3]);
-                var applicability = Convert.ToInt32(lines[i + 2]);
-
-                if (metaAction.Preconditions is AndExp and)
-                {
-                    // Remove preconditions that have the same effect
-                    if (metaAction.Effects is AndExp effAnd)
-                    {
-                        var cpy = effAnd.Copy();
-                        cpy.RemoveContext();
-                        cpy.RemoveTypes();
-                        if (cpy.Children.All(x => preconditions.Any(y => y.Equals(x))))
-                            continue;
-                        if (IsSubset(preconditions, cpy.Children))
-                            continue;
-                    }
-
-                    // Prune some nonsensical preconditions.
-                    if (preconditions.Any(x => preconditions.Contains(new NotExp(x))))
-                        continue;
-
-                    foreach (var precon in preconditions)
-                        if (!and.Children.Contains(precon))
-                            and.Children.Add(precon);
-                }
-
-                if (!checkedMetaActions.Contains(metaAction))
-                {
-                    checkedMetaActions.Add(metaAction);
-                    var newState = new PreconditionState(
-                        totalValidStates,
-                        totalInvalidStates,
-                        totalValidStates - (totalInvalidStates - invalidStates),
-                        invalidStates,
-                        applicability,
-                        metaAction,
-                        preconditions,
-                        0);
-                    if (!_closedList.Contains(newState))
-                    {
-                        newState.hValue = Heuristic.GetValue(newState);
-                        if (newState.hValue != int.MaxValue)
-                            toCheck.Add(newState);
-                    }
-                }
-            }
-
+            var toCheck = StackelbergOutputParser.ParseOutput(currentMetaAction, workingDir, _closedList);
             _result.InitialRefinementPossibilities += toCheck.Count;
+
+            foreach (var check in toCheck)
+                check.hValue = Heuristic.GetValue(check);
+            toCheck.RemoveAll(x => x.hValue == int.MaxValue);
 
             ConsoleHelper.WriteLineColor($"\t\t\tChecks for covered meta actions", ConsoleColor.Magenta);
             ConsoleHelper.WriteLineColor($"\t\t\tTotal to check: {toCheck.Count}", ConsoleColor.Magenta);
@@ -373,14 +272,6 @@ namespace P10.PreconditionAdditionRefinements
                 }
             }
             return false;
-        }
-
-        private bool IsSubset(List<IExp> set1, List<IExp> set2)
-        {
-            foreach (var item in set1)
-                if (!set2.Contains(item))
-                    return false;
-            return true;
         }
     }
 }
