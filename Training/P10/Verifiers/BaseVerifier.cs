@@ -52,7 +52,7 @@ namespace P10.Verifiers
             {
                 StartInfo = new ProcessStartInfo()
                 {
-                    FileName = "python2",
+                    FileName = "python3",
                     Arguments = sb.ToString(),
                     CreateNoWindow = true,
                     UseShellExecute = false,
