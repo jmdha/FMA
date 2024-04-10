@@ -35,6 +35,8 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                     {
                         if (action.Effects.FindNames(predicate.Name).Count == 0)
                             continue;
+
+                        // Possitives
                         if (!predicate.CanOnlyBeSetToFalse(pddlDecl.Domain))
                         {
                             var handled = new List<string>();
@@ -142,6 +144,14 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                                 }
                             }
                         }
+
+                        // Negatives (TODO)
+                        if (!predicate.CanOnlyBeSetToTrue(pddlDecl.Domain))
+                            candidates.Add(GenerateMetaAction(
+                                $"meta_{predicate.Name}_{counter++}_false",
+                                new List<IExp>(),
+                                new List<IExp>() { new NotExp(predicate) },
+                                action));
                     }
                 }
             }
@@ -186,6 +196,11 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                     {
                         var subRuleStr = subRule.Trim();
                         var predName = subRuleStr.Substring(0, subRuleStr.IndexOf(' '));
+                        if (predName.StartsWith("NOT-"))
+                        {
+                            valid = false;
+                            break;
+                        }
                         var fixArgs = new List<string>();
                         var args = subRuleStr.Substring(subRuleStr.IndexOf(' ')).Split(' ').ToList();
                         args.RemoveAll(x => x == "");
