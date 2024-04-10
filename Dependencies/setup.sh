@@ -1,6 +1,6 @@
 echo == Installing packages ==
 echo 
-apt install cmake gcc-multilib g++-multilib flex bison python3 python2 curl automake dotnet-sdk-8.0 libfl-dev r-base
+apt install cmake gcc-multilib g++-multilib flex bison python3 curl automake dotnet-sdk-8.0 libfl-dev r-base
 echo 
 echo == Done! ==
 echo 
