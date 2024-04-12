@@ -1,15 +1,15 @@
-﻿namespace P10.Models
+﻿namespace P10.PreconditionAdditionRefinements.Heuristics
 {
-    public class hSum<T> : IHeuristic<T>
+    public class hSum : IHeuristic
     {
-        public List<IHeuristic<T>> Heuristics { get; set; }
+        public List<IHeuristic> Heuristics { get; set; }
 
-        public hSum(List<IHeuristic<T>> heuristics)
+        public hSum(List<IHeuristic> heuristics)
         {
             Heuristics = heuristics;
         }
 
-        public int GetValue(T metaAction)
+        public int GetValue(PreconditionState metaAction)
         {
             int sum = 0;
             foreach (var heuristic in Heuristics)

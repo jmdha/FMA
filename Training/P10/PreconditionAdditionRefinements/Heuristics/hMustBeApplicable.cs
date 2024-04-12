@@ -1,8 +1,6 @@
-﻿using P10.Models;
-
-namespace P10.PreconditionAdditionRefinements.Heuristics
+﻿namespace P10.PreconditionAdditionRefinements.Heuristics
 {
-    public class hMustBeApplicable : IHeuristic<PreconditionState>
+    public class hMustBeApplicable : IHeuristic
     {
         public int GetValue(PreconditionState preconditions)
         {

@@ -1,5 +1,4 @@
 ﻿using P10.Helpers;
-using P10.Models;
 using P10.PreconditionAdditionRefinements.Heuristics;
 using P10.Verifiers;
 using PDDLSharp.CodeGenerators.PDDL;
@@ -19,7 +18,7 @@ namespace P10.PreconditionAdditionRefinements
         public int TimeLimitS { get; }
         public string TempDir { get; }
         public string OutputDir { get; }
-        public IHeuristic<PreconditionState> Heuristic { get; set; }
+        public IHeuristic Heuristic { get; set; }
         public IVerifier Verifier { get; } = new FrontierVerifier();
         public ActionDecl MetaAction { get; }
 
@@ -35,13 +34,13 @@ namespace P10.PreconditionAdditionRefinements
 
         public PreconditionAdditionRefinement(int timeLimitS, ActionDecl metaAction, string tempDir, string outputDir, int maxPreconditionCombinations, int maxAddedParameters, string learningCache)
         {
-            Heuristic = new hSum<PreconditionState>(new List<IHeuristic<PreconditionState>>() {
+            Heuristic = new hSum(new List<IHeuristic>() {
                 new hMustBeApplicable(),
                 //new hMustBeValid(),
-                new hWeighted<PreconditionState>(new hMostValid(), 100000),
-                new hWeighted<PreconditionState>(new hFewestParameters(), 10000),
-                new hWeighted<PreconditionState>(new hFewestPre(), 1000),
-                new hWeighted<PreconditionState>(new hMostApplicable(), 100)
+                new hWeighted(new hMostValid(), 100000),
+                new hWeighted(new hFewestParameters(), 10000),
+                new hWeighted(new hFewestPre(), 1000),
+                new hWeighted(new hMostApplicable(), 100)
             });
             MetaAction = metaAction;
             TimeLimitS = timeLimitS;
