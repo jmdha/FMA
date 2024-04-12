@@ -99,26 +99,31 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                     foreach (var subRule in subRulesStr)
                     {
                         var subRuleStr = subRule.Trim();
-                        var predName = subRuleStr.Substring(0, subRuleStr.IndexOf(' '));
+                        var predName = subRuleStr;
+                        if (subRuleStr.Contains(' '))
+                            predName = subRuleStr.Substring(0, subRuleStr.IndexOf(' '));
                         if (predName.StartsWith("NOT-"))
                         {
                             valid = false;
                             break;
                         }
                         var fixArgs = new List<string>();
-                        var args = subRuleStr.Substring(subRuleStr.IndexOf(' ')).Split(' ').ToList();
-                        args.RemoveAll(x => x == "");
-                        for (int i = 0; i < args.Count; i++)
+                        if (subRuleStr.Contains(' '))
                         {
-                            if (args[i].StartsWith('C'))
-                                fixArgs.Add(args[i].Substring(0, args[i].IndexOf(':')));
-                            else if (args[i].StartsWith('V'))
-                                fixArgs.Add(args[i].Substring(0, args[i].IndexOf(':')));
-                            else
-                                valid = false;
+                            var args = subRuleStr.Substring(subRuleStr.IndexOf(' ')).Split(' ').ToList();
+                            args.RemoveAll(x => x == "");
+                            for (int i = 0; i < args.Count; i++)
+                            {
+                                if (args[i].StartsWith('C'))
+                                    fixArgs.Add(args[i].Substring(0, args[i].IndexOf(':')));
+                                else if (args[i].StartsWith('V'))
+                                    fixArgs.Add(args[i].Substring(0, args[i].IndexOf(':')));
+                                else
+                                    valid = false;
+                            }
+                            if (!valid)
+                                break;
                         }
-                        if (!valid)
-                            break;
                         subRules.Add(new PredicateRule(predName, fixArgs));
                     }
 
