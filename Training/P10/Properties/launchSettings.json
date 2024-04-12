@@ -6,7 +6,7 @@
     "WSL": {
       "commandName": "WSL2",
       "distributionName": "",
-      "commandLineArgs": "P10/bin/Debug/net8.0/P10.dll --output output --domain ../Dependencies/learning-benchmarks/sokoban/domain.pddl --problems ../Dependencies/learning-benchmarks/sokoban/training/easy/p01.pddl ../Dependencies/learning-benchmarks/sokoban/training/easy/p05.pddl ../Dependencies/learning-benchmarks/sokoban/training/easy/p60.pddl --generation-strategies CPDDLInvariantMetaActions --remove-duplicates --refinement-time-limit 60",
+      "commandLineArgs": "P10/bin/Debug/net8.0/P10.dll --output output --domain ../Dependencies/learning-benchmarks/satellite/domain.pddl --problems ../Dependencies/learning-benchmarks/satellite/training/easy/p01.pddl ../Dependencies/learning-benchmarks/satellite/training/easy/p05.pddl ../Dependencies/learning-benchmarks/satellite/training/easy/p60.pddl --generation-strategies CPDDLInvariantMetaActions --remove-duplicates --refinement-time-limit 60",
       "workingDirectory": "/home/kris/P10/Training"
     }
   }

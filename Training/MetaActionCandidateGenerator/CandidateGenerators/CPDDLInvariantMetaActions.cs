@@ -1,19 +1,11 @@
-﻿using CommandLine.Text;
-using Microsoft.VisualBasic.FileIO;
-using PDDLSharp.CodeGenerators.PDDL;
+﻿using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Models.PDDL.Overloads;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.Metrics;
-using System.Reflection;
-using System.Text.RegularExpressions;
 using Tools;
-using static System.Collections.Specialized.BitVector32;
 
 namespace MetaActionCandidateGenerator.CandidateGenerators
 {

@@ -30,7 +30,7 @@ namespace P10.PreconditionAdditionRefinements
         private RefinementResult _result = new RefinementResult();
         private readonly int _maxPreconditionCombinations;
         private readonly int _maxAddedParameters;
-        private readonly string _learningCache = ".cache";
+        private readonly string _learningCache;
 
         public PreconditionAdditionRefinement(int timeLimitS, ActionDecl metaAction, string tempDir, string outputDir, int maxPreconditionCombinations, int maxAddedParameters, string learningCache)
         {
@@ -162,6 +162,11 @@ namespace P10.PreconditionAdditionRefinements
                 else if (result == StateExploreResult.InvariantError)
                 {
                     ConsoleHelper.WriteLineColor($"\t\t\tInvariant error! Trying next problem...", ConsoleColor.Yellow);
+                    invalidInSome = true;
+                }
+                else if (result == StateExploreResult.PDDLError)
+                {
+                    ConsoleHelper.WriteLineColor($"\t\t\tPDDL error! Trying next problem...", ConsoleColor.Yellow);
                     invalidInSome = true;
                 }
                 else if (result == StateExploreResult.Success)

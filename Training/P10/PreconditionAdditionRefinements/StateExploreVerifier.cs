@@ -11,7 +11,7 @@ namespace P10.PreconditionAdditionRefinements
 {
     public class StateExploreVerifier : BaseVerifier
     {
-        public enum StateExploreResult { Success, InvariantError, UnknownError, MetaActionValid }
+        public enum StateExploreResult { Success, InvariantError, PDDLError, UnknownError, MetaActionValid }
         public static string StateInfoFile = "out";
         public int MaxPreconditionCombinations = 3;
         public int MaxParameters = 0;
@@ -132,8 +132,9 @@ namespace P10.PreconditionAdditionRefinements
                 return StateExploreResult.Success;
             else
             {
-                if (_log.Contains("There should be no goal defined for a non-attack var! Error in PDDL!") ||
-                    _log.Contains("Mutex type changed to mutex_and because the domain has conditional effects"))
+                if (_log.Contains("There should be no goal defined for a non-attack var! Error in PDDL!"))
+                    return StateExploreResult.PDDLError;
+                if (_log.Contains("Mutex type changed to mutex_and because the domain has conditional effects"))
                     return StateExploreResult.InvariantError;
                 if (exitCode == 0)
                     return StateExploreResult.MetaActionValid;
