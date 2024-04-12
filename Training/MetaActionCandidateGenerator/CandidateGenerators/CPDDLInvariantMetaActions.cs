@@ -1,5 +1,4 @@
 ﻿using CommandLine;
-using CommandLine.Text;
 using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
@@ -9,7 +8,6 @@ using PDDLSharp.Models.PDDL.Overloads;
 using System;
 using System.Data;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
 using Tools;
 
 namespace MetaActionCandidateGenerator.CandidateGenerators
@@ -35,30 +33,46 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
             {
                 if (!Statics.Any(x => x.Name.ToUpper() == predicate.Name.ToUpper()))
                 {
-                    foreach (var action in pddlDecl.Domain.Actions)
+                    bool invarianted = rules.Any(x => x.Any(y => y.Predicate == predicate.Name));
+                    if (invarianted)
+                        candidates.AddRange(GeneateCandidates(rules, pddlDecl, predicate));
+                    else
                     {
-                        if (action.Effects.FindNames(predicate.Name).Count == 0)
-                            continue;
-
-                        bool invarianted = rules.Any(x => x.Any(y => y.Predicate == predicate.Name));
-                        if (invarianted)
-                            candidates.AddRange(GeneateCandidates(rules, pddlDecl, predicate, action));
-                        else
-                        {
-                            if (!predicate.CanOnlyBeSetToFalse(pddlDecl.Domain))
-                                candidates.Add(GenerateMetaAction(
-                                    $"meta_{predicate.Name}",
-                                    new List<IExp>(),
-                                    new List<IExp>() { predicate },
-                                    action));
-                            if (!predicate.CanOnlyBeSetToTrue(pddlDecl.Domain))
-                                candidates.Add(GenerateMetaAction(
-                                    $"meta_{predicate.Name}_false",
-                                    new List<IExp>(),
-                                    new List<IExp>() { new NotExp(predicate) },
-                                    action));
-                        }
+                        if (!predicate.CanOnlyBeSetToFalse(pddlDecl.Domain))
+                            candidates.Add(GenerateMetaAction(
+                                $"meta_{predicate.Name}",
+                                new List<IExp>(),
+                                new List<IExp>() { predicate }));
+                        if (!predicate.CanOnlyBeSetToTrue(pddlDecl.Domain))
+                            candidates.Add(GenerateMetaAction(
+                                $"meta_{predicate.Name}_false",
+                                new List<IExp>(),
+                                new List<IExp>() { new NotExp(predicate) }));
                     }
+                    //foreach (var action in pddlDecl.Domain.Actions)
+                    //{
+                    //    if (action.Effects.FindNames(predicate.Name).Count == 0)
+                    //        continue;
+
+                    //    bool invarianted = rules.Any(x => x.Any(y => y.Predicate == predicate.Name));
+                    //    if (invarianted)
+                    //        candidates.AddRange(GeneateCandidates(rules, pddlDecl, predicate, action));
+                    //    else
+                    //    {
+                    //        if (!predicate.CanOnlyBeSetToFalse(pddlDecl.Domain))
+                    //            candidates.Add(GenerateMetaAction(
+                    //                $"meta_{predicate.Name}",
+                    //                new List<IExp>(),
+                    //                new List<IExp>() { predicate },
+                    //                action));
+                    //        if (!predicate.CanOnlyBeSetToTrue(pddlDecl.Domain))
+                    //            candidates.Add(GenerateMetaAction(
+                    //                $"meta_{predicate.Name}_false",
+                    //                new List<IExp>(),
+                    //                new List<IExp>() { new NotExp(predicate) },
+                    //                action));
+                    //    }
+                    //}
                 }
             }
 
@@ -142,14 +156,14 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
             return rules;
         }
 
-        private List<ActionDecl> GeneateCandidates(List<List<PredicateRule>> rules, PDDLDecl pddlDecl, PredicateExp predicate, ActionDecl staticsReference)
+        private List<ActionDecl> GeneateCandidates(List<List<PredicateRule>> rules, PDDLDecl pddlDecl, PredicateExp predicate)
         {
             var candidateOptions = RefineForRules(rules, new Candidate(new List<IExp>(), new List<IExp>() { predicate }), pddlDecl.Domain, new List<List<PredicateRule>>());
             var validCandidateOptions = new List<Candidate>();
-            foreach(var option in candidateOptions)
+            foreach (var option in candidateOptions)
             {
                 bool valid = true;
-                foreach(var effect in option.Effects)
+                foreach (var effect in option.Effects)
                 {
                     if (!valid)
                         break;
@@ -179,8 +193,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                 candidates.Add(GenerateMetaAction(
                     $"meta_{predicate.Name}_{version++}",
                     option.Preconditions,
-                    option.Effects,
-                    staticsReference));
+                    option.Effects));
 
             return candidates;
         }
@@ -201,7 +214,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                 else
                     throw new ArgumentNullException();
 
-                foreach(var ruleSet in rules)
+                foreach (var ruleSet in rules)
                 {
                     if (coveredNow.Contains(ruleSet))
                         continue;
@@ -222,7 +235,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                             coveredNow.Add(ruleSet);
                             break;
                         }
-                    } 
+                    }
                     else if (ruleSet.Count == 2)
                     {
                         var sourceRule = GetMatchingRule(candidate.Effects[i], ruleSet);
@@ -246,7 +259,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                         recursed = true;
                         var sourceRule = GetMatchingRule(candidate.Effects[i], ruleSet);
                         var others = ruleSet.Where(x => x != sourceRule);
-                        foreach(var targetRule in others)
+                        foreach (var targetRule in others)
                         {
                             var target = GetMutatedBinaryIExp(candidate.Effects[i], sourceRule, targetRule, domain);
                             if (!candidate.Effects.Contains(target))

@@ -1,13 +1,10 @@
 ﻿using P10.Helpers;
 using P10.PreconditionAdditionRefinements.Heuristics;
 using P10.Verifiers;
-using PDDLSharp.CodeGenerators.PDDL;
-using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
 using System.Diagnostics;
-using System.Text;
 using Tools;
 using static P10.PreconditionAdditionRefinements.StateExploreVerifier;
 

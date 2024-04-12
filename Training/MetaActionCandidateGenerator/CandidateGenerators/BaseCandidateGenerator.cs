@@ -77,6 +77,23 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
             return newAction;
         }
 
+        internal ActionDecl GenerateMetaAction(string actionName, List<IExp> preconditions, List<IExp> effects)
+        {
+            var newAction = new ActionDecl(actionName);
+            newAction.Parameters = new ParameterExp();
+            newAction.Preconditions = new AndExp(newAction, preconditions);
+            newAction.Effects = new AndExp(newAction, effects);
+
+            // Stitch parameters together
+            var all = newAction.FindTypes<PredicateExp>();
+            foreach (var pred in all)
+                foreach (var arg in pred.Arguments)
+                    if (!newAction.Parameters.Values.Contains(arg))
+                        newAction.Parameters.Values.Add(arg.Copy());
+
+            return newAction;
+        }
+
         private List<PredicateExp> GetUnaryStaticsForPredicate(ActionDecl act, PredicateExp pred)
         {
             var actionStatics = act.Preconditions.FindTypes<PredicateExp>().Where(x => SimpleStatics.Any(y => y.Name == x.Name)).ToList();
