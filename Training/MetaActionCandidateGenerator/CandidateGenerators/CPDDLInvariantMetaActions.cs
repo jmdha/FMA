@@ -226,11 +226,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                         var target = GetMutatedUnaryIExp(candidate.Effects[i], ruleSet[0]);
                         if (!candidate.Effects.Contains(target))
                         {
-                            candidate.Effects.Add(target);
-                            if (target is NotExp not)
-                                candidate.Preconditions.Add(not.Child);
-                            else
-                                candidate.Preconditions.Add(GenerateNegated(target));
+                            AddTargetToCandidate(candidate, target);
                             i = -1;
                             coveredNow.Add(ruleSet);
                             break;
@@ -243,11 +239,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                         var target = GetMutatedBinaryIExp(candidate.Effects[i], sourceRule, targetRule, domain);
                         if (!candidate.Effects.Contains(target))
                         {
-                            candidate.Effects.Add(target);
-                            if (target is NotExp not)
-                                candidate.Preconditions.Add(not.Child);
-                            else
-                                candidate.Preconditions.Add(GenerateNegated(target));
+                            AddTargetToCandidate(candidate, target);
                             i = -1;
                             coveredNow.Add(ruleSet);
                             break;
@@ -265,11 +257,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                             if (!candidate.Effects.Contains(target))
                             {
                                 var cpy = candidate.Copy();
-                                cpy.Effects.Add(target);
-                                if (target is NotExp not)
-                                    cpy.Preconditions.Add(not.Child);
-                                else
-                                    cpy.Preconditions.Add(GenerateNegated(target));
+                                AddTargetToCandidate(candidate, target);
                                 candidates.AddRange(RefineForRules(rules, cpy, domain, coveredNow));
                             }
                         }
@@ -282,6 +270,15 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                 candidates.Add(candidate);
 
             return candidates;
+        }
+
+        private void AddTargetToCandidate(Candidate candidate, IExp target)
+        {
+            candidate.Effects.Add(target);
+            if (target is NotExp not)
+                candidate.Preconditions.Add(not.Child);
+            else
+                candidate.Preconditions.Add(GenerateNegated(target));
         }
 
         private IExp GetMutatedUnaryIExp(IExp exp, PredicateRule rule)
