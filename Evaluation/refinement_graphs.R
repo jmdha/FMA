@@ -16,7 +16,7 @@ data <- read.csv(
   header = T, 
   sep = ",", 
   colClasses = c(
-    'character','character',
+    'character','character','character',
     'numeric','numeric',
     'character','character',
     'numeric','numeric',
