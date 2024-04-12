@@ -5,6 +5,8 @@ namespace P10
 {
     public class MetaActionGenerationResult
     {
+        [CSVColumn("id")]
+        public string ID { get; set; } = "";
         [CSVColumn("domain")]
         public string Domain { get; set; } = "";
         [CSVColumn("generator")]
@@ -18,6 +20,7 @@ namespace P10
         {
             var sb = new StringBuilder();
 
+            sb.AppendLine($"ID: {ID}");
             sb.AppendLine($"Domain: {Domain}");
             sb.AppendLine($"Generator: {Generator}");
             sb.AppendLine($"Total Candidates: {TotalCandidates}");

@@ -59,6 +59,7 @@ namespace P10.PreconditionAdditionRefinements
         {
             _result = new RefinementResult()
             {
+                ID = P10.ID,
                 Domain = domain.Name!.Name,
                 MetaAction = MetaAction.Name
             };

@@ -19,6 +19,8 @@ namespace P10
 {
     public class P10 : BaseCLI
     {
+        public static string ID = "";
+
         private static string _candidateOutput = "initial-candidates";
         private static int _returnCode = 0;
 
@@ -83,7 +85,15 @@ namespace P10
             }
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
-            var generalResult = new P10Result();
+            foreach (var strategy in opts.GeneratorStrategies)
+                ID += $"{Enum.GetName(strategy)}+";
+            if (ID.EndsWith('+'))
+                ID = ID.Substring(0, ID.Length - 1);
+
+            var generalResult = new P10Result()
+            {
+                ID = ID
+            };
 
             ConsoleHelper.WriteLineColor($"Parsing PDDL Files", ConsoleColor.Blue);
             var listener = new ErrorListener();
@@ -111,6 +121,7 @@ namespace P10
                 candidates.AddRange(newCandidates);
                 generatorResults.Add(new MetaActionGenerationResult()
                 {
+                    ID = ID,
                     Domain = domain.Name!.Name,
                     TotalCandidates = newCandidates.Count,
                     Generator = $"{Enum.GetName(typeof(GeneratorStrategies), generator)}"

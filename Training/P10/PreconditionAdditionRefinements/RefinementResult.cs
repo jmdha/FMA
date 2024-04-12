@@ -6,6 +6,8 @@ namespace P10.PreconditionAdditionRefinements
 {
     public class RefinementResult
     {
+        [CSVColumn("id")]
+        public string ID { get; set; } = "";
         [CSVColumn("domain")]
         public string Domain { get; set; } = "";
         [CSVColumn("meta-action")]
@@ -35,6 +37,7 @@ namespace P10.PreconditionAdditionRefinements
         {
             var sb = new StringBuilder();
 
+            sb.AppendLine($"Domain: {ID}");
             sb.AppendLine($"Domain: {Domain}");
             sb.AppendLine($"Meta Action: {MetaAction}");
             sb.AppendLine($"Total Refinement Time: {RefinementTime}");

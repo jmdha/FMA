@@ -5,6 +5,8 @@ namespace P10
 {
     public class P10Result
     {
+        [CSVColumn("id")]
+        public string ID { get; set; } = "";
         [CSVColumn("domain")]
         public string Domain { get; set; } = "";
         [CSVColumn("problems")]
@@ -28,6 +30,7 @@ namespace P10
         {
             var sb = new StringBuilder();
 
+            sb.AppendLine($"ID: {ID}");
             sb.AppendLine($"Domain: {Domain}");
             sb.AppendLine($"Problems: {Problems}");
             sb.AppendLine($"Total Candidates: {TotalCandidates}");
