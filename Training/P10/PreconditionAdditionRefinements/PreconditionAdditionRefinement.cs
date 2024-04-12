@@ -153,7 +153,8 @@ namespace P10.PreconditionAdditionRefinements
                 var result = verifier.VerifyCode(compiled.Domain, compiled.Problem, Path.Combine(TempDir, "state-search"), TimeLimitS);
                 if (result == StateExploreResult.UnknownError)
                 {
-                    GenerateErrorLogFile(verifier._log, compiled.Domain, compiled.Problem);
+                    var file = Path.Combine(TempDir, $"{MetaAction.Name}_verification-log_{problem.Name}_{DateTime.Now.TimeOfDay}.txt");
+                    File.WriteAllText(file, verifier.GetLog());
                     ConsoleHelper.WriteLineColor($"\t\t\tUnknown error! Trying next problem...", ConsoleColor.Yellow);
                     invalidInSome = true;
                 }
@@ -198,26 +199,6 @@ namespace P10.PreconditionAdditionRefinements
                 return -1;
 
             return count;
-        }
-
-        private void GenerateErrorLogFile(string log, DomainDecl domain, ProblemDecl problem)
-        {
-            var file = Path.Combine(TempDir, $"{MetaAction.Name}_verification-log_{problem.Name}_{DateTime.Now.TimeOfDay}.txt");
-            var sb = new StringBuilder();
-            var codeGenerator = new PDDLCodeGenerator(new ErrorListener());
-
-            sb.AppendLine(" == Log ==");
-            sb.AppendLine(log);
-            sb.AppendLine();
-            sb.AppendLine();
-            sb.AppendLine(" == Domain ==");
-            sb.AppendLine(codeGenerator.Generate(domain));
-            sb.AppendLine();
-            sb.AppendLine();
-            sb.AppendLine(" == Problem ==");
-            sb.AppendLine(codeGenerator.Generate(problem));
-
-            File.WriteAllText(file, sb.ToString());
         }
 
         private ActionDecl? GetNextRefined(DomainDecl domain, List<ProblemDecl> problems)

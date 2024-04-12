@@ -1,4 +1,6 @@
-﻿using PDDLSharp.Models.PDDL.Domain;
+﻿using PDDLSharp.CodeGenerators.PDDL;
+using PDDLSharp.ErrorListeners;
+using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
 using System.Diagnostics;
 using System.Text;
@@ -12,6 +14,8 @@ namespace P10.Verifiers
         public string SearchString { get; set; } = "--search \"sym_stackelberg(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false)\"";
         private Process? _currentProcess;
         internal string _log = "";
+        internal DomainDecl? _domain;
+        internal ProblemDecl? _problem;
 
         internal int ExecutePlanner(string domainPath, string problemPath, string outputPath, int timeLimitS)
         {
@@ -82,5 +86,29 @@ namespace P10.Verifiers
         }
 
         public abstract bool Verify(DomainDecl domain, ProblemDecl problem, string workingDir, int timeLimitS);
+        public virtual string GetLog()
+        {
+            var sb = new StringBuilder();
+            var codeGenerator = new PDDLCodeGenerator(new ErrorListener());
+
+            sb.AppendLine(" == Log ==");
+            sb.AppendLine(_log);
+            sb.AppendLine();
+            sb.AppendLine();
+            if (_domain != null)
+            {
+                sb.AppendLine(" == Domain ==");
+                sb.AppendLine(codeGenerator.Generate(_domain));
+                sb.AppendLine();
+                sb.AppendLine();
+            }
+            if (_problem != null)
+            {
+                sb.AppendLine(" == Problem ==");
+                sb.AppendLine(codeGenerator.Generate(_problem));
+            }
+
+            return sb.ToString();
+        }
     }
 }

@@ -119,6 +119,8 @@ namespace P10.PreconditionAdditionRefinements
         }
         public StateExploreResult VerifyCode(DomainDecl domain, ProblemDecl problem, string workingDir, int timeLimitS)
         {
+            _domain = domain;
+            _problem = problem;
             var listener = new ErrorListener();
             var codeGenerator = new PDDLCodeGenerator(listener);
             var domainFile = Path.Combine(workingDir, $"tempDomain.pddl");

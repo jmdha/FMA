@@ -10,11 +10,10 @@ namespace P10.Verifiers
 {
     public static class VerificationHelper
     {
-        public static bool UseCache = false;
         public static bool IsValid(DomainDecl domain, List<ProblemDecl> problems, ActionDecl metaAction, string workingDir, int timeLimitS, string cachePath)
         {
             var code = 0;
-            if (UseCache)
+            if (cachePath != "")
             {
                 code = GetDeterministicHashCode(domain, problems, metaAction, timeLimitS);
                 if (File.Exists(Path.Combine(cachePath, $"{code}-valid.txt")))
@@ -32,13 +31,13 @@ namespace P10.Verifiers
                 var compiled = StackelbergHelper.CompileToStackelberg(new PDDLDecl(domain, problem), metaAction.Copy());
                 if (!verifier.Verify(compiled.Domain, compiled.Problem, workingDir, timeLimitS))
                 {
-                    if (UseCache)
+                    if (cachePath != "")
                         File.Create(Path.Combine(cachePath, $"{code}-invalid.txt"));
                     ConsoleHelper.WriteLineColor($"Meta action invalid in problem {problem.Name}", ConsoleColor.Red);
                     return false;
                 }
             }
-            if (UseCache)
+            if (cachePath != "")
                 File.Create(Path.Combine(cachePath, $"{code}-valid.txt"));
             return true;
         }
