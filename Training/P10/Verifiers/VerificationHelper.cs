@@ -28,13 +28,15 @@ namespace P10.Verifiers
             var verifier = new FrontierVerifier();
             bool stop = false;
             var timer = new System.Timers.Timer();
-            timer.Interval = timeLimitS * 1000;
+            if (timeLimitS > -1)
+                timer.Interval = timeLimitS * 1000;
             timer.AutoReset = false;
             timer.Elapsed += (s, e) => {
                 stop = true;
                 verifier.Stop(); 
             };
-            timer.Start();
+            if (timeLimitS > -1)
+                timer.Start();
             bool any = false;
             foreach (var problem in problems)
             {
@@ -55,7 +57,8 @@ namespace P10.Verifiers
                 else
                     any = true;
             }
-            timer.Stop();
+            if (timeLimitS > -1)
+                timer.Stop();
             if (cachePath != "" && any)
                 File.Create(Path.Combine(cachePath, $"{code}-valid.txt"));
             return any;
