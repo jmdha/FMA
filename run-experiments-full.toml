@@ -50,26 +50,26 @@ patterns = [
 [[tasks]]
 name = "childsnack"
 domain = "Dependencies/learning-benchmarks/childsnack/domain.pddl"
-learn = "Dependencies/learning-benchmarks/childsnack/training/*/p0*.pddl"
-solve = "Dependencies/learning-benchmarks/childsnack/testing/*/*.pddl"
+learn = ["Dependencies/learning-benchmarks/childsnack/training/*/p0*.pddl", "Dependencies/learning-benchmarks/childsnack/training/*/p90.pddl"]
+solve = ["Dependencies/learning-benchmarks/childsnack/testing/*/*.pddl"]
 
 [[tasks]]
 name = "ferry"
 domain = "Dependencies/learning-benchmarks/ferry/domain.pddl"
-learn = "Dependencies/learning-benchmarks/ferry/training/*/p0*.pddl"
-solve = "Dependencies/learning-benchmarks/ferry/testing/*/*.pddl"
+learn = ["Dependencies/learning-benchmarks/ferry/training/*/p0*.pddl", "Dependencies/learning-benchmarks/ferry/training/*/p90.pddl"]
+solve = ["Dependencies/learning-benchmarks/ferry/testing/*/*.pddl"]
 
 [[tasks]]
 name = "floortile"
 domain = "Dependencies/learning-benchmarks/floortile/domain.pddl"
-learn = "Dependencies/learning-benchmarks/floortile/training/*/p0*.pddl"
-solve = "Dependencies/learning-benchmarks/floortile/testing/*/*.pddl"
+learn = ["Dependencies/learning-benchmarks/floortile/training/*/p0*.pddl", "Dependencies/learning-benchmarks/floortile/training/*/p90.pddl"]
+solve = ["Dependencies/learning-benchmarks/floortile/testing/*/*.pddl"]
 
 [[tasks]]
 name = "miconic"
 domain = "Dependencies/learning-benchmarks/miconic/domain.pddl"
-learn = "Dependencies/learning-benchmarks/miconic/training/*/p0*.pddl"
-solve = "Dependencies/learning-benchmarks/miconic/testing/*/*.pddl"
+learn = ["Dependencies/learning-benchmarks/miconic/training/*/p0*.pddl", "Dependencies/learning-benchmarks/miconic/training/*/p90.pddl"]
+solve = ["Dependencies/learning-benchmarks/miconic/testing/*/*.pddl"]
 
 #[[tasks]]
 #name = "rovers"
@@ -80,8 +80,8 @@ solve = "Dependencies/learning-benchmarks/miconic/testing/*/*.pddl"
 [[tasks]]
 name = "satellite"
 domain = "Dependencies/learning-benchmarks/satellite/domain.pddl"
-learn = "Dependencies/learning-benchmarks/satellite/training/*/p0*.pddl"
-solve = "Dependencies/learning-benchmarks/satellite/testing/*/*.pddl"
+learn = ["Dependencies/learning-benchmarks/satellite/training/*/p0*.pddl", "Dependencies/learning-benchmarks/satellite/training/*/p90.pddl"]
+solve = ["Dependencies/learning-benchmarks/satellite/testing/*/*.pddl"]
 
 #[[tasks]]
 #name = "sokoban"
