@@ -48,8 +48,8 @@ namespace P10
 
         [Option("validation-time-limit", Required = false, HelpText = "Time limit in seconds that each validation step is allowed to take. (-1 for no time limit)", Default = -1)]
         public int ValidationTimeLimitS { get; set; } = -1;
-        [Option("exploration-time-limit", Required = false, HelpText = "Time limit in seconds that each state exploration step is allowed to take. (-1 for no time limit)", Default = -1)]
-        public int ExplorationTimeLimitS { get; set; } = -1;
+        [Option("exploration-time-limit", Required = false, HelpText = "Time limit in seconds that each state exploration step is allowed to take. (-1 for no time limit)", Default = 999999)]
+        public int ExplorationTimeLimitS { get; set; } = 999999;
         [Option("refinement-time-limit", Required = false, HelpText = "Time limit in seconds that each refinement step is allowed to take. (-1 for no time limit)", Default = -1)]
         public int RefinementTimeLimitS { get; set; } = -1;
 
