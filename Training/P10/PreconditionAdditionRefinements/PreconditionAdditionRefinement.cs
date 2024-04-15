@@ -140,11 +140,11 @@ namespace P10.PreconditionAdditionRefinements
 
             var searchWatch = new Stopwatch();
             searchWatch.Start();
-            var verifier = new StateExploreVerifier(_maxPreconditionCombinations, _maxAddedParameters);
+            var verifier = new StateExploreVerifier(_maxPreconditionCombinations, _maxAddedParameters, ExplorationTimeLimitS);
             if (File.Exists(Path.Combine(_searchWorkingDir, StateInfoFile)))
                 File.Delete(Path.Combine(_searchWorkingDir, StateInfoFile));
             verifier.UpdateSearchString(compiled);
-            var result = verifier.VerifyCode(compiled.Domain, compiled.Problem, _searchWorkingDir, ExplorationTimeLimitS);
+            var result = verifier.VerifyCode(compiled.Domain, compiled.Problem, _searchWorkingDir);
             if (result == StateExploreResult.UnknownError)
             {
                 var file = Path.Combine(TempDir, $"{MetaAction.Name}_verification-log_{pddlDecl.Problem.Name}_{DateTime.Now.TimeOfDay}.txt");

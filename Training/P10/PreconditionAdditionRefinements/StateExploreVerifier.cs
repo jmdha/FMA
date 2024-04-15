@@ -15,12 +15,14 @@ namespace P10.PreconditionAdditionRefinements
         public static string StateInfoFile = "out";
         public int MaxPreconditionCombinations = 3;
         public int MaxParameters = 0;
+        public int TimeLimit = 0;
 
-        public StateExploreVerifier(int maxPreconditionCombinations, int maxParameters)
+        public StateExploreVerifier(int maxPreconditionCombinations, int maxParameters, int timeLimit)
         {
-            SearchString = $"--search \"state_explorer(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false, max_precondition_size={MaxPreconditionCombinations}, max_parameters={MaxParameters})\"";
             MaxPreconditionCombinations = maxPreconditionCombinations;
             MaxParameters = maxParameters;
+            TimeLimit = timeLimit;
+            SearchString = $"--search \"state_explorer(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false, max_precondition_size={MaxPreconditionCombinations}, max_parameters={MaxParameters}, exploration_time_limit={TimeLimit})\"";
         }
 
         public void UpdateSearchString(PDDLDecl from)
@@ -30,7 +32,7 @@ namespace P10.PreconditionAdditionRefinements
             if (from.Problem.Init == null)
                 throw new Exception("Problem init was null!");
 
-            var start = $"--search \"state_explorer(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false, max_precondition_size={MaxPreconditionCombinations}, max_parameters={MaxParameters}, ";
+            var start = $"--search \"state_explorer(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false, max_precondition_size={MaxPreconditionCombinations}, max_parameters={MaxParameters}, exploration_time_limit={TimeLimit}, ";
 
             var staticNamesString = "static_names=[";
             var statics = SimpleStaticPredicateDetector.FindStaticPredicates(from);
@@ -114,9 +116,9 @@ namespace P10.PreconditionAdditionRefinements
 
         public override bool Verify(DomainDecl domain, ProblemDecl problem, string workingDir, int timeLimitS)
         {
-            return VerifyCode(domain, problem, workingDir, timeLimitS) == StateExploreResult.Success;
+            return VerifyCode(domain, problem, workingDir) == StateExploreResult.Success;
         }
-        public StateExploreResult VerifyCode(DomainDecl domain, ProblemDecl problem, string workingDir, int timeLimitS)
+        public StateExploreResult VerifyCode(DomainDecl domain, ProblemDecl problem, string workingDir)
         {
             _domain = domain;
             _problem = problem;
@@ -128,7 +130,7 @@ namespace P10.PreconditionAdditionRefinements
             codeGenerator.Generate(problem, problemFile);
             if (File.Exists(Path.Combine(workingDir, StateInfoFile)))
                 File.Delete(Path.Combine(workingDir, StateInfoFile));
-            var exitCode = ExecutePlanner(domainFile, problemFile, workingDir, timeLimitS);
+            var exitCode = ExecutePlanner(domainFile, problemFile, workingDir, -1);
             if (TimedOut)
                 return StateExploreResult.TimedOut;
 
