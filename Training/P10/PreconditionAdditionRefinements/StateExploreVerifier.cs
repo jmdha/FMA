@@ -11,7 +11,7 @@ namespace P10.PreconditionAdditionRefinements
 {
     public class StateExploreVerifier : BaseVerifier
     {
-        public enum StateExploreResult { Success, InvariantError, PDDLError, UnknownError, MetaActionValid }
+        public enum StateExploreResult { Success, InvariantError, PDDLError, UnknownError, MetaActionValid, TimedOut }
         public static string StateInfoFile = "out";
         public int MaxPreconditionCombinations = 3;
         public int MaxParameters = 0;
@@ -30,7 +30,6 @@ namespace P10.PreconditionAdditionRefinements
             if (from.Problem.Init == null)
                 throw new Exception("Problem init was null!");
 
-            // Until the stackelberg planner works with this
             var start = $"--search \"state_explorer(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false, max_precondition_size={MaxPreconditionCombinations}, max_parameters={MaxParameters}, ";
 
             var staticNamesString = "static_names=[";
@@ -130,15 +129,18 @@ namespace P10.PreconditionAdditionRefinements
             if (File.Exists(Path.Combine(workingDir, StateInfoFile)))
                 File.Delete(Path.Combine(workingDir, StateInfoFile));
             var exitCode = ExecutePlanner(domainFile, problemFile, workingDir, timeLimitS);
+            if (TimedOut)
+                return StateExploreResult.TimedOut;
+
             if (File.Exists(Path.Combine(workingDir, StateInfoFile)))
                 return StateExploreResult.Success;
             else
             {
                 if (_log.Contains("There should be no goal defined for a non-attack var! Error in PDDL!"))
                     return StateExploreResult.PDDLError;
-                if (_log.Contains("Mutex type changed to mutex_and because the domain has conditional effects"))
+                else if (_log.Contains("Mutex type changed to mutex_and because the domain has conditional effects"))
                     return StateExploreResult.InvariantError;
-                if (exitCode == 0)
+                else if (exitCode == 0)
                     return StateExploreResult.MetaActionValid;
                 return StateExploreResult.UnknownError;
             }

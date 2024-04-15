@@ -20,7 +20,7 @@ namespace P10.Verifiers
                     return true;
                 if (File.Exists(Path.Combine(cachePath, $"{code}-invalid.txt")))
                 {
-                    ConsoleHelper.WriteLineColor($"Meta action invalid in a cached problem", ConsoleColor.Red);
+                    ConsoleHelper.WriteLineColor($"\t\tMeta action invalid in a cached problem", ConsoleColor.Red);
                     return false;
                 }
             }
@@ -33,7 +33,7 @@ namespace P10.Verifiers
                 {
                     if (cachePath != "")
                         File.Create(Path.Combine(cachePath, $"{code}-invalid.txt"));
-                    ConsoleHelper.WriteLineColor($"Meta action invalid in problem {problem.Name}", ConsoleColor.Red);
+                    ConsoleHelper.WriteLineColor($"\t\tMeta action invalid in problem {problem.Name}", ConsoleColor.Red);
                     return false;
                 }
             }

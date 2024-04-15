@@ -19,7 +19,6 @@ namespace P10.PreconditionAdditionRefinements
         public IVerifier Verifier { get; } = new FrontierVerifier();
         public ActionDecl MetaAction { get; }
 
-        private readonly PriorityQueue<PreconditionState, int> _openList = new PriorityQueue<PreconditionState, int>();
         private readonly List<PreconditionState> _closedList = new List<PreconditionState>();
         private int _initialPossibilities = 0;
         private readonly Stopwatch _watch = new Stopwatch();
@@ -28,6 +27,7 @@ namespace P10.PreconditionAdditionRefinements
         private readonly int _maxPreconditionCombinations;
         private readonly int _maxAddedParameters;
         private readonly string _learningCache;
+        private readonly string _searchWorkingDir;
 
         public PreconditionAdditionRefinement(int timeLimitS, ActionDecl metaAction, string tempDir, string outputDir, int maxPreconditionCombinations, int maxAddedParameters, string learningCache)
         {
@@ -45,6 +45,8 @@ namespace P10.PreconditionAdditionRefinements
             OutputDir = outputDir;
             _tempValidationFolder = Path.Combine(tempDir, "validation");
             PathHelper.RecratePath(_tempValidationFolder);
+            _searchWorkingDir = Path.Combine(tempDir, "state-search");
+            PathHelper.RecratePath(_searchWorkingDir);
             _maxPreconditionCombinations = maxPreconditionCombinations;
             _maxAddedParameters = maxAddedParameters;
             _learningCache = learningCache;
@@ -71,6 +73,8 @@ namespace P10.PreconditionAdditionRefinements
         private List<ActionDecl> Run(DomainDecl domain, List<ProblemDecl> problems)
         {
             var returnList = new List<ActionDecl>();
+
+            // Check if initial meta action is valid
             ConsoleHelper.WriteLineColor($"\t\tValidating...", ConsoleColor.Magenta);
             if (VerificationHelper.IsValid(domain, problems, MetaAction, _tempValidationFolder, TimeLimitS, _learningCache))
             {
@@ -80,132 +84,90 @@ namespace P10.PreconditionAdditionRefinements
                 return returnList;
             }
 
-            var refined = false;
-            int offset = 0;
-            while (!refined)
+            // Iterate through all problems, until some valid refinements are found
+            var invalidInSome = false;
+            foreach(var problem in problems)
             {
+                // Explore state for problem
                 ConsoleHelper.WriteLineColor($"\t\tInitial state space exploration started...", ConsoleColor.Magenta);
-                var refineProblem = InitializeStateSearch(domain, problems, offset);
-                if (refineProblem == -1)
-                {
-                    ConsoleHelper.WriteLineColor($"\t\tExploration failed", ConsoleColor.Magenta);
-                    _result.Succeded = false;
-                    return new List<ActionDecl>();
-                }
-                offset = refineProblem + 1;
-                var refinedCandidates = RefineIterate(domain, problems);
-                if (refinedCandidates.Count != 0)
-                {
-                    returnList = refinedCandidates;
-                    refined = true;
-                }
-                else
-                {
-                    ConsoleHelper.WriteLineColor($"\t\tNo valid refinements for state explored problem! Trying next problem.", ConsoleColor.Magenta);
-                    if (offset >= problems.Count)
-                        break;
-                }
-            }
-
-            return returnList;
-        }
-
-        private List<ActionDecl> RefineIterate(DomainDecl domain, List<ProblemDecl> problems)
-        {
-            int iteration = 0;
-            var returnList = new List<ActionDecl>();
-            ConsoleHelper.WriteLineColor($"\tRefining iteration {iteration++}...", ConsoleColor.Magenta);
-            var refined = GetNextRefined(domain, problems);
-            while (refined != null)
-            {
-                ConsoleHelper.WriteLineColor($"\t\tValidating...", ConsoleColor.Magenta);
-                if (VerificationHelper.IsValid(domain, problems, refined, _tempValidationFolder, TimeLimitS, _learningCache))
-                {
-                    ConsoleHelper.WriteLineColor($"\tRefined meta action is valid!", ConsoleColor.Green);
-                    returnList.Add(refined);
-                }
-                ConsoleHelper.WriteLineColor($"\tRefining iteration {iteration++}...", ConsoleColor.Magenta);
-                refined = GetNextRefined(domain, problems);
-            }
-            return returnList;
-        }
-
-        private int InitializeStateSearch(DomainDecl domain, List<ProblemDecl> problems, int offset)
-        {
-            var searchWorkingDir = Path.Combine(TempDir, "state-search");
-            PathHelper.RecratePath(searchWorkingDir);
-
-            var searchWatch = new Stopwatch();
-            searchWatch.Start();
-            bool invalidInSome = false;
-            var count = offset;
-            foreach (var problem in problems.Skip(offset))
-            {
-                var pddlDecl = new PDDLDecl(domain, problem);
-                var compiled = StackelbergHelper.CompileToStackelberg(pddlDecl, MetaAction.Copy());
-
-                var verifier = new StateExploreVerifier(_maxPreconditionCombinations, _maxAddedParameters);
-                if (File.Exists(Path.Combine(searchWorkingDir, StateInfoFile)))
-                    File.Delete(Path.Combine(searchWorkingDir, StateInfoFile));
-                verifier.UpdateSearchString(compiled);
-                var result = verifier.VerifyCode(compiled.Domain, compiled.Problem, Path.Combine(TempDir, "state-search"), TimeLimitS);
-                if (result == StateExploreResult.UnknownError)
-                {
-                    var file = Path.Combine(TempDir, $"{MetaAction.Name}_verification-log_{problem.Name}_{DateTime.Now.TimeOfDay}.txt");
-                    File.WriteAllText(file, verifier.GetLog());
-                    ConsoleHelper.WriteLineColor($"\t\t\tUnknown error! Trying next problem...", ConsoleColor.Yellow);
+                var explored = ExploreState(domain, problem);
+                if (explored != StateExploreResult.MetaActionValid)
                     invalidInSome = true;
-                }
-                else if (result == StateExploreResult.MetaActionValid)
-                    ConsoleHelper.WriteLineColor($"\t\t\tMeta action valid in problem. Trying next problem...", ConsoleColor.Yellow);
-                else if (result == StateExploreResult.InvariantError)
-                {
-                    ConsoleHelper.WriteLineColor($"\t\t\tInvariant error! Trying next problem...", ConsoleColor.Yellow);
-                    invalidInSome = true;
-                }
-                else if (result == StateExploreResult.PDDLError)
-                {
-                    ConsoleHelper.WriteLineColor($"\t\t\tPDDL error! Trying next problem...", ConsoleColor.Yellow);
-                    invalidInSome = true;
-                }
-                else if (result == StateExploreResult.Success)
-                {
-                    var parseWatch = new Stopwatch();
-                    parseWatch.Start();
-                    UpdateOpenList(MetaAction, searchWorkingDir);
-                    parseWatch.Stop();
-                    _result.StackelbergOutputParsingTime += parseWatch.ElapsedMilliseconds;
-                    invalidInSome = true;
+                if (explored != StateExploreResult.Success)
+                    continue;
 
-                    if (_openList.Count != 0)
+                // Generate refinement list
+                var openList = UpdateOpenList(MetaAction);
+                if (openList.Count == 0)
+                {
+                    ConsoleHelper.WriteLineColor($"\t\t\tExploration yielded no candidates. Trying next problem...", ConsoleColor.Yellow);
+                    continue;
+                }
+
+                // Check through each of the refinements and add valid ones to the return set.
+                var nextRefined = GetNextRefined(openList);
+                while(nextRefined != null)
+                {
+                    ConsoleHelper.WriteLineColor($"\t\tValidating...", ConsoleColor.Magenta);
+                    if (VerificationHelper.IsValid(domain, problems, nextRefined, _tempValidationFolder, TimeLimitS, _learningCache))
                     {
-                        ConsoleHelper.WriteLineColor($"\t\t\tExploration successful!", ConsoleColor.Green);
-                        break;
+                        ConsoleHelper.WriteLineColor($"\tMeta action refinement is valid!", ConsoleColor.Green);
+                        returnList.Add(MetaAction);
                     }
-                    else
-                        ConsoleHelper.WriteLineColor($"\t\t\tExploration resulted in no candidates! Trying next problem!", ConsoleColor.Green);
+                    nextRefined = GetNextRefined(openList);
                 }
-                count++;
+                if (returnList.Count == 0)
+                    ConsoleHelper.WriteLineColor($"\t\tNo valid refinements for state explored problem! Trying next problem...", ConsoleColor.Magenta);
+                else
+                    break;
             }
-            searchWatch.Stop();
-            _result.StateSpaceSearchTime += searchWatch.ElapsedMilliseconds;
 
             if (!invalidInSome)
                 throw new Exception("Meta Action was valid in all problems??? This should not be possible");
 
-            if (_openList.Count == 0)
-                return -1;
-
-            return count;
+            return returnList;
         }
 
-        private ActionDecl? GetNextRefined(DomainDecl domain, List<ProblemDecl> problems)
+        private StateExploreResult ExploreState(DomainDecl domain, ProblemDecl problem)
         {
-            if (_openList.Count == 0)
+            var pddlDecl = new PDDLDecl(domain, problem);
+            var compiled = StackelbergHelper.CompileToStackelberg(pddlDecl, MetaAction.Copy());
+
+            var searchWatch = new Stopwatch();
+            searchWatch.Start();
+            var verifier = new StateExploreVerifier(_maxPreconditionCombinations, _maxAddedParameters);
+            if (File.Exists(Path.Combine(_searchWorkingDir, StateInfoFile)))
+                File.Delete(Path.Combine(_searchWorkingDir, StateInfoFile));
+            verifier.UpdateSearchString(compiled);
+            var result = verifier.VerifyCode(compiled.Domain, compiled.Problem, _searchWorkingDir, TimeLimitS);
+            if (result == StateExploreResult.UnknownError)
+            {
+                var file = Path.Combine(TempDir, $"{MetaAction.Name}_verification-log_{pddlDecl.Problem.Name}_{DateTime.Now.TimeOfDay}.txt");
+                File.WriteAllText(file, verifier.GetLog());
+                ConsoleHelper.WriteLineColor($"\t\t\tUnknown error! Trying next problem...", ConsoleColor.Yellow);
+            }
+            else if (result == StateExploreResult.MetaActionValid)
+                ConsoleHelper.WriteLineColor($"\t\t\tMeta action valid in problem. Trying next problem...", ConsoleColor.Yellow);
+            else if (result == StateExploreResult.InvariantError)
+                ConsoleHelper.WriteLineColor($"\t\t\tInvariant error! Trying next problem...", ConsoleColor.Yellow);
+            else if (result == StateExploreResult.PDDLError)
+                ConsoleHelper.WriteLineColor($"\t\t\tPDDL error! Trying next problem...", ConsoleColor.Yellow);
+            else if (result == StateExploreResult.Success)
+                ConsoleHelper.WriteLineColor($"\t\t\tState exploration succeeded!", ConsoleColor.Green);
+            else if (result == StateExploreResult.TimedOut)
+                ConsoleHelper.WriteLineColor($"\t\t\tState exploration timed out...", ConsoleColor.Yellow);
+            searchWatch.Stop();
+            _result.StateSpaceSearchTime += searchWatch.ElapsedMilliseconds;
+            return result;
+        }
+
+        private ActionDecl? GetNextRefined(PriorityQueue<PreconditionState, int> openList)
+        {
+            if (openList.Count == 0)
                 return null;
 
-            ConsoleHelper.WriteLineColor($"\t\t{_openList.Count} possibilities left [Est. {TimeSpan.FromMilliseconds((double)_openList.Count * ((double)(_watch.ElapsedMilliseconds + 1) / (double)(1 + (_initialPossibilities - _openList.Count)))).ToString("hh\\:mm\\:ss")} until finished]", ConsoleColor.Magenta);
-            var state = _openList.Dequeue();
+            ConsoleHelper.WriteLineColor($"\t\t{openList.Count} possibilities left [Est. {TimeSpan.FromMilliseconds((double)openList.Count * ((double)(_watch.ElapsedMilliseconds + 1) / (double)(1 + (_initialPossibilities - openList.Count)))).ToString("hh\\:mm\\:ss")} until finished]", ConsoleColor.Magenta);
+            var state = openList.Dequeue();
             _closedList.Add(state);
 #if DEBUG
             ConsoleHelper.WriteLineColor($"\t\tBest Validity: {Math.Round((1 - ((double)state.InvalidStates / (double)state.TotalInvalidStates)) * 100, 2)}%", ConsoleColor.Magenta);
@@ -215,10 +177,14 @@ namespace P10.PreconditionAdditionRefinements
             return state.MetaAction;
         }
 
-        private void UpdateOpenList(ActionDecl currentMetaAction, string workingDir)
+        private PriorityQueue<PreconditionState, int> UpdateOpenList(ActionDecl currentMetaAction)
         {
+            var parseWatch = new Stopwatch();
+            parseWatch.Start();
+
             ConsoleHelper.WriteLineColor($"\t\t\tParsing stackelberg output", ConsoleColor.Magenta);
-            var toCheck = StackelbergOutputParser.ParseOutput(currentMetaAction, workingDir, _closedList);
+            var openList = new PriorityQueue<PreconditionState, int>();
+            var toCheck = StackelbergOutputParser.ParseOutput(currentMetaAction, _searchWorkingDir, _closedList);
             _result.InitialRefinementPossibilities += toCheck.Count;
 
             foreach (var check in toCheck)
@@ -229,11 +195,15 @@ namespace P10.PreconditionAdditionRefinements
             ConsoleHelper.WriteLineColor($"\t\t\tTotal to check: {toCheck.Count}", ConsoleColor.Magenta);
             foreach (var state in toCheck)
                 if (!IsCovered(state, toCheck))
-                    _openList.Enqueue(state, state.hValue);
-            ConsoleHelper.WriteLineColor($"\t\t\tTotal not covered: {_openList.Count}", ConsoleColor.Magenta);
+                    openList.Enqueue(state, state.hValue);
+            ConsoleHelper.WriteLineColor($"\t\t\tTotal not covered: {openList.Count}", ConsoleColor.Magenta);
 
-            _result.FinalRefinementPossibilities += _openList.Count;
-            _initialPossibilities = _openList.Count;
+            parseWatch.Stop();
+            _result.StackelbergOutputParsingTime += parseWatch.ElapsedMilliseconds;
+            _result.FinalRefinementPossibilities += openList.Count;
+            _initialPossibilities = openList.Count;
+
+            return openList;
         }
 
         private bool IsCovered(PreconditionState check, List<PreconditionState> others)
