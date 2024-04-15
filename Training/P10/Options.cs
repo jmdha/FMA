@@ -22,14 +22,10 @@ namespace P10
         public string TempPath { get; set; } = "temp";
         [Option("domain", Required = true, HelpText = "Path to the domain file")]
         public string DomainPath { get; set; } = "";
-        [Option("pre-usefulness", Required = false, HelpText = "Check if meta action candidates seem to be useful, before refining them.", Default = false)]
-        public bool PreCheckUsefullness { get; set; } = false;
-        [Option("post-usefulness", Required = false, HelpText = "Check if refined meta actions are useful before outputting them.", Default = false)]
-        public bool PostCheckUsefullness { get; set; } = false;
+        [Option("problems", Required = true, HelpText = "Path to the problem files")]
+        public IEnumerable<string> ProblemsPath { get; set; } = new List<string>();
         [Option("remove-duplicates", Required = false, HelpText = "If duplicate meta actions should be removed from candidates and output.")]
         public bool RemoveDuplicates { get; set; } = false;
-        [Option("problems", Required = true, HelpText = "Path to the problem file")]
-        public IEnumerable<string> ProblemsPath { get; set; } = new List<string>();
         [Option("generation-strategies", Required = true, HelpText = $"The generator strategies. Valid values: " +
             $"{nameof(MetaActionCandidateGenerator.Options.GeneratorStrategies.PredicateMetaActions)}," +
             $"{nameof(MetaActionCandidateGenerator.Options.GeneratorStrategies.StrippedMetaActions)}," +
@@ -38,8 +34,10 @@ namespace P10
             $"{nameof(MetaActionCandidateGenerator.Options.GeneratorStrategies.CPDDLInvariantMetaActions)}," +
             $"{nameof(MetaActionCandidateGenerator.Options.GeneratorStrategies.InvariantMetaActions)}")]
         public IEnumerable<GeneratorStrategies> GeneratorStrategies { get; set; } = new List<GeneratorStrategies>();
-        [Option("usefulness-strategy", Required = false, HelpText = "The usefulness strategy", Default = UsefulnessStrategies.None)]
-        public UsefulnessStrategies UsefulnessStrategy { get; set; } = UsefulnessStrategies.None;
+        [Option("pre-usefulness-strategy", Required = false, HelpText = "The usefulness strategy for the pre-usefulness check", Default = UsefulnessStrategies.None)]
+        public UsefulnessStrategies PreUsefulnessStrategy { get; set; } = UsefulnessStrategies.None;
+        [Option("post-usefulness-strategy", Required = false, HelpText = "The usefulness strategy for the post-usefulness check", Default = UsefulnessStrategies.None)]
+        public UsefulnessStrategies PostUsefulnessStrategy { get; set; } = UsefulnessStrategies.None;
 
         [Option("fast-downward-path", Required = false, HelpText = "Path to Fast Downward")]
         public string FastDownwardPath { get; set; } = "";

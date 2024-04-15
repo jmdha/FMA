@@ -26,20 +26,39 @@ namespace P10.Verifiers
             }
 
             var verifier = new FrontierVerifier();
+            bool stop = false;
+            var timer = new System.Timers.Timer();
+            timer.Interval = timeLimitS * 1000;
+            timer.AutoReset = false;
+            timer.Elapsed += (s, e) => {
+                stop = true;
+                verifier.Stop(); 
+            };
+            timer.Start();
+            bool any = false;
             foreach (var problem in problems)
             {
                 var compiled = StackelbergHelper.CompileToStackelberg(new PDDLDecl(domain, problem), metaAction.Copy());
-                if (!verifier.Verify(compiled.Domain, compiled.Problem, workingDir, timeLimitS))
+                var isValid = verifier.Verify(compiled.Domain, compiled.Problem, workingDir, -1);
+                if (stop)
+                    break;
+                if (verifier.TimedOut)
+                    continue;
+                if (!isValid)
                 {
                     if (cachePath != "")
                         File.Create(Path.Combine(cachePath, $"{code}-invalid.txt"));
                     ConsoleHelper.WriteLineColor($"\t\tMeta action invalid in problem {problem.Name}", ConsoleColor.Red);
-                    return false;
+                    any = false;
+                    break;
                 }
+                else
+                    any = true;
             }
-            if (cachePath != "")
+            timer.Stop();
+            if (cachePath != "" && any)
                 File.Create(Path.Combine(cachePath, $"{code}-valid.txt"));
-            return true;
+            return any;
         }
 
         private static readonly Dictionary<INode, string> _textCache = new Dictionary<INode, string>();

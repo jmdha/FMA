@@ -17,9 +17,17 @@ namespace P10.Verifiers
         internal string _log = "";
         internal DomainDecl? _domain;
         internal ProblemDecl? _problem;
+        private bool _stop = false;
+
+        public void Stop()
+        {
+            if (_currentProcess != null)
+                _currentProcess.Kill(true);
+        }
 
         internal int ExecutePlanner(string domainPath, string problemPath, string outputPath, int timeLimitS)
         {
+            TimedOut = false;
             var task = new Task<int>(() => RunPlanner(domainPath, problemPath, outputPath));
             task.Start();
             if (timeLimitS != -1)
