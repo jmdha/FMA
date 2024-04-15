@@ -12,11 +12,11 @@ namespace P10.PreconditionAdditionRefinements
 {
     public class PreconditionAdditionRefinement
     {
-        public int TimeLimitS { get; }
+        public int ValidationTimeLimitS { get; }
+        public int ExplorationTimeLimitS { get; }
+        public int RefinementTimeLimitS { get; }
         public string TempDir { get; }
-        public string OutputDir { get; }
         public IHeuristic Heuristic { get; set; }
-        public IVerifier Verifier { get; } = new FrontierVerifier();
         public ActionDecl MetaAction { get; }
 
         private readonly List<PreconditionState> _closedList = new List<PreconditionState>();
@@ -29,7 +29,7 @@ namespace P10.PreconditionAdditionRefinements
         private readonly string _learningCache;
         private readonly string _searchWorkingDir;
 
-        public PreconditionAdditionRefinement(int timeLimitS, ActionDecl metaAction, string tempDir, string outputDir, int maxPreconditionCombinations, int maxAddedParameters, string learningCache)
+        public PreconditionAdditionRefinement(int validationTimeLimitS, int explorationTimeLimitS, int refinementTimeLimitS, ActionDecl metaAction, string tempDir, int maxPreconditionCombinations, int maxAddedParameters, string learningCache)
         {
             Heuristic = new hSum(new List<IHeuristic>() {
                 new hMustBeApplicable(),
@@ -40,9 +40,10 @@ namespace P10.PreconditionAdditionRefinements
                 new hWeighted(new hMostApplicable(), 100)
             });
             MetaAction = metaAction;
-            TimeLimitS = timeLimitS;
+            ValidationTimeLimitS = validationTimeLimitS;
+            ExplorationTimeLimitS = explorationTimeLimitS;
+            RefinementTimeLimitS = refinementTimeLimitS;
             TempDir = tempDir;
-            OutputDir = outputDir;
             _tempValidationFolder = Path.Combine(tempDir, "validation");
             PathHelper.RecratePath(_tempValidationFolder);
             _searchWorkingDir = Path.Combine(tempDir, "state-search");
@@ -76,7 +77,7 @@ namespace P10.PreconditionAdditionRefinements
 
             // Check if initial meta action is valid
             ConsoleHelper.WriteLineColor($"\t\tValidating...", ConsoleColor.Magenta);
-            if (VerificationHelper.IsValid(domain, problems, MetaAction, _tempValidationFolder, TimeLimitS, _learningCache))
+            if (VerificationHelper.IsValid(domain, problems, MetaAction, _tempValidationFolder, ValidationTimeLimitS, _learningCache))
             {
                 _result.AlreadyValid = true;
                 ConsoleHelper.WriteLineColor($"\tOriginal meta action is valid!", ConsoleColor.Green);
@@ -105,11 +106,15 @@ namespace P10.PreconditionAdditionRefinements
                 }
 
                 // Check through each of the refinements and add valid ones to the return set.
+                var timeoutWatch = new Stopwatch();
+                timeoutWatch.Start();
                 var nextRefined = GetNextRefined(openList);
                 while(nextRefined != null)
                 {
+                    if (RefinementTimeLimitS > -1 && timeoutWatch.ElapsedMilliseconds / 1000 > RefinementTimeLimitS)
+                        break;
                     ConsoleHelper.WriteLineColor($"\t\tValidating...", ConsoleColor.Magenta);
-                    if (VerificationHelper.IsValid(domain, problems, nextRefined, _tempValidationFolder, TimeLimitS, _learningCache))
+                    if (VerificationHelper.IsValid(domain, problems, nextRefined, _tempValidationFolder, ValidationTimeLimitS, _learningCache))
                     {
                         ConsoleHelper.WriteLineColor($"\tMeta action refinement is valid!", ConsoleColor.Green);
                         returnList.Add(MetaAction);
@@ -139,7 +144,7 @@ namespace P10.PreconditionAdditionRefinements
             if (File.Exists(Path.Combine(_searchWorkingDir, StateInfoFile)))
                 File.Delete(Path.Combine(_searchWorkingDir, StateInfoFile));
             verifier.UpdateSearchString(compiled);
-            var result = verifier.VerifyCode(compiled.Domain, compiled.Problem, _searchWorkingDir, TimeLimitS);
+            var result = verifier.VerifyCode(compiled.Domain, compiled.Problem, _searchWorkingDir, ExplorationTimeLimitS);
             if (result == StateExploreResult.UnknownError)
             {
                 var file = Path.Combine(TempDir, $"{MetaAction.Name}_verification-log_{pddlDecl.Problem.Name}_{DateTime.Now.TimeOfDay}.txt");

@@ -167,7 +167,7 @@ namespace P10
                 ConsoleHelper.WriteLineColor($"", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"{codeGenerator.Generate(candidate)}", ConsoleColor.Cyan);
                 ConsoleHelper.WriteLineColor($"", ConsoleColor.Magenta);
-                var refiner = new PreconditionAdditionRefinement(opts.TimeLimitS, candidate, opts.TempPath, opts.OutputPath, opts.MaxPreconditionCombinations, opts.MaxAddedParameters, opts.LearningCache);
+                var refiner = new PreconditionAdditionRefinement(opts.ValidationTimeLimitS, opts.ExplorationTimeLimitS, opts.RefinementTimeLimitS, candidate, opts.TempPath, opts.MaxPreconditionCombinations, opts.MaxAddedParameters, opts.LearningCache);
                 var refinedResult = refiner.Refine(domain, problems);
                 refinementResults.Add(refinedResult);
                 if (refinedResult.RefinedMetaActions.Count > 0)

@@ -48,8 +48,12 @@ namespace P10
         [Option("cpddl-path", Required = false, HelpText = "Path to the CPDDL executable")]
         public string CPDDLPath { get; set; } = "";
 
-        [Option("refinement-time-limit", Required = false, HelpText = "Time limit in seconds that each refinement step is allowed to take.", Default = -1)]
-        public int TimeLimitS { get; set; } = -1;
+        [Option("validation-time-limit", Required = false, HelpText = "Time limit in seconds that each validation step is allowed to take. (-1 for no time limit)", Default = -1)]
+        public int ValidationTimeLimitS { get; set; } = -1;
+        [Option("exploration-time-limit", Required = false, HelpText = "Time limit in seconds that each state exploration step is allowed to take. (-1 for no time limit)", Default = -1)]
+        public int ExplorationTimeLimitS { get; set; } = -1;
+        [Option("refinement-time-limit", Required = false, HelpText = "Time limit in seconds that each refinement step is allowed to take. (-1 for no time limit)", Default = -1)]
+        public int RefinementTimeLimitS { get; set; } = -1;
 
         [Option("stackelberg-debug", Required = false, HelpText = "Show the stdout of the Stackelberg Planner", Default = false)]
         public bool StackelbergDebug { get; set; } = false;
