@@ -31,9 +31,10 @@ namespace P10.Verifiers
             if (timeLimitS > -1)
                 timer.Interval = timeLimitS * 1000;
             timer.AutoReset = false;
-            timer.Elapsed += (s, e) => {
+            timer.Elapsed += (s, e) =>
+            {
                 stop = true;
-                verifier.Stop(); 
+                verifier.Stop();
             };
             if (timeLimitS > -1)
                 timer.Start();

@@ -5,7 +5,6 @@ using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Models.PDDL.Overloads;
-using System;
 using System.Data;
 using System.Diagnostics;
 using Tools;

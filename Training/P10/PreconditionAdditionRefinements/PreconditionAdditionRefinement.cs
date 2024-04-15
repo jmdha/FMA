@@ -87,7 +87,7 @@ namespace P10.PreconditionAdditionRefinements
 
             // Iterate through all problems, until some valid refinements are found
             var invalidInSome = false;
-            foreach(var problem in problems)
+            foreach (var problem in problems)
             {
                 // Explore state for problem
                 ConsoleHelper.WriteLineColor($"\t\tInitial state space exploration started...", ConsoleColor.Magenta);
@@ -109,7 +109,7 @@ namespace P10.PreconditionAdditionRefinements
                 var timeoutWatch = new Stopwatch();
                 timeoutWatch.Start();
                 var nextRefined = GetNextRefined(openList);
-                while(nextRefined != null)
+                while (nextRefined != null)
                 {
                     if (RefinementTimeLimitS > -1 && timeoutWatch.ElapsedMilliseconds / 1000 > RefinementTimeLimitS)
                         break;
