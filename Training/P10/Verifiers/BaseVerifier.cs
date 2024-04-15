@@ -17,7 +17,6 @@ namespace P10.Verifiers
         internal string _log = "";
         internal DomainDecl? _domain;
         internal ProblemDecl? _problem;
-        private bool _stop = false;
 
         public void Stop()
         {
