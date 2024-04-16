@@ -122,7 +122,7 @@ namespace P10.PreconditionAdditionRefinements
                     if (VerificationHelper.IsValid(domain, problems, nextRefined, _tempValidationFolder, ValidationTimeLimitS, _learningCache))
                     {
                         ConsoleHelper.WriteLineColor($"\tMeta action refinement is valid!", ConsoleColor.Green);
-                        returnList.Add(MetaAction);
+                        returnList.Add(nextRefined);
                     }
                     nextRefined = GetNextRefined(openList);
                 }
