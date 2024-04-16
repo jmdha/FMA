@@ -256,7 +256,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                             if (!candidate.Effects.Contains(target))
                             {
                                 var cpy = candidate.Copy();
-                                AddTargetToCandidate(candidate, target);
+                                AddTargetToCandidate(cpy, target);
                                 candidates.AddRange(RefineForRules(rules, cpy, domain, coveredNow));
                             }
                         }
