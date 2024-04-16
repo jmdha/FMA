@@ -101,8 +101,12 @@ namespace P10
             var contexturalizer = new PDDLContextualiser(listener);
             var domain = parser.ParseAs<DomainDecl>(new FileInfo(opts.DomainPath));
             var problems = new List<ProblemDecl>();
+            var problemFiles = new List<FileInfo>();
             foreach (var problem in opts.ProblemsPath)
-                problems.Add(parser.ParseAs<ProblemDecl>(new FileInfo(problem)));
+                problemFiles.Add(new FileInfo(problem));
+            problemFiles = problemFiles.OrderBy(x => x.Length).ToList();
+            foreach (var problem in problemFiles)
+                problems.Add(parser.ParseAs<ProblemDecl>(problem));
             var baseDecl = new PDDLDecl(domain, problems[problems.Count - 1]);
             contexturalizer.Contexturalise(baseDecl);
             generalResult.Domain = domain.Name!.Name;

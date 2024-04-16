@@ -46,7 +46,10 @@ namespace P10.Verifiers
                 if (stop)
                     break;
                 if (verifier.TimedOut)
+                {
+                    ConsoleHelper.WriteLineColor($"\t\tMeta Action Verification timed out, assuming following problems are too hard...", ConsoleColor.Yellow);
                     break;
+                }
                 if (!isValid)
                 {
                     if (cachePath != "")

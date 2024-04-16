@@ -95,7 +95,10 @@ namespace P10.PreconditionAdditionRefinements
                 if (explored != StateExploreResult.MetaActionValid)
                     invalidInSome = true;
                 if (explored == StateExploreResult.TimedOut)
+                {
+                    ConsoleHelper.WriteLineColor($"\t\tState exploration timed out, assuming following problems are too hard...", ConsoleColor.Yellow);
                     break;
+                }
                 if (explored != StateExploreResult.Success)
                     continue;
 
