@@ -9,6 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		readme.md = readme.md
 		run-experiments-fast.toml = run-experiments-fast.toml
 		run-experiments-full.toml = run-experiments-full.toml
+		run-experiments-trainonly.toml = run-experiments-trainonly.toml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{B69FF3BF-8010-4A04-99B4-8E994E1F9392}"
