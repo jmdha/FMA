@@ -5,7 +5,7 @@ memory_limit_solve = 4000
 name = "L_CPDDL"
 path = "Training/training.sh"
 kind = "Learn"
-args = ["CPDDLInvariantMetaActions", "ReducesMetaSearchTimeTop2"]
+args = ["CPDDLInvariantMetaActions"]
 attribute = "P10"
 
 [[attributes]]

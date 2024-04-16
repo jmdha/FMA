@@ -5,7 +5,7 @@ memory_limit_solve = 4000
 name = "L_CPDDL"
 path = "Training/training.sh"
 kind = "Learn"
-args = ["CPDDLInvariantMetaActions", "ReducesMetaSearchTimeTop2"]
+args = ["CPDDLInvariantMetaActions"]
 attribute = "P10"
 
 [[runners]]
@@ -41,11 +41,11 @@ patterns = [
     { name = "total_candidates", pattern = "Total candidates: ([0-9]*)" },
 ]
 
-#[[tasks]]
-#name = "blocksworld"
-#domain = "Dependencies/learning-benchmarks/blocksworld/domain.pddl"
-#learn = "Dependencies/learning-benchmarks/blocksworld/training/*/p0*.pddl"
-#solve = "Dependencies/learning-benchmarks/blocksworld/testing/*/*.pddl"
+[[tasks]]
+name = "blocksworld"
+domain = "Dependencies/learning-benchmarks/blocksworld/domain.pddl"
+learn = ["Dependencies/learning-benchmarks/blocksworld/training/*/p0*.pddl", "Dependencies/learning-benchmarks/blocksworld/training/*/p90.pddl"]
+solve = ["Dependencies/learning-benchmarks/blocksworld/testing/*/*.pddl"]
 
 [[tasks]]
 name = "childsnack"
@@ -71,11 +71,11 @@ domain = "Dependencies/learning-benchmarks/miconic/domain.pddl"
 learn = ["Dependencies/learning-benchmarks/miconic/training/*/p0*.pddl", "Dependencies/learning-benchmarks/miconic/training/*/p90.pddl"]
 solve = ["Dependencies/learning-benchmarks/miconic/testing/*/*.pddl"]
 
-#[[tasks]]
-#name = "rovers"
-#domain = "Dependencies/learning-benchmarks/rovers/domain.pddl"
-#learn = "Dependencies/learning-benchmarks/rovers/training/*/p0*.pddl"
-#solve = "Dependencies/learning-benchmarks/rovers/testing/*/*.pddl"
+[[tasks]]
+name = "rovers"
+domain = "Dependencies/learning-benchmarks/rovers/domain.pddl"
+learn = ["Dependencies/learning-benchmarks/rovers/training/*/p0*.pddl","Dependencies/learning-benchmarks/rovers/training/*/p90.pddl"]
+solve = ["Dependencies/learning-benchmarks/rovers/testing/*/*.pddl"]
 
 [[tasks]]
 name = "satellite"
@@ -83,20 +83,20 @@ domain = "Dependencies/learning-benchmarks/satellite/domain.pddl"
 learn = ["Dependencies/learning-benchmarks/satellite/training/*/p0*.pddl", "Dependencies/learning-benchmarks/satellite/training/*/p90.pddl"]
 solve = ["Dependencies/learning-benchmarks/satellite/testing/*/*.pddl"]
 
-#[[tasks]]
-#name = "sokoban"
-#domain = "Dependencies/learning-benchmarks/sokoban/domain.pddl"
-#learn = "Dependencies/learning-benchmarks/sokoban/training/*/p0*.pddl"
-#solve = "Dependencies/learning-benchmarks/sokoban/testing/*/*.pddl"
+[[tasks]]
+name = "sokoban"
+domain = "Dependencies/learning-benchmarks/sokoban/domain.pddl"
+learn = ["Dependencies/learning-benchmarks/sokoban/training/*/p0*.pddl", "Dependencies/learning-benchmarks/sokoban/training/*/p90.pddl"]
+solve = ["Dependencies/learning-benchmarks/sokoban/testing/*/*.pddl"]
 
-#[[tasks]]
-#name = "spanner"
-#domain = "Dependencies/learning-benchmarks/spanner/domain.pddl"
-#learn = "Dependencies/learning-benchmarks/spanner/training/*/p0*.pddl"
-#solve = "Dependencies/learning-benchmarks/spanner/testing/*/*.pddl"
+[[tasks]]
+name = "spanner"
+domain = "Dependencies/learning-benchmarks/spanner/domain.pddl"
+learn = ["Dependencies/learning-benchmarks/spanner/training/*/p0*.pddl", "Dependencies/learning-benchmarks/spanner/training/*/p90.pddl"]
+solve = ["Dependencies/learning-benchmarks/spanner/testing/*/*.pddl"]
 
-#[[tasks]]
-#name = "transport"
-#domain = "Dependencies/learning-benchmarks/transport/domain.pddl"
-#learn = "Dependencies/learning-benchmarks/transport/training/*/p0*.pddl"
-#solve = "Dependencies/learning-benchmarks/transport/testing/*/*.pddl"
+[[tasks]]
+name = "transport"
+domain = "Dependencies/learning-benchmarks/transport/domain.pddl"
+learn = ["Dependencies/learning-benchmarks/transport/training/*/p0*.pddl", "Dependencies/learning-benchmarks/transport/training/*/p90.pddl"]
+solve = ["Dependencies/learning-benchmarks/transport/testing/*/*.pddl"]
