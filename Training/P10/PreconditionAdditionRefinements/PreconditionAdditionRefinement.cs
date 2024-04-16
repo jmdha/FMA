@@ -117,7 +117,10 @@ namespace P10.PreconditionAdditionRefinements
                 while (nextRefined != null)
                 {
                     if (RefinementTimeLimitS > -1 && timeoutWatch.ElapsedMilliseconds / 1000 > RefinementTimeLimitS)
+                    {
+                        ConsoleHelper.WriteLineColor($"\t\tRefinement checking timed out, stopping...", ConsoleColor.Yellow);
                         break;
+                    }
                     ConsoleHelper.WriteLineColor($"\t\tValidating...", ConsoleColor.Magenta);
                     if (VerificationHelper.IsValid(domain, problems, nextRefined, _tempValidationFolder, ValidationTimeLimitS, _learningCache))
                     {
