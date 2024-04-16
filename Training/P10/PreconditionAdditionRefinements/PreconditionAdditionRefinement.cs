@@ -94,6 +94,8 @@ namespace P10.PreconditionAdditionRefinements
                 var explored = ExploreState(domain, problem);
                 if (explored != StateExploreResult.MetaActionValid)
                     invalidInSome = true;
+                if (explored == StateExploreResult.TimedOut)
+                    break;
                 if (explored != StateExploreResult.Success)
                     continue;
 
@@ -144,7 +146,7 @@ namespace P10.PreconditionAdditionRefinements
             if (File.Exists(Path.Combine(_searchWorkingDir, StateInfoFile)))
                 File.Delete(Path.Combine(_searchWorkingDir, StateInfoFile));
             verifier.UpdateSearchString(compiled);
-            var result = verifier.VerifyCode(compiled.Domain, compiled.Problem, _searchWorkingDir);
+            var result = verifier.VerifyCode(compiled.Domain, compiled.Problem, _searchWorkingDir, ExplorationTimeLimitS);
             if (result == StateExploreResult.UnknownError)
             {
                 var file = Path.Combine(TempDir, $"{MetaAction.Name}_verification-log_{pddlDecl.Problem.Name}_{DateTime.Now.TimeOfDay}.txt");

@@ -116,9 +116,9 @@ namespace P10.PreconditionAdditionRefinements
 
         public override bool Verify(DomainDecl domain, ProblemDecl problem, string workingDir, int timeLimitS)
         {
-            return VerifyCode(domain, problem, workingDir) == StateExploreResult.Success;
+            return VerifyCode(domain, problem, workingDir, timeLimitS) == StateExploreResult.Success;
         }
-        public StateExploreResult VerifyCode(DomainDecl domain, ProblemDecl problem, string workingDir)
+        public StateExploreResult VerifyCode(DomainDecl domain, ProblemDecl problem, string workingDir, int timeLimitS)
         {
             _domain = domain;
             _problem = problem;
@@ -130,7 +130,9 @@ namespace P10.PreconditionAdditionRefinements
             codeGenerator.Generate(problem, problemFile);
             if (File.Exists(Path.Combine(workingDir, StateInfoFile)))
                 File.Delete(Path.Combine(workingDir, StateInfoFile));
-            var exitCode = ExecutePlanner(domainFile, problemFile, workingDir, -1);
+            if (timeLimitS != -1)
+                timeLimitS *= 2;
+            var exitCode = ExecutePlanner(domainFile, problemFile, workingDir, timeLimitS);
             if (TimedOut)
                 return StateExploreResult.TimedOut;
 

@@ -46,7 +46,7 @@ namespace P10.Verifiers
                 if (stop)
                     break;
                 if (verifier.TimedOut)
-                    continue;
+                    break;
                 if (!isValid)
                 {
                     if (cachePath != "")
