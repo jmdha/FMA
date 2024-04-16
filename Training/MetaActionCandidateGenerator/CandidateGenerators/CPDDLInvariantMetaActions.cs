@@ -34,7 +34,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                 {
                     bool invarianted = rules.Any(x => x.Any(y => y.Predicate == predicate.Name));
                     if (invarianted)
-                        candidates.AddRange(GeneateCandidates(rules, pddlDecl, predicate));
+                        candidates.AddRange(GeneateInvariantSafeCandidates(rules, pddlDecl, predicate));
                     else
                     {
                         if (!predicate.CanOnlyBeSetToFalse(pddlDecl.Domain))
@@ -48,30 +48,6 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                                 new List<IExp>(),
                                 new List<IExp>() { new NotExp(predicate) }));
                     }
-                    //foreach (var action in pddlDecl.Domain.Actions)
-                    //{
-                    //    if (action.Effects.FindNames(predicate.Name).Count == 0)
-                    //        continue;
-
-                    //    bool invarianted = rules.Any(x => x.Any(y => y.Predicate == predicate.Name));
-                    //    if (invarianted)
-                    //        candidates.AddRange(GeneateCandidates(rules, pddlDecl, predicate, action));
-                    //    else
-                    //    {
-                    //        if (!predicate.CanOnlyBeSetToFalse(pddlDecl.Domain))
-                    //            candidates.Add(GenerateMetaAction(
-                    //                $"meta_{predicate.Name}",
-                    //                new List<IExp>(),
-                    //                new List<IExp>() { predicate },
-                    //                action));
-                    //        if (!predicate.CanOnlyBeSetToTrue(pddlDecl.Domain))
-                    //            candidates.Add(GenerateMetaAction(
-                    //                $"meta_{predicate.Name}_false",
-                    //                new List<IExp>(),
-                    //                new List<IExp>() { new NotExp(predicate) },
-                    //                action));
-                    //    }
-                    //}
                 }
             }
 
@@ -150,41 +126,29 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                 }
             }
 
+            // Make sure rule argument IDs are unique 
+            var index = 0;
+            foreach(var ruleSet in rules)
+            {
+                foreach (var rule in ruleSet)
+                    for (int i = 0; i < rule.Args.Count; i++)
+                        if (rule.Args[i].StartsWith('C'))
+                            rule.Args[i] = $"C{index}_{rule.Args[i].Substring(1)}";
+                index++;
+            }
+
             rules = rules.OrderBy(x => x.Count).ToList();
 
             return rules;
         }
 
-        private List<ActionDecl> GeneateCandidates(List<List<PredicateRule>> rules, PDDLDecl pddlDecl, PredicateExp predicate)
+        private List<ActionDecl> GeneateInvariantSafeCandidates(List<List<PredicateRule>> rules, PDDLDecl pddlDecl, PredicateExp predicate)
         {
             var candidateOptions = RefineForRules(rules, new Candidate(new List<IExp>(), new List<IExp>() { predicate }), pddlDecl.Domain, new List<List<PredicateRule>>());
             var validCandidateOptions = new List<Candidate>();
             foreach (var option in candidateOptions)
-            {
-                bool valid = true;
-                foreach (var effect in option.Effects)
-                {
-                    if (!valid)
-                        break;
-                    if (effect is NotExp not && not.Child is PredicateExp pred && pred.CanOnlyBeSetToTrue(pddlDecl.Domain))
-                        valid = false;
-                    if (effect is PredicateExp pred2 && pred2.CanOnlyBeSetToFalse(pddlDecl.Domain))
-                        valid = false;
-                }
-                if (!valid)
-                    continue;
-                foreach (var precon in option.Preconditions)
-                {
-                    if (!valid)
-                        break;
-                    if (precon is NotExp not && not.Child is PredicateExp pred && pred.CanOnlyBeSetToTrue(pddlDecl.Domain))
-                        valid = false;
-                    if (precon is PredicateExp pred2 && pred2.CanOnlyBeSetToFalse(pddlDecl.Domain))
-                        valid = false;
-                }
-                if (valid)
+                if (IsCandidateValid(option, pddlDecl))
                     validCandidateOptions.Add(option);
-            }
 
             int version = 0;
             var candidates = new List<ActionDecl>();
@@ -197,6 +161,25 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
             return candidates;
         }
 
+        private bool IsCandidateValid(Candidate candidate, PDDLDecl pddlDecl)
+        {
+            foreach (var effect in candidate.Effects)
+            {
+                if (effect is NotExp not && not.Child is PredicateExp pred && pred.CanOnlyBeSetToTrue(pddlDecl.Domain))
+                    return false;
+                if (effect is PredicateExp pred2 && pred2.CanOnlyBeSetToFalse(pddlDecl.Domain))
+                    return false;
+            }
+            foreach (var precon in candidate.Preconditions)
+            {
+                if (precon is NotExp not && not.Child is PredicateExp pred && pred.CanOnlyBeSetToTrue(pddlDecl.Domain))
+                    return false;
+                if (precon is PredicateExp pred2 && pred2.CanOnlyBeSetToFalse(pddlDecl.Domain))
+                    return false;
+            }
+            return true;
+        }
+
         private List<Candidate> RefineForRules(List<List<PredicateRule>> rules, Candidate candidate, DomainDecl domain, List<List<PredicateRule>> covered)
         {
             var candidates = new List<Candidate>();
@@ -205,13 +188,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
             var coveredNow = new List<List<PredicateRule>>(covered);
             for (int i = 0; i < candidate.Effects.Count; i++)
             {
-                PredicateExp? reference = null;
-                if (candidate.Effects[i] is PredicateExp pred)
-                    reference = pred;
-                else if (candidate.Effects[i] is NotExp not && not.Child is PredicateExp pred2)
-                    reference = pred2;
-                else
-                    throw new ArgumentNullException();
+                var reference = GetReferencePredicate(candidate.Effects[i]);
 
                 foreach (var ruleSet in rules)
                 {
@@ -223,19 +200,6 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                     if (ruleSet.Count == 1)
                     {
                         var target = GetMutatedUnaryIExp(candidate.Effects[i], ruleSet[0]);
-                        if (!candidate.Effects.Contains(target))
-                        {
-                            AddTargetToCandidate(candidate, target);
-                            i = -1;
-                            coveredNow.Add(ruleSet);
-                            break;
-                        }
-                    }
-                    else if (ruleSet.Count == 2)
-                    {
-                        var sourceRule = GetMatchingRule(candidate.Effects[i], ruleSet);
-                        var targetRule = ruleSet.First(x => x != sourceRule);
-                        var target = GetMutatedBinaryIExp(candidate.Effects[i], sourceRule, targetRule, domain);
                         if (!candidate.Effects.Contains(target))
                         {
                             AddTargetToCandidate(candidate, target);
@@ -282,10 +246,10 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
 
         private IExp GetMutatedUnaryIExp(IExp exp, PredicateRule rule)
         {
-            var predicate = GetReferencePredicate(exp);
+            var reference = GetReferencePredicate(exp);
 
             int index = 0;
-            foreach (var arg in predicate.Arguments)
+            foreach (var arg in reference.Arguments)
             {
                 if (rule.Args[index++].StartsWith('C'))
                 {
@@ -296,9 +260,9 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                 }
             }
             if (exp is PredicateExp)
-                return GenerateNegated(predicate);
+                return GenerateNegated(reference);
             else if (exp is NotExp not2 && not2.Child is PredicateExp)
-                return predicate;
+                return reference;
 
             throw new Exception();
         }
@@ -311,7 +275,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
 
         private IExp GetMutatedBinaryIExp(IExp exp, PredicateRule sourceRule, PredicateRule targetRule, DomainDecl domain)
         {
-            var predicate = GetReferencePredicate(exp);
+            var reference = GetReferencePredicate(exp);
 
             var sourceRuleArgs = new List<string>(sourceRule.Args);
             var targetRuleArgs = new List<string>(targetRule.Args);
@@ -319,7 +283,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
             for (int i = 0; i < targetRuleArgs.Count; i++)
             {
                 if (targetRuleArgs[i].StartsWith('V'))
-                    sample.Arguments[i].Name = predicate.Arguments[sourceRuleArgs.IndexOf(targetRuleArgs[i])].Name;
+                    sample.Arguments[i].Name = reference.Arguments[sourceRuleArgs.IndexOf(targetRuleArgs[i])].Name;
                 else
                     sample.Arguments[i].Name = $"?{targetRuleArgs[i]}";
             }
