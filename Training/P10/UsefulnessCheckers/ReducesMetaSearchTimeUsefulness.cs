@@ -3,7 +3,7 @@ using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers.FastDownward.Plans;
-using System.Diagnostics;
+using System.Text.RegularExpressions;
 using Tools;
 
 namespace P10.UsefulnessCheckers
@@ -11,6 +11,7 @@ namespace P10.UsefulnessCheckers
     public class ReducesMetaSearchTimeUsefulness : UsedInPlansUsefulness
     {
         public static int Rounds { get; set; } = 5;
+        private readonly Regex _searchTime = new Regex("Search time: ([0-9.]*)", RegexOptions.Compiled);
 
         public ReducesMetaSearchTimeUsefulness(string workingDir) : base(workingDir)
         {
@@ -35,9 +36,9 @@ namespace P10.UsefulnessCheckers
             return usefulCandidates;
         }
 
-        private List<long> GetDefaultSearchTimes(DomainDecl domain, List<ProblemDecl> problems)
+        private List<double> GetDefaultSearchTimes(DomainDecl domain, List<ProblemDecl> problems)
         {
-            var returnList = new List<long>();
+            var returnList = new List<double>();
             var errorListener = new ErrorListener();
             var codeGenerator = new PDDLCodeGenerator(errorListener);
             var planParser = new FDPlanParser(errorListener);
@@ -53,13 +54,16 @@ namespace P10.UsefulnessCheckers
                 var problemFile = new FileInfo(Path.Combine(WorkingDir, "usefulCheckProblem.pddl"));
                 codeGenerator.Generate(problem, problemFile.FullName);
 
-                var watch = new Stopwatch();
-                watch.Start();
+                var times = new List<double>();
                 for (int i = 0; i < Rounds; i++)
                 {
                     using (ArgsCaller fdCaller = new ArgsCaller("python3"))
                     {
-                        fdCaller.StdOut += (s, o) => { };
+                        var log = "";
+                        fdCaller.StdOut += (s, o) =>
+                        {
+                            log += o.Data;
+                        };
                         fdCaller.StdErr += (s, o) => { };
                         fdCaller.Arguments.Add(ExternalPaths.FastDownwardPath, "");
                         fdCaller.Arguments.Add("--alias", "lama-first");
@@ -69,17 +73,20 @@ namespace P10.UsefulnessCheckers
                         fdCaller.Arguments.Add(problemFile.FullName, "");
                         fdCaller.Process.StartInfo.WorkingDirectory = WorkingDir;
                         fdCaller.Run();
+                        var matches = _searchTime.Match(log);
+                        if (matches == null)
+                            throw new Exception("No search time for problem???");
+                        times.Add(double.Parse(matches.Groups[1].Value));
                     }
                 }
-                watch.Stop();
-                returnList.Add(watch.ElapsedMilliseconds);
+                returnList.Add(times.Average());
                 count++;
             }
 
             return returnList;
         }
 
-        private bool DoesMetaActionReduceSearchTime(DomainDecl domain, List<ProblemDecl> problems, ActionDecl candidate, List<long> searchTimes)
+        private bool DoesMetaActionReduceSearchTime(DomainDecl domain, List<ProblemDecl> problems, ActionDecl candidate, List<double> searchTimes)
         {
             var errorListener = new ErrorListener();
             var codeGenerator = new PDDLCodeGenerator(errorListener);
@@ -98,13 +105,16 @@ namespace P10.UsefulnessCheckers
                 var problemFile = new FileInfo(Path.Combine(WorkingDir, "usefulCheckProblem.pddl"));
                 codeGenerator.Generate(problem, problemFile.FullName);
 
-                var watch = new Stopwatch();
-                watch.Start();
+                var times = new List<double>();
                 for (int i = 0; i < Rounds; i++)
                 {
                     using (ArgsCaller fdCaller = new ArgsCaller("python3"))
                     {
-                        fdCaller.StdOut += (s, o) => { };
+                        var log = "";
+                        fdCaller.StdOut += (s, o) =>
+                        {
+                            log += o.Data;
+                        };
                         fdCaller.StdErr += (s, o) => { };
                         fdCaller.Arguments.Add(ExternalPaths.FastDownwardPath, "");
                         fdCaller.Arguments.Add("--alias", "lama-first");
@@ -114,10 +124,13 @@ namespace P10.UsefulnessCheckers
                         fdCaller.Arguments.Add(problemFile.FullName, "");
                         fdCaller.Process.StartInfo.WorkingDirectory = WorkingDir;
                         fdCaller.Run();
+                        var matches = _searchTime.Match(log);
+                        if (matches == null)
+                            throw new Exception("No search time for problem???");
+                        times.Add(double.Parse(matches.Groups[1].Value));
                     }
                 }
-                watch.Stop();
-                if (watch.ElapsedMilliseconds < searchTimes[count - 1])
+                if (times.Average() < searchTimes[count - 1])
                 {
                     ConsoleHelper.WriteLineColor($"\t\tMeta action reduced search time in problem {count}!", ConsoleColor.Green);
                     return true;

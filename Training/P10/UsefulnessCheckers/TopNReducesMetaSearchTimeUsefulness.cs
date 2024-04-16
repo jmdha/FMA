@@ -3,7 +3,7 @@ using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers.FastDownward.Plans;
-using System.Diagnostics;
+using System.Text.RegularExpressions;
 using Tools;
 
 namespace P10.UsefulnessCheckers
@@ -12,6 +12,8 @@ namespace P10.UsefulnessCheckers
     {
         public static int Rounds { get; set; } = 5;
         public int N { get; set; }
+
+        private readonly Regex _searchTime = new Regex("Search time: ([0-9.]*)", RegexOptions.Compiled);
 
         public TopNReducesMetaSearchTimeUsefulness(string workingDir, int n) : base(workingDir)
         {
@@ -25,7 +27,7 @@ namespace P10.UsefulnessCheckers
 
             var toRemove = new List<ActionDecl>();
             foreach (var key in metaSearchTimes.Keys)
-                if (metaSearchTimes[key] >= normalSearchTime)
+                if (metaSearchTimes[key] > normalSearchTime)
                     toRemove.Add(key);
             foreach (var remove in toRemove)
                 metaSearchTimes.Remove(remove);
@@ -44,9 +46,9 @@ namespace P10.UsefulnessCheckers
             return usefull;
         }
 
-        private long GetDefaultSearchTime(DomainDecl domain, List<ProblemDecl> problems)
+        private double GetDefaultSearchTime(DomainDecl domain, List<ProblemDecl> problems)
         {
-            long returnValue = 0;
+            double returnValue = 0;
             var errorListener = new ErrorListener();
             var codeGenerator = new PDDLCodeGenerator(errorListener);
             var planParser = new FDPlanParser(errorListener);
@@ -62,13 +64,16 @@ namespace P10.UsefulnessCheckers
                 var problemFile = new FileInfo(Path.Combine(WorkingDir, "usefulCheckProblem.pddl"));
                 codeGenerator.Generate(problem, problemFile.FullName);
 
-                var watch = new Stopwatch();
-                watch.Start();
+                var times = new List<double>();
                 for (int i = 0; i < Rounds; i++)
                 {
                     using (ArgsCaller fdCaller = new ArgsCaller("python3"))
                     {
-                        fdCaller.StdOut += (s, o) => { };
+                        var log = "";
+                        fdCaller.StdOut += (s, o) =>
+                        {
+                            log += o.Data;
+                        };
                         fdCaller.StdErr += (s, o) => { };
                         fdCaller.Arguments.Add(ExternalPaths.FastDownwardPath, "");
                         fdCaller.Arguments.Add("--alias", "lama-first");
@@ -78,19 +83,22 @@ namespace P10.UsefulnessCheckers
                         fdCaller.Arguments.Add(problemFile.FullName, "");
                         fdCaller.Process.StartInfo.WorkingDirectory = WorkingDir;
                         fdCaller.Run();
+                        var matches = _searchTime.Match(log);
+                        if (matches == null)
+                            throw new Exception("No search time for problem???");
+                        times.Add(double.Parse(matches.Groups[1].Value));
                     }
                 }
-                watch.Stop();
-                returnValue += watch.ElapsedMilliseconds;
+                returnValue += times.Average();
                 count++;
             }
 
             return returnValue;
         }
 
-        private Dictionary<ActionDecl, long> GetMetaSearchTimes(DomainDecl domain, List<ProblemDecl> problems, List<ActionDecl> candidates)
+        private Dictionary<ActionDecl, double> GetMetaSearchTimes(DomainDecl domain, List<ProblemDecl> problems, List<ActionDecl> candidates)
         {
-            var returnList = new Dictionary<ActionDecl, long>();
+            var returnList = new Dictionary<ActionDecl, double>();
             foreach (var candidate in candidates)
             {
                 var errorListener = new ErrorListener();
@@ -103,7 +111,7 @@ namespace P10.UsefulnessCheckers
                 codeGenerator.Generate(testDomain, domainFile.FullName);
 
                 int count = 1;
-                long searchTime = 0;
+                double searchTime = 0;
                 ConsoleHelper.WriteLineColor($"\t\tGetting meta search time for candidate {candidate.Name}", ConsoleColor.Magenta);
                 foreach (var problem in problems)
                 {
@@ -111,13 +119,16 @@ namespace P10.UsefulnessCheckers
                     var problemFile = new FileInfo(Path.Combine(WorkingDir, "usefulCheckProblem.pddl"));
                     codeGenerator.Generate(problem, problemFile.FullName);
 
-                    var watch = new Stopwatch();
-                    watch.Start();
+                    var times = new List<double>();
                     for (int i = 0; i < Rounds; i++)
                     {
                         using (ArgsCaller fdCaller = new ArgsCaller("python3"))
                         {
-                            fdCaller.StdOut += (s, o) => { };
+                            var log = "";
+                            fdCaller.StdOut += (s, o) =>
+                            {
+                                log += o.Data;
+                            };
                             fdCaller.StdErr += (s, o) => { };
                             fdCaller.Arguments.Add(ExternalPaths.FastDownwardPath, "");
                             fdCaller.Arguments.Add("--alias", "lama-first");
@@ -127,10 +138,13 @@ namespace P10.UsefulnessCheckers
                             fdCaller.Arguments.Add(problemFile.FullName, "");
                             fdCaller.Process.StartInfo.WorkingDirectory = WorkingDir;
                             fdCaller.Run();
+                            var matches = _searchTime.Match(log);
+                            if (matches == null)
+                                throw new Exception("No search time for problem???");
+                            times.Add(double.Parse(matches.Groups[1].Value));
                         }
                     }
-                    watch.Stop();
-                    searchTime += watch.ElapsedMilliseconds;
+                    searchTime += times.Average();
                     count++;
                 }
                 returnList.Add(candidate, searchTime);
