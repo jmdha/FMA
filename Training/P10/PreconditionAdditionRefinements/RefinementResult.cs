@@ -19,7 +19,7 @@ namespace P10.PreconditionAdditionRefinements
         [CSVColumn("already-valid")]
         public bool AlreadyValid { get; set; } = false;
         [CSVColumn("succeded")]
-        public bool Succeded { get; set; } = true;
+        public bool Succeded { get; set; } = false;
         [CSVColumn("state-space-search-time")]
         public float StateSpaceSearchTime { get; set; } = 0;
         [CSVColumn("stackelberg-output-parsing")]

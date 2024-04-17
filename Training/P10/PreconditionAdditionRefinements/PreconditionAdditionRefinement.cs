@@ -80,6 +80,7 @@ namespace P10.PreconditionAdditionRefinements
             if (VerificationHelper.IsValid(domain, problems, MetaAction, _tempValidationFolder, ValidationTimeLimitS, _learningCache))
             {
                 _result.AlreadyValid = true;
+                _result.Succeded = true;
                 ConsoleHelper.WriteLineColor($"\tOriginal meta action is valid!", ConsoleColor.Green);
                 returnList.Add(MetaAction);
                 return returnList;
@@ -178,6 +179,8 @@ namespace P10.PreconditionAdditionRefinements
         {
             if (openList.Count == 0)
                 return null;
+
+            _result.Succeded = true;
 
             ConsoleHelper.WriteLineColor($"\t\t{openList.Count} possibilities left [Est. {TimeSpan.FromMilliseconds((double)openList.Count * ((double)(_watch.ElapsedMilliseconds + 1) / (double)(1 + (_initialPossibilities - openList.Count)))).ToString("hh\\:mm\\:ss")} until finished]", ConsoleColor.Magenta);
             var state = openList.Dequeue();
