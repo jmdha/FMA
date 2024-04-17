@@ -37,16 +37,14 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                         candidates.AddRange(GeneateInvariantSafeCandidates(rules, pddlDecl, predicate));
                     else
                     {
-                        if (!predicate.CanOnlyBeSetToFalse(pddlDecl.Domain))
-                            candidates.Add(GenerateMetaAction(
-                                $"meta_{predicate.Name}",
-                                new List<IExp>(),
-                                new List<IExp>() { predicate }));
-                        if (!predicate.CanOnlyBeSetToTrue(pddlDecl.Domain))
-                            candidates.Add(GenerateMetaAction(
-                                $"meta_{predicate.Name}_false",
-                                new List<IExp>(),
-                                new List<IExp>() { new NotExp(predicate) }));
+                        candidates.Add(GenerateMetaAction(
+                            $"meta_{predicate.Name}",
+                            new List<IExp>(),
+                            new List<IExp>() { predicate }));
+                        candidates.Add(GenerateMetaAction(
+                            $"meta_{predicate.Name}_false",
+                            new List<IExp>(),
+                            new List<IExp>() { new NotExp(predicate) }));
                     }
                 }
             }
