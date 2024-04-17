@@ -6,7 +6,7 @@ source("Tools/scatterPlots.R")
 
 # Handle arguments
 args = commandArgs(trailingOnly=TRUE)
-args[1] <- "general.csv"
+#args[1] <- "general.csv"
 if (length(args) != 1) {
   stop("1 arguments must be supplied! The source data file", call.=FALSE)
 }
@@ -27,16 +27,20 @@ data <- read.csv(
 tableData <- data %>% select(
   contains('domain'), 
   contains('total.candidates'), 
-  contains('total.refined'))
+  contains('pre.not.useful.removed'), 
+  contains('total.refined'), 
+  contains('post.not.useful.removed'))
 tableData <- aggregate(. ~ domain, data=tableData, FUN=sum)
 generate_table(
   tableData,
-  paste("out/general.tex", sep = ""),
+  paste("out/usefulness.tex", sep = ""),
   c(
     "$Domain$",
     "$C$",
-    "$C_{valid}$"
+    "$PreRemoved$",
+    "$C_{valid}$",
+    "$PostRemoved$"
   ),
-  "General Process Info. $C$ is the initial meta action candidates. $C_{valid}$ is the total valid meta actions either initially valid or refined.",
-  "tab:general"
+  "Usefulness pruning information. $C$ is the initial candidate meta actions. $PreRemoved$ is the candidates removed by the pre-usefulness check. $C_{valid}$ is the valid refinements found in the end.. $PostRemoved$ is the candidates removed by the post-usefulness check.",
+  "tab:usefulness"
 )

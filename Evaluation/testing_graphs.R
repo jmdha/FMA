@@ -7,9 +7,9 @@ source("Tools/clamper.R")
 
 # Handle arguments
 args = commandArgs(trailingOnly=TRUE)
-args[1] <- "solve.csv"
-args[2] <- "StrippedMeta"
-args[3] <- "Downward"
+#args[1] <- "solve.csv"
+#args[2] <- "StrippedMeta"
+#args[3] <- "Downward"
 if (length(args) != 3) {
   stop("3 arguments must be supplied! The source data file, and one for each target reconstruction type", call.=FALSE)
 }
@@ -22,8 +22,9 @@ data <- read.csv(
   sep = ",", 
   colClasses = c(
     'character','character','character',
-    'numeric','numeric',
-    'numeric'
+    'numeric','numeric', 'numeric',
+    'numeric','numeric', 'numeric',
+    'numeric','numeric', 'numeric'
   )
 )
 data <- rename_data(data)

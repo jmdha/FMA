@@ -142,7 +142,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
 
         private List<ActionDecl> GeneateInvariantSafeCandidates(List<List<PredicateRule>> rules, PDDLDecl pddlDecl, PredicateExp predicate)
         {
-            var candidateOptions = RefineForRules(rules, new Candidate(new List<IExp>(), new List<IExp>() { predicate }), pddlDecl.Domain, new List<List<PredicateRule>>());
+            var candidateOptions = InvGen(rules, new Candidate(new List<IExp>(), new List<IExp>() { predicate }), pddlDecl.Domain, new List<List<PredicateRule>>());
             int version = 0;
             var candidates = new List<ActionDecl>();
             foreach (var option in candidateOptions)
@@ -154,11 +154,8 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
             return candidates;
         }
 
-        private List<Candidate> RefineForRules(List<List<PredicateRule>> rules, Candidate candidate, DomainDecl domain, List<List<PredicateRule>> covered)
+        private List<Candidate> InvGen(List<List<PredicateRule>> rules, Candidate candidate, DomainDecl domain, List<List<PredicateRule>> covered)
         {
-            var candidates = new List<Candidate>();
-
-            bool recursed = false;
             var coveredNow = new List<List<PredicateRule>>(covered);
             for (int i = 0; i < candidate.Effects.Count; i++)
             {
@@ -185,7 +182,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                     else
                     {
                         coveredNow.Add(ruleSet);
-                        recursed = true;
+                        var candidates = new List<Candidate>();
                         var sourceRule = GetMatchingRule(candidate.Effects[i], ruleSet);
                         var others = ruleSet.Where(x => x != sourceRule);
                         foreach (var targetRule in others)
@@ -195,18 +192,14 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                             {
                                 var cpy = candidate.Copy();
                                 AddTargetToCandidate(cpy, target);
-                                candidates.AddRange(RefineForRules(rules, cpy, domain, coveredNow));
+                                candidates.AddRange(InvGen(rules, cpy, domain, coveredNow));
                             }
                         }
-                        i = candidate.Effects.Count;
-                        break;
+                        return candidates;
                     }
                 }
             }
-            if (!recursed)
-                candidates.Add(candidate);
-
-            return candidates;
+            return new List<Candidate> { candidate };
         }
 
         private void AddTargetToCandidate(Candidate candidate, IExp target)
