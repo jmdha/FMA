@@ -6,9 +6,10 @@ source("Tools/scatterPlots.R")
 
 # Handle arguments
 args = commandArgs(trailingOnly=TRUE)
-args[1] <- "refinement.csv"
-if (length(args) != 1) {
-  stop("1 arguments must be supplied! The source data file", call.=FALSE)
+#args[1] <- "refinement.csv"
+#args[2] <- "CPDDLInvariantMetaActions"
+if (length(args) != 2) {
+  stop("2 arguments must be supplied! The source data file and the method to generate tables for", call.=FALSE)
 }
 
 data <- read.csv(
@@ -23,6 +24,8 @@ data <- read.csv(
     'numeric','numeric'
   )
 )
+
+data <- data[data$id == args[2],]
 
 tableData <- data %>% select(
   contains('domain'), 
