@@ -145,39 +145,15 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
         private List<ActionDecl> GeneateInvariantSafeCandidates(List<List<PredicateRule>> rules, PDDLDecl pddlDecl, PredicateExp predicate)
         {
             var candidateOptions = RefineForRules(rules, new Candidate(new List<IExp>(), new List<IExp>() { predicate }), pddlDecl.Domain, new List<List<PredicateRule>>());
-            var validCandidateOptions = new List<Candidate>();
-            foreach (var option in candidateOptions)
-                if (IsCandidateValid(option, pddlDecl))
-                    validCandidateOptions.Add(option);
-
             int version = 0;
             var candidates = new List<ActionDecl>();
-            foreach (var option in validCandidateOptions)
+            foreach (var option in candidateOptions)
                 candidates.Add(GenerateMetaAction(
                     $"meta_{predicate.Name}_{version++}",
                     option.Preconditions,
                     option.Effects));
 
             return candidates;
-        }
-
-        private bool IsCandidateValid(Candidate candidate, PDDLDecl pddlDecl)
-        {
-            foreach (var effect in candidate.Effects)
-            {
-                if (effect is NotExp not && not.Child is PredicateExp pred && pred.CanOnlyBeSetToTrue(pddlDecl.Domain))
-                    return false;
-                if (effect is PredicateExp pred2 && pred2.CanOnlyBeSetToFalse(pddlDecl.Domain))
-                    return false;
-            }
-            foreach (var precon in candidate.Preconditions)
-            {
-                if (precon is NotExp not && not.Child is PredicateExp pred && pred.CanOnlyBeSetToTrue(pddlDecl.Domain))
-                    return false;
-                if (precon is PredicateExp pred2 && pred2.CanOnlyBeSetToFalse(pddlDecl.Domain))
-                    return false;
-            }
-            return true;
         }
 
         private List<Candidate> RefineForRules(List<List<PredicateRule>> rules, Candidate candidate, DomainDecl domain, List<List<PredicateRule>> covered)
