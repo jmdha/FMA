@@ -89,8 +89,11 @@ namespace P10.PreconditionAdditionRefinements
 
             // Iterate through all problems, until some valid refinements are found
             var invalidInSome = false;
+            int count = 1;
             foreach (var problem in problems)
             {
+                ConsoleHelper.WriteLineColor($"\t\tStarting refinement on problem {problem.Name!.Name} ({count++} out of {problems.Count})", ConsoleColor.Magenta);
+
                 // Explore state for problem
                 ConsoleHelper.WriteLineColor($"\t\tInitial state space exploration started...", ConsoleColor.Magenta);
                 var explored = ExploreState(domain, problem);
