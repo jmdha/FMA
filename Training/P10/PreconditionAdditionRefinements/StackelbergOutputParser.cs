@@ -65,7 +65,7 @@ namespace P10.PreconditionAdditionRefinements
                         {
                             if (types.Count == 0)
                                 throw new Exception("Added precondition is trying to reference a added parameter, but said parameter have not been added! (Stackelberg Output Malformed)");
-                            var newNamed = new NameExp($"?{item}", new TypeExp(types[metaAction.Parameters.Values.Count - index]));
+                            var newNamed = new NameExp($"?{item.Trim()}", new TypeExp(types[metaAction.Parameters.Values.Count - index]));
                             metaAction.Parameters.Values.Add(newNamed);
                             newPredicate.Arguments.Add(newNamed);
                         }

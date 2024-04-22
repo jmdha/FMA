@@ -11,7 +11,7 @@ namespace P10.PreconditionAdditionRefinements
 {
     public class StateExploreVerifier : BaseVerifier
     {
-        public enum StateExploreResult { Success, InvariantError, PDDLError, UnknownError, MetaActionValid, TimedOut }
+        public enum StateExploreResult { Success, InvariantError, PDDLError, UnknownError, MetaActionValid, TimedOut, TimedOutButSuccess }
         public static string StateInfoFile = "out";
         public int MaxPreconditionCombinations = 3;
         public int MaxParameters = 0;
@@ -134,7 +134,12 @@ namespace P10.PreconditionAdditionRefinements
                 timeLimitS *= 2;
             var exitCode = ExecutePlanner(domainFile, problemFile, workingDir, timeLimitS);
             if (TimedOut)
-                return StateExploreResult.TimedOut;
+            {
+                if (File.Exists(Path.Combine(workingDir, StateInfoFile)))
+                    return StateExploreResult.TimedOutButSuccess;
+                else
+                    return StateExploreResult.TimedOut;
+            }
 
             if (File.Exists(Path.Combine(workingDir, StateInfoFile)))
                 return StateExploreResult.Success;

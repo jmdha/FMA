@@ -29,15 +29,16 @@ namespace P10.PreconditionAdditionRefinements
         private readonly string _learningCache;
         private readonly string _searchWorkingDir;
 
-        public PreconditionAdditionRefinement(int validationTimeLimitS, int explorationTimeLimitS, int refinementTimeLimitS, ActionDecl metaAction, string tempDir, int maxPreconditionCombinations, int maxAddedParameters, string learningCache)
+        public PreconditionAdditionRefinement(int validationTimeLimitS, int explorationTimeLimitS, int refinementTimeLimitS, ActionDecl metaAction, string tempDir, int maxPreconditionCombinations, int maxAddedParameters, string learningCache, PDDLDecl pddlDecl)
         {
             Heuristic = new hSum(new List<IHeuristic>() {
                 new hMustBeApplicable(),
                 //new hMustBeValid(),
-                new hWeighted(new hMostValid(), 100000),
-                new hWeighted(new hFewestParameters(), 10000),
-                new hWeighted(new hFewestPre(), 1000),
-                new hWeighted(new hMostApplicable(), 100)
+                new hWeighted(new hMostStatics(pddlDecl), 100000),
+                //new hWeighted(new hMostValid(), 10000),
+                new hWeighted(new hFewestParameters(), 1000),
+                new hWeighted(new hFewestPre(), 100),
+                new hWeighted(new hMostApplicable(), 10)
             });
             MetaAction = metaAction;
             ValidationTimeLimitS = validationTimeLimitS;
@@ -100,7 +101,7 @@ namespace P10.PreconditionAdditionRefinements
                     ConsoleHelper.WriteLineColor($"\t\tState exploration timed out, assuming following problems are too hard...", ConsoleColor.Yellow);
                     break;
                 }
-                if (explored != StateExploreResult.Success)
+                if (explored != StateExploreResult.Success && explored != StateExploreResult.TimedOutButSuccess)
                     continue;
 
                 // Generate refinement list
@@ -170,6 +171,8 @@ namespace P10.PreconditionAdditionRefinements
                 ConsoleHelper.WriteLineColor($"\t\t\tState exploration succeeded!", ConsoleColor.Green);
             else if (result == StateExploreResult.TimedOut)
                 ConsoleHelper.WriteLineColor($"\t\t\tState exploration timed out...", ConsoleColor.Yellow);
+            else if (result == StateExploreResult.TimedOutButSuccess)
+                ConsoleHelper.WriteLineColor($"\t\t\tState exploration timed out but some refinement options exist...", ConsoleColor.Yellow);
             searchWatch.Stop();
             _result.StateSpaceSearchTime += searchWatch.ElapsedMilliseconds;
             return result;
@@ -185,11 +188,7 @@ namespace P10.PreconditionAdditionRefinements
             ConsoleHelper.WriteLineColor($"\t\t{openList.Count} possibilities left [Est. {TimeSpan.FromMilliseconds((double)openList.Count * ((double)(_watch.ElapsedMilliseconds + 1) / (double)(1 + (_initialPossibilities - openList.Count)))).ToString("hh\\:mm\\:ss")} until finished]", ConsoleColor.Magenta);
             var state = openList.Dequeue();
             _closedList.Add(state);
-#if DEBUG
-            ConsoleHelper.WriteLineColor($"\t\tBest Validity: {Math.Round((1 - ((double)state.InvalidStates / (double)state.TotalInvalidStates)) * 100, 2)}%", ConsoleColor.Magenta);
-            ConsoleHelper.WriteLineColor($"\t\tBest Applicability: {Math.Round(((double)state.Applicability / (double)(state.TotalValidStates + state.TotalInvalidStates)) * 100, 2)}%", ConsoleColor.Magenta);
             ConsoleHelper.WriteLineColor($"\t\tPrecondition: {state}", ConsoleColor.Magenta);
-#endif
             return state.MetaAction;
         }
 
