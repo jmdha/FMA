@@ -170,7 +170,7 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
 
                     if (ruleSet.Count == 1)
                     {
-                        var target = GetMutatedUnaryIExp(candidate.Effects[i], ruleSet[0]);
+                        var target = GetMutatedBinaryIExp(candidate.Effects[i], ruleSet[0], ruleSet[0], domain);
                         if (!candidate.Effects.Contains(target))
                         {
                             AddTargetToCandidate(candidate, target);
@@ -209,29 +209,6 @@ namespace MetaActionCandidateGenerator.CandidateGenerators
                 candidate.Preconditions.Add(not.Child);
             else
                 candidate.Preconditions.Add(GenerateNegated(target));
-        }
-
-        private IExp GetMutatedUnaryIExp(IExp exp, PredicateRule rule)
-        {
-            var reference = GetReferencePredicate(exp);
-
-            int index = 0;
-            foreach (var arg in reference.Arguments)
-            {
-                if (rule.Args[index++].StartsWith('C'))
-                {
-                    if (arg.Name.EndsWith('_'))
-                        arg.Name = $"{arg.Name.Substring(0, arg.Name.Length - 1)}";
-                    else
-                        arg.Name = $"{arg.Name}_";
-                }
-            }
-            if (exp is PredicateExp)
-                return GenerateNegated(reference);
-            else if (exp is NotExp not2 && not2.Child is PredicateExp)
-                return reference;
-
-            throw new Exception();
         }
 
         private PredicateRule GetMatchingRule(IExp exp, List<PredicateRule> rules)

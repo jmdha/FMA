@@ -6,7 +6,7 @@
     "WSL": {
       "commandName": "WSL2",
       "distributionName": "",
-      "commandLineArgs": "P10/bin/Debug/net8.0/P10.dll --output output --domain ../Dependencies/learning-benchmarks/rovers/domain.pddl --problems ../Dependencies/learning-benchmarks/rovers/training/easy/p50.pddl ../Dependencies/learning-benchmarks/rovers/training/easy/p01.pddl  ../Dependencies/learning-benchmarks/rovers/training/easy/p05.pddl ../Dependencies/learning-benchmarks/rovers/training/easy/p08.pddl ../Dependencies/learning-benchmarks/rovers/training/easy/p60.pddl --generation-strategies CPDDLInvariantMetaActions --remove-duplicates --refinement-time-limit 240 --exploration-time-limit 120 --validation-time-limit 10 --post-usefulness-strategy ReducesMetaSearchTimeTop2 --max-added-parameters 1 --max-precondition-combinations 2",
+      "commandLineArgs": "P10/bin/Debug/net8.0/P10.dll --output output --domain ../Dependencies/learning-benchmarks/floortile/domain.pddl --problems ../Dependencies/learning-benchmarks/floortile/training/easy/p50.pddl ../Dependencies/learning-benchmarks/floortile/training/easy/p01.pddl  ../Dependencies/learning-benchmarks/floortile/training/easy/p05.pddl ../Dependencies/learning-benchmarks/floortile/training/easy/p08.pddl ../Dependencies/learning-benchmarks/floortile/training/easy/p60.pddl --generation-strategies CPDDLInvariantMetaActions --remove-duplicates --refinement-time-limit 240 --exploration-time-limit 120 --validation-time-limit 10 --post-usefulness-strategy ReducesMetaSearchTimeTop2 --max-added-parameters 1 --max-precondition-combinations 2",
       "workingDirectory": "/home/kris/P10/Training"
     }
   }
