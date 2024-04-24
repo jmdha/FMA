@@ -56,7 +56,7 @@ namespace P10
                 throw new FileNotFoundException($"Stackelberg Planner path not found: {opts.StackelbergPath}");
             if (opts.ModifiedStackelbergPath != "")
             {
-                opts.ModifiedStackelbergPath = PathHelper.RootPath(opts.StackelbergPath);
+                opts.ModifiedStackelbergPath = PathHelper.RootPath(opts.ModifiedStackelbergPath);
                 ExternalPaths.ModifiedStackelbergPath = opts.ModifiedStackelbergPath;
             }
             if (!File.Exists(ExternalPaths.ModifiedStackelbergPath))
