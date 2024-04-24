@@ -51,9 +51,14 @@ namespace P10.PreconditionAdditionRefinements
                         continue;
                     bool isNegative = fact.Contains("NegatedAtom");
                     var predText = fact.Replace("NegatedAtom", "").Replace("Atom", "").Trim();
-                    var predName = predText.Substring(0, predText.IndexOf('[')).Trim();
-                    var paramString = predText.Substring(predText.IndexOf('[')).Replace("[", "").Replace("]", "").Trim();
-                    var paramStrings = paramString.Split(',');
+                    var predName = predText;
+                    var paramString = "";
+                    if (predText.Contains(' '))
+                    {
+                        predName = predText.Substring(0, predText.IndexOf(' ')).Trim();
+                        paramString = predText.Substring(predText.IndexOf(' ')).Trim();
+                    }
+                    var paramStrings = paramString.Split(' ');
 
                     var newPredicate = new PredicateExp(predName);
                     foreach (var item in paramStrings)
