@@ -132,7 +132,7 @@ namespace P10.PreconditionAdditionRefinements
                 File.Delete(Path.Combine(workingDir, StateInfoFile));
             if (timeLimitS != -1)
                 timeLimitS *= 2;
-            var exitCode = ExecutePlanner(domainFile, problemFile, workingDir, timeLimitS);
+            var exitCode = ExecutePlanner(ExternalPaths.ModifiedStackelbergPath, domainFile, problemFile, workingDir, timeLimitS);
             if (TimedOut)
             {
                 if (File.Exists(Path.Combine(workingDir, StateInfoFile)))

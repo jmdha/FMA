@@ -24,10 +24,10 @@ namespace P10.Verifiers
                 _currentProcess.Kill(true);
         }
 
-        internal int ExecutePlanner(string domainPath, string problemPath, string outputPath, int timeLimitS)
+        internal int ExecutePlanner(string stackelbergPath, string domainPath, string problemPath, string outputPath, int timeLimitS)
         {
             TimedOut = false;
-            var task = new Task<int>(() => RunPlanner(domainPath, problemPath, outputPath));
+            var task = new Task<int>(() => RunPlanner(stackelbergPath, domainPath, problemPath, outputPath));
             task.Start();
             if (timeLimitS != -1)
             {
@@ -52,11 +52,11 @@ namespace P10.Verifiers
             return task.Result;
         }
 
-        private int RunPlanner(string domainPath, string problemPath, string outputPath)
+        private int RunPlanner(string stackelbergPath, string domainPath, string problemPath, string outputPath)
         {
             _log = "";
             StringBuilder sb = new StringBuilder("");
-            sb.Append($"{ExternalPaths.StackelbergPath} ");
+            sb.Append($"{stackelbergPath} ");
             sb.Append($"\"{domainPath}\" ");
             sb.Append($"\"{problemPath}\" ");
             sb.Append($"{SearchString} ");

@@ -43,6 +43,8 @@ namespace P10
         public string FastDownwardPath { get; set; } = "";
         [Option("stackelberg-path", Required = false, HelpText = "Path to the Stackelberg Planner")]
         public string StackelbergPath { get; set; } = "";
+        [Option("modified-stackelberg-path", Required = false, HelpText = "Path to the Stackelberg Planner")]
+        public string ModifiedStackelbergPath { get; set; } = "";
         [Option("cpddl-path", Required = false, HelpText = "Path to the CPDDL executable")]
         public string CPDDLPath { get; set; } = "";
 
