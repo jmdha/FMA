@@ -6,7 +6,7 @@
     "WSL": {
       "commandName": "WSL2",
       "distributionName": "",
-      "commandLineArgs": "P10/bin/Debug/net8.0/P10.dll --output output --domain ../Dependencies/learning-benchmarks/blocksworld/domain.pddl --problems ../Dependencies/learning-benchmarks/blocksworld/training/easy/p50.pddl ../Dependencies/learning-benchmarks/blocksworld/training/easy/p01.pddl  ../Dependencies/learning-benchmarks/blocksworld/training/easy/p05.pddl ../Dependencies/learning-benchmarks/blocksworld/training/easy/p08.pddl ../Dependencies/learning-benchmarks/blocksworld/training/easy/p60.pddl --generation-strategies CPDDLInvariantMetaActions --remove-duplicates --refinement-time-limit 240 --exploration-time-limit 120 --validation-time-limit 10 --post-usefulness-strategy ReducesMetaSearchTimeTop2",
+      "commandLineArgs": "P10/bin/Debug/net8.0/P10.dll --output output --domain ../Dependencies/learning-benchmarks/blocksworld/domain.pddl --problems ../Dependencies/learning-benchmarks/blocksworld/training/easy/p50.pddl ../Dependencies/learning-benchmarks/blocksworld/training/easy/p01.pddl  ../Dependencies/learning-benchmarks/blocksworld/training/easy/p05.pddl ../Dependencies/learning-benchmarks/blocksworld/training/easy/p08.pddl ../Dependencies/learning-benchmarks/blocksworld/training/easy/p60.pddl --generation-strategies CPDDLInvariantMetaActions --remove-duplicates --refinement-time-limit 120 --exploration-time-limit 120 --validation-time-limit 10 --post-usefulness-strategy ReducesMetaSearchTimeTop2",
       "workingDirectory": "/home/kris/P10/Training"
     }
   }
