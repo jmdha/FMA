@@ -1,0 +1,6 @@
+< {loaded V0:goods V1:truck C2:level}:=1
+, {ready-to-load V0:goods V1:market C2:level}:=1
+, {stored V0:goods C1:level}:=1
+, {on-sale V0:goods V1:market C2:level}:=1
+, {at V0:truck C1:place}:=1
+>

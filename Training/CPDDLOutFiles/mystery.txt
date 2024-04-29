@@ -1,0 +1,4 @@
+< {fuel V0:object C1:object}:=1
+, {capacity V0:object C1:object}:=1
+, {at V0:object C1:object, in V0:object C2:object}:=1
+>

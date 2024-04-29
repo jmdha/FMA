@@ -1,0 +1,2 @@
+< {lift-at C0:object}:=1
+>

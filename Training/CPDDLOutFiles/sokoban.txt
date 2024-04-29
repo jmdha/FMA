@@ -1,0 +1,4 @@
+< {at-robot C0:location}:=1
+, {at box1 C0:location}:=1
+, {at box1 V0:location, clear V0:location}:=1
+>

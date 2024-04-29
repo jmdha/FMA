@@ -1,0 +1,3 @@
+< {driving C1:object V0:object, empty V0:object}:=1
+, {at V0:object C1:object, in V0:object C2:object, driving V0:object C3:object}:=1
+>

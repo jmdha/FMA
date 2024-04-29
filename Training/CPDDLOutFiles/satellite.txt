@@ -1,0 +1,2 @@
+< {pointing V0:object C1:object}:=1
+>
