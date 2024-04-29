@@ -15,61 +15,37 @@ patterns = [
 ]
 
 [[tasks]]
+name = "barman-sat11-strips"
+domain = "Dependencies/p10-benchmarks/Benchmarks/barman-sat11-strips/domain.pddl"
+learn = ["Dependencies/p10-benchmarks/Benchmarks/barman-sat11-strips/train/*.pddl"]
+solve = ["Dependencies/p10-benchmarks/Benchmarks/barman-sat11-strips/test/*.pddl"]
+
+[[tasks]]
+name = "barman-sat14-strips"
+domain = "Dependencies/p10-benchmarks/Benchmarks/barman-sat14-strips/domain.pddl"
+learn = ["Dependencies/p10-benchmarks/Benchmarks/barman-sat14-strips/train/*.pddl"]
+solve = ["Dependencies/p10-benchmarks/Benchmarks/barman-sat14-strips/test/*.pddl"]
+
+[[tasks]]
 name = "blocksworld"
-domain = "Dependencies/learning-benchmarks/blocksworld/domain.pddl"
-learn = ["Dependencies/learning-benchmarks/blocksworld/training/*/p0*.pddl", "Dependencies/learning-benchmarks/blocksworld/training/*/p90.pddl"]
-solve = ["Dependencies/learning-benchmarks/blocksworld/testing/*/*.pddl"]
+domain = "Dependencies/p10-benchmarks/Benchmarks/blocksworld/domain.pddl"
+learn = ["Dependencies/p10-benchmarks/Benchmarks/blocksworld/train/*.pddl"]
+solve = ["Dependencies/p10-benchmarks/Benchmarks/blocksworld/test/*.pddl"]
 
 [[tasks]]
-name = "childsnack"
-domain = "Dependencies/learning-benchmarks/childsnack/domain.pddl"
-learn = ["Dependencies/learning-benchmarks/childsnack/training/*/p0*.pddl", "Dependencies/learning-benchmarks/childsnack/training/*/p90.pddl"]
-solve = ["Dependencies/learning-benchmarks/childsnack/testing/*/*.pddl"]
+name = "childsnack-sat14-strips"
+domain = "Dependencies/p10-benchmarks/Benchmarks/childsnack-sat14-strips/domain.pddl"
+learn = ["Dependencies/p10-benchmarks/Benchmarks/childsnack-sat14-strips/train/*.pddl"]
+solve = ["Dependencies/p10-benchmarks/Benchmarks/childsnack-sat14-strips/test/*.pddl"]
 
 [[tasks]]
-name = "ferry"
-domain = "Dependencies/learning-benchmarks/ferry/domain.pddl"
-learn = ["Dependencies/learning-benchmarks/ferry/training/*/p0*.pddl", "Dependencies/learning-benchmarks/ferry/training/*/p90.pddl"]
-solve = ["Dependencies/learning-benchmarks/ferry/testing/*/*.pddl"]
+name = "depot"
+domain = "Dependencies/p10-benchmarks/Benchmarks/depot/domain.pddl"
+learn = ["Dependencies/p10-benchmarks/Benchmarks/depot/train/*.pddl"]
+solve = ["Dependencies/p10-benchmarks/Benchmarks/depot/test/*.pddl"]
 
 [[tasks]]
-name = "floortile"
-domain = "Dependencies/learning-benchmarks/floortile/domain.pddl"
-learn = ["Dependencies/learning-benchmarks/floortile/training/*/p0*.pddl", "Dependencies/learning-benchmarks/floortile/training/*/p90.pddl"]
-solve = ["Dependencies/learning-benchmarks/floortile/testing/*/*.pddl"]
-
-[[tasks]]
-name = "miconic"
-domain = "Dependencies/learning-benchmarks/miconic/domain.pddl"
-learn = ["Dependencies/learning-benchmarks/miconic/training/*/p0*.pddl", "Dependencies/learning-benchmarks/miconic/training/*/p90.pddl"]
-solve = ["Dependencies/learning-benchmarks/miconic/testing/*/*.pddl"]
-
-[[tasks]]
-name = "rovers"
-domain = "Dependencies/learning-benchmarks/rovers/domain.pddl"
-learn = ["Dependencies/learning-benchmarks/rovers/training/*/p0*.pddl","Dependencies/learning-benchmarks/rovers/training/*/p90.pddl"]
-solve = ["Dependencies/learning-benchmarks/rovers/testing/*/*.pddl"]
-
-[[tasks]]
-name = "satellite"
-domain = "Dependencies/learning-benchmarks/satellite/domain.pddl"
-learn = ["Dependencies/learning-benchmarks/satellite/training/*/p0*.pddl", "Dependencies/learning-benchmarks/satellite/training/*/p90.pddl"]
-solve = ["Dependencies/learning-benchmarks/satellite/testing/*/*.pddl"]
-
-[[tasks]]
-name = "sokoban"
-domain = "Dependencies/learning-benchmarks/sokoban/domain.pddl"
-learn = ["Dependencies/learning-benchmarks/sokoban/training/*/p0*.pddl", "Dependencies/learning-benchmarks/sokoban/training/*/p90.pddl"]
-solve = ["Dependencies/learning-benchmarks/sokoban/testing/*/*.pddl"]
-
-[[tasks]]
-name = "spanner"
-domain = "Dependencies/learning-benchmarks/spanner/domain.pddl"
-learn = ["Dependencies/learning-benchmarks/spanner/training/*/p0*.pddl", "Dependencies/learning-benchmarks/spanner/training/*/p90.pddl"]
-solve = ["Dependencies/learning-benchmarks/spanner/testing/*/*.pddl"]
-
-[[tasks]]
-name = "transport"
-domain = "Dependencies/learning-benchmarks/transport/domain.pddl"
-learn = ["Dependencies/learning-benchmarks/transport/training/*/p0*.pddl", "Dependencies/learning-benchmarks/transport/training/*/p90.pddl"]
-solve = ["Dependencies/learning-benchmarks/transport/testing/*/*.pddl"]
+name = "driverlog"
+domain = "Dependencies/p10-benchmarks/Benchmarks/driverlog/domain.pddl"
+learn = ["Dependencies/p10-benchmarks/Benchmarks/driverlog/train/*.pddl"]
+solve = ["Dependencies/p10-benchmarks/Benchmarks/driverlog/test/*.pddl"]
