@@ -61,6 +61,7 @@ echo
 echo == Installing Benchmarks ==
 echo 
 git clone https://github.com/ipc2023-learning/benchmarks learning-benchmarks
+git clone https://github.com/kris701/P10Data p10-benchmarks
 echo 
 echo == Done! ==
 echo 
