@@ -1,5 +1,5 @@
 ﻿using CommandLine;
-using static MetaActionCandidateGenerator.Options;
+using static MetaActionGenerators.MetaGeneratorBuilder;
 
 namespace P10
 {
@@ -26,14 +26,8 @@ namespace P10
         public IEnumerable<string> ProblemsPath { get; set; } = new List<string>();
         [Option("remove-duplicates", Required = false, HelpText = "If duplicate meta actions should be removed from candidates and output.")]
         public bool RemoveDuplicates { get; set; } = false;
-        [Option("generation-strategies", Required = true, HelpText = $"The generator strategies. Valid values: " +
-            $"{nameof(MetaActionCandidateGenerator.Options.GeneratorStrategies.PredicateMetaActions)}," +
-            $"{nameof(MetaActionCandidateGenerator.Options.GeneratorStrategies.StrippedMetaActions)}," +
-            $"{nameof(MetaActionCandidateGenerator.Options.GeneratorStrategies.AgressiveStrippedMetaActions)}," +
-            $"{nameof(MetaActionCandidateGenerator.Options.GeneratorStrategies.FlipMetaActions)}," +
-            $"{nameof(MetaActionCandidateGenerator.Options.GeneratorStrategies.CPDDLInvariantMetaActions)}," +
-            $"{nameof(MetaActionCandidateGenerator.Options.GeneratorStrategies.InvariantMetaActions)}")]
-        public IEnumerable<GeneratorStrategies> GeneratorStrategies { get; set; } = new List<GeneratorStrategies>();
+        [Option("generator", Required = true, HelpText = $"The generator strategies")]
+        public GeneratorOptions GeneratorOption { get; set; }
         [Option("pre-usefulness-strategy", Required = false, HelpText = "The usefulness strategy for the pre-usefulness check", Default = UsefulnessStrategies.None)]
         public UsefulnessStrategies PreUsefulnessStrategy { get; set; } = UsefulnessStrategies.None;
         [Option("post-usefulness-strategy", Required = false, HelpText = "The usefulness strategy for the post-usefulness check", Default = UsefulnessStrategies.None)]
@@ -46,7 +40,9 @@ namespace P10
         [Option("modified-stackelberg-path", Required = false, HelpText = "Path to the Stackelberg Planner")]
         public string ModifiedStackelbergPath { get; set; } = "";
         [Option("cpddl-path", Required = false, HelpText = "Path to the CPDDL executable")]
-        public string CPDDLPath { get; set; } = "";
+        public string CPDDLPath { get; set; } = "../Dependencies/cpddl/bin/pddl";
+        [Option("cpddl-out-folder", Required = false, HelpText = "Path to a folder with CPDDL output files")]
+        public string CPDDLOutputPath { get; set; } = "CPDDLOutFiles";
 
         [Option("validation-time-limit", Required = false, HelpText = "Time limit in seconds that each validation step is allowed to take. (-1 for no time limit)", Default = -1)]
         public int ValidationTimeLimitS { get; set; } = -1;

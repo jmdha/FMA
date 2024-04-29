@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 using CSVToolsSharp;
-using MetaActionCandidateGenerator.CandidateGenerators;
+using MetaActionGenerators;
 using P10.PreconditionAdditionRefinements;
 using P10.UsefulnessCheckers;
 using P10.Verifiers;
@@ -13,7 +13,7 @@ using PDDLSharp.Models.PDDL.Overloads;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers.PDDL;
 using Tools;
-using static MetaActionCandidateGenerator.Options;
+using static MetaActionGenerators.MetaGeneratorBuilder;
 
 namespace P10
 {
@@ -65,6 +65,7 @@ namespace P10
             opts.OutputPath = PathHelper.RootPath(opts.OutputPath);
             opts.TempPath = PathHelper.RootPath(opts.TempPath);
             opts.DomainPath = PathHelper.RootPath(opts.DomainPath);
+            opts.CPDDLOutputPath = PathHelper.RootPath(opts.CPDDLOutputPath);
             for (int i = 0; i < problemsPath.Count; i++)
                 problemsPath[i] = PathHelper.RootPath(problemsPath[i]);
             _candidateOutput = Path.Combine(opts.TempPath, _candidateOutput);
@@ -79,21 +80,9 @@ namespace P10
             PathHelper.RecratePath(opts.TempPath);
             PathHelper.RecratePath(_candidateOutput);
             BaseVerifier.ShowSTDOut = opts.StackelbergDebug;
-            if (opts.GeneratorStrategies.Contains(GeneratorStrategies.CPDDLInvariantMetaActions))
-            {
-                if (opts.CPDDLPath != "")
-                {
-                    opts.CPDDLPath = PathHelper.RootPath(opts.CPDDLPath);
-                    CPDDLInvariantMetaActions.CPDDLExecutable = opts.CPDDLPath;
-                }
-                if (!File.Exists(CPDDLInvariantMetaActions.CPDDLExecutable))
-                    throw new FileNotFoundException($"CPDDL executable not found: {CPDDLInvariantMetaActions.CPDDLExecutable}");
-                CPDDLInvariantMetaActions.TempFolder = Path.Combine(opts.TempPath, "cpddl");
-            }
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
-            foreach (var strategy in opts.GeneratorStrategies)
-                ID += $"{Enum.GetName(strategy)}+";
+            ID += $"{Enum.GetName(opts.GeneratorOption)}+";
             if (ID.EndsWith('+'))
                 ID = ID.Substring(0, ID.Length - 1);
 
@@ -107,6 +96,7 @@ namespace P10
             var parser = new PDDLParser(listener);
             var contexturalizer = new PDDLContextualiser(listener);
             var domain = parser.ParseAs<DomainDecl>(new FileInfo(opts.DomainPath));
+            var domainName = new FileInfo(opts.DomainPath).Directory.Name;
             var problems = new List<ProblemDecl>();
             var problemFiles = new List<FileInfo>();
             foreach (var problem in opts.ProblemsPath)
@@ -125,19 +115,34 @@ namespace P10
             var codeGenerator = new PDDLCodeGenerator(listener);
             codeGenerator.Readable = true;
             var generatorResults = new List<MetaActionGenerationResult>();
-            foreach (var generator in opts.GeneratorStrategies)
+            ConsoleHelper.WriteLineColor($"\tGenerating with: {Enum.GetName(opts.GeneratorOption)}", ConsoleColor.Magenta);
+
+            var args = new Dictionary<string, string>();
+            if (opts.GeneratorOption == GeneratorOptions.CPDDLMutexed)
             {
-                ConsoleHelper.WriteLineColor($"\tGenerating with: {Enum.GetName(typeof(GeneratorStrategies), generator)}", ConsoleColor.Magenta);
-                var newCandidates = CandidateGeneratorBuilder.GetGenerator(generator).GenerateCandidates(baseDecl);
-                candidates.AddRange(newCandidates);
-                generatorResults.Add(new MetaActionGenerationResult()
+                if (File.Exists(Path.Combine(opts.CPDDLOutputPath, $"{domainName}.txt")))
                 {
-                    ID = ID,
-                    Domain = domain.Name!.Name,
-                    TotalCandidates = newCandidates.Count,
-                    Generator = $"{Enum.GetName(typeof(GeneratorStrategies), generator)}"
-                });
+                    ConsoleHelper.WriteLineColor($"\t\tUsing existing CPDDL output!", ConsoleColor.Magenta);
+                    args.Add("cpddlOutput", Path.Combine(opts.CPDDLOutputPath, $"{domainName}.txt"));
+                }
+                else
+                {
+                    ConsoleHelper.WriteLineColor($"\t\tGenerating new CPDDL output!", ConsoleColor.Magenta);
+                    args.Add("tempFolder", Path.Combine(opts.TempPath, "cpddl"));
+                    args.Add("cpddlExecutable", opts.CPDDLPath);
+                }
             }
+
+            var generator = MetaGeneratorBuilder.GetGenerator(opts.GeneratorOption, domain, problems, args);
+            var newCandidates = generator.GenerateCandidates();
+            candidates.AddRange(newCandidates);
+            generatorResults.Add(new MetaActionGenerationResult()
+            {
+                ID = ID,
+                Domain = domain.Name!.Name,
+                TotalCandidates = newCandidates.Count,
+                Generator = $"{Enum.GetName(opts.GeneratorOption)}"
+            });
             File.WriteAllText(Path.Combine(opts.OutputPath, "candidates.csv"), CSVSerialiser.Serialise(generatorResults, new CSVSerialiserOptions() { PrettyOutput = true }));
             foreach (var candidiate in candidates)
                 codeGenerator.Generate(candidiate, Path.Combine(_candidateOutput, $"{candidiate.Name}.pddl"));
