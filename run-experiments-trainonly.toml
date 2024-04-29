@@ -49,3 +49,111 @@ name = "driverlog"
 domain = "Dependencies/p10-benchmarks/Benchmarks/driverlog/domain.pddl"
 learn = ["Dependencies/p10-benchmarks/Benchmarks/driverlog/train/*.pddl"]
 solve = ["Dependencies/p10-benchmarks/Benchmarks/driverlog/test/*.pddl"]
+
+[[tasks]]
+name = "ferry"
+domain = "Dependencies/p10-benchmarks/Benchmarks/ferry/domain.pddl"
+learn = ["Dependencies/p10-benchmarks/Benchmarks/ferry/train/*.pddl"]
+solve = ["Dependencies/p10-benchmarks/Benchmarks/ferry/test/*.pddl"]
+
+[[tasks]]
+name = "floortile"
+domain = "Dependencies/p10-benchmarks/Benchmarks/floortile/domain.pddl"
+learn = ["Dependencies/p10-benchmarks/Benchmarks/floortile/train/*.pddl"]
+solve = ["Dependencies/p10-benchmarks/Benchmarks/floortile/test/*.pddl"]
+
+[[tasks]]
+name = "grid"
+domain = "Dependencies/p10-benchmarks/Benchmarks/grid/domain.pddl"
+learn = ["Dependencies/p10-benchmarks/Benchmarks/grid/train/*.pddl"]
+solve = ["Dependencies/p10-benchmarks/Benchmarks/grid/test/*.pddl"]
+
+[[tasks]]
+name = "gripper"
+domain = "Dependencies/p10-benchmarks/Benchmarks/gripper/domain.pddl"
+learn = ["Dependencies/p10-benchmarks/Benchmarks/gripper/train/*.pddl"]
+solve = ["Dependencies/p10-benchmarks/Benchmarks/gripper/test/*.pddl"]
+
+[[tasks]]
+name = "logistics00"
+domain = "Dependencies/p10-benchmarks/Benchmarks/logistics00/domain.pddl"
+learn = ["Dependencies/p10-benchmarks/Benchmarks/logistics00/train/*.pddl"]
+solve = ["Dependencies/p10-benchmarks/Benchmarks/logistics00/test/*.pddl"]
+
+[[tasks]]
+name = "logistics98"
+domain = "Dependencies/p10-benchmarks/Benchmarks/logistics98/domain.pddl"
+learn = ["Dependencies/p10-benchmarks/Benchmarks/logistics98/train/*.pddl"]
+solve = ["Dependencies/p10-benchmarks/Benchmarks/logistics98/test/*.pddl"]
+
+[[tasks]]
+name = "miconic"
+domain = "Dependencies/p10-benchmarks/Benchmarks/miconic/domain.pddl"
+learn = ["Dependencies/p10-benchmarks/Benchmarks/miconic/train/*.pddl"]
+solve = ["Dependencies/p10-benchmarks/Benchmarks/miconic/test/*.pddl"]
+
+[[tasks]]
+name = "mystery"
+domain = "Dependencies/p10-benchmarks/Benchmarks/mystery/domain.pddl"
+learn = ["Dependencies/p10-benchmarks/Benchmarks/mystery/train/*.pddl"]
+solve = ["Dependencies/p10-benchmarks/Benchmarks/mystery/test/*.pddl"]
+
+[[tasks]]
+name = "nomystery-sat11-strips"
+domain = "Dependencies/p10-benchmarks/Benchmarks/nomystery-sat11-strips/domain.pddl"
+learn = ["Dependencies/p10-benchmarks/Benchmarks/nomystery-sat11-strips/train/*.pddl"]
+solve = ["Dependencies/p10-benchmarks/Benchmarks/nomystery-sat11-strips/test/*.pddl"]
+
+[[tasks]]
+name = "rovers"
+domain = "Dependencies/p10-benchmarks/Benchmarks/rovers/domain.pddl"
+learn = ["Dependencies/p10-benchmarks/Benchmarks/rovers/train/*.pddl"]
+solve = ["Dependencies/p10-benchmarks/Benchmarks/rovers/test/*.pddl"]
+
+[[tasks]]
+name = "satellite"
+domain = "Dependencies/p10-benchmarks/Benchmarks/satellite/domain.pddl"
+learn = ["Dependencies/p10-benchmarks/Benchmarks/satellite/train/*.pddl"]
+solve = ["Dependencies/p10-benchmarks/Benchmarks/satellite/test/*.pddl"]
+
+[[tasks]]
+name = "sokoban"
+domain = "Dependencies/p10-benchmarks/Benchmarks/sokoban/domain.pddl"
+learn = ["Dependencies/p10-benchmarks/Benchmarks/sokoban/train/*.pddl"]
+solve = ["Dependencies/p10-benchmarks/Benchmarks/sokoban/test/*.pddl"]
+
+[[tasks]]
+name = "spanner"
+domain = "Dependencies/p10-benchmarks/Benchmarks/spanner/domain.pddl"
+learn = ["Dependencies/p10-benchmarks/Benchmarks/spanner/train/*.pddl"]
+solve = ["Dependencies/p10-benchmarks/Benchmarks/spanner/test/*.pddl"]
+
+[[tasks]]
+name = "tpp"
+domain = "Dependencies/p10-benchmarks/Benchmarks/tpp/domain.pddl"
+learn = ["Dependencies/p10-benchmarks/Benchmarks/tpp/train/*.pddl"]
+solve = ["Dependencies/p10-benchmarks/Benchmarks/tpp/test/*.pddl"]
+
+[[tasks]]
+name = "transport-sat08-strips"
+domain = "Dependencies/p10-benchmarks/Benchmarks/transport-sat08-strips/domain.pddl"
+learn = ["Dependencies/p10-benchmarks/Benchmarks/transport-sat08-strips/train/*.pddl"]
+solve = ["Dependencies/p10-benchmarks/Benchmarks/transport-sat08-strips/test/*.pddl"]
+
+[[tasks]]
+name = "transport-sat11-strips"
+domain = "Dependencies/p10-benchmarks/Benchmarks/transport-sat11-strips/domain.pddl"
+learn = ["Dependencies/p10-benchmarks/Benchmarks/transport-sat11-strips/train/*.pddl"]
+solve = ["Dependencies/p10-benchmarks/Benchmarks/transport-sat11-strips/test/*.pddl"]
+
+[[tasks]]
+name = "transport-sat14-strips"
+domain = "Dependencies/p10-benchmarks/Benchmarks/transport-sat14-strips/domain.pddl"
+learn = ["Dependencies/p10-benchmarks/Benchmarks/transport-sat14-strips/train/*.pddl"]
+solve = ["Dependencies/p10-benchmarks/Benchmarks/transport-sat14-strips/test/*.pddl"]
+
+[[tasks]]
+name = "zenotravel"
+domain = "Dependencies/p10-benchmarks/Benchmarks/zenotravel/domain.pddl"
+learn = ["Dependencies/p10-benchmarks/Benchmarks/zenotravel/train/*.pddl"]
+solve = ["Dependencies/p10-benchmarks/Benchmarks/zenotravel/test/*.pddl"]
