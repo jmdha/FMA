@@ -41,10 +41,6 @@ namespace P10
         public string StackelbergPath { get; set; } = "";
         [Option("modified-stackelberg-path", Required = false, HelpText = "Path to the Stackelberg Planner")]
         public string ModifiedStackelbergPath { get; set; } = "";
-        [Option("cpddl-path", Required = false, HelpText = "Path to the CPDDL executable")]
-        public string CPDDLPath { get; set; } = "../Dependencies/cpddl/bin/pddl";
-        [Option("cpddl-out-folder", Required = false, HelpText = "Path to a folder with CPDDL output files")]
-        public string CPDDLOutputPath { get; set; } = "CPDDLOutFiles";
 
         [Option("validation-time-limit", Required = false, HelpText = "Time limit in seconds that each validation step is allowed to take. (-1 for no time limit)", Default = -1)]
         public int ValidationTimeLimitS { get; set; } = -1;

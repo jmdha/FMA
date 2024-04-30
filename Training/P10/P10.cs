@@ -65,7 +65,6 @@ namespace P10
             opts.OutputPath = PathHelper.RootPath(opts.OutputPath);
             opts.TempPath = PathHelper.RootPath(opts.TempPath);
             opts.DomainPath = PathHelper.RootPath(opts.DomainPath);
-            opts.CPDDLOutputPath = PathHelper.RootPath(opts.CPDDLOutputPath);
             for (int i = 0; i < problemsPath.Count; i++)
                 problemsPath[i] = PathHelper.RootPath(problemsPath[i]);
             _candidateOutput = Path.Combine(opts.TempPath, _candidateOutput);
