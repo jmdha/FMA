@@ -28,6 +28,8 @@ namespace P10
         public bool RemoveDuplicates { get; set; } = false;
         [Option("generator", Required = true, HelpText = $"The generator strategies")]
         public GeneratorOptions GeneratorOption { get; set; }
+        [Option("args", Required = false, HelpText = "Optional arguments for the generator. Some generators require specific arguments, others do not. The arguments are in key-pairs, in the format key;value")]
+        public IEnumerable<string> Args { get; set; } = new List<string>();
         [Option("pre-usefulness-strategy", Required = false, HelpText = "The usefulness strategy for the pre-usefulness check", Default = UsefulnessStrategies.None)]
         public UsefulnessStrategies PreUsefulnessStrategy { get; set; } = UsefulnessStrategies.None;
         [Option("post-usefulness-strategy", Required = false, HelpText = "The usefulness strategy for the post-usefulness check", Default = UsefulnessStrategies.None)]

@@ -96,7 +96,6 @@ namespace P10
             var parser = new PDDLParser(listener);
             var contexturalizer = new PDDLContextualiser(listener);
             var domain = parser.ParseAs<DomainDecl>(new FileInfo(opts.DomainPath));
-            var domainName = new FileInfo(opts.DomainPath).Directory.Name;
             var problems = new List<ProblemDecl>();
             var problemFiles = new List<FileInfo>();
             foreach (var problem in opts.ProblemsPath)
@@ -118,19 +117,11 @@ namespace P10
             ConsoleHelper.WriteLineColor($"\tGenerating with: {Enum.GetName(opts.GeneratorOption)}", ConsoleColor.Magenta);
 
             var args = new Dictionary<string, string>();
-            if (opts.GeneratorOption == GeneratorOptions.CPDDLMutexed)
+            foreach (var keyvalue in opts.Args)
             {
-                if (File.Exists(Path.Combine(opts.CPDDLOutputPath, $"{domainName}.txt")))
-                {
-                    ConsoleHelper.WriteLineColor($"\t\tUsing existing CPDDL output!", ConsoleColor.Magenta);
-                    args.Add("cpddlOutput", Path.Combine(opts.CPDDLOutputPath, $"{domainName}.txt"));
-                }
-                else
-                {
-                    ConsoleHelper.WriteLineColor($"\t\tGenerating new CPDDL output!", ConsoleColor.Magenta);
-                    args.Add("tempFolder", Path.Combine(opts.TempPath, "cpddl"));
-                    args.Add("cpddlExecutable", opts.CPDDLPath);
-                }
+                var key = keyvalue.Substring(0, keyvalue.IndexOf(';')).Trim();
+                var value = keyvalue.Substring(keyvalue.IndexOf(';') + 1).Trim();
+                args.Add(key, value);
             }
 
             var generator = MetaGeneratorBuilder.GetGenerator(opts.GeneratorOption, domain, problems, args);
