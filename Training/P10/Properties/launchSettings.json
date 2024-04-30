@@ -6,7 +6,7 @@
     "WSL": {
       "commandName": "WSL2",
       "distributionName": "",
-      "commandLineArgs": "P10/bin/Debug/net8.0/P10.dll --output output --domain ../Dependencies/p10-benchmarks/Benchmarks/barman-sat11-strips/domain.pddl --problems ../Dependencies/p10-benchmarks/Benchmarks/barman-sat11-strips/train/p01.pddl --generator CPDDLMutexed --remove-duplicates --refinement-time-limit 120 --exploration-time-limit 120 --validation-time-limit 10 --post-usefulness-strategy ReducesMetaSearchTimeTop2",
+      "commandLineArgs": "P10/bin/Debug/net8.0/P10.dll --output output --domain ../Dependencies/p10-benchmarks/Benchmarks/barman/domain.pddl --problems ../Dependencies/p10-benchmarks/Benchmarks/barman/training/p1.pddl --generator CPDDLMutexed --args cpddlOutput;../Dependencies/p10-benchmarks/CPDDLGroups/barman.txt --remove-duplicates --refinement-time-limit 120 --exploration-time-limit 120 --validation-time-limit 10 --post-usefulness-strategy ReducesMetaSearchTimeTop2",
       "workingDirectory": "/home/kris/P10/Training"
     }
   }
