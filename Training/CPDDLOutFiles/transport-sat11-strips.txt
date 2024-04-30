@@ -1,4 +1,0 @@
-< {at V0:vehicle C1:location}:=1
-, {capacity V0:vehicle C1:capacity-number}:=1
-, {at V0:package C1:location, in V0:package C2:vehicle}:=1
->

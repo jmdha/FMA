@@ -1,2 +1,0 @@
-< {at V0:object C1:object, in V0:object C2:object}:=1
->

@@ -1,5 +1,0 @@
-< {at-ferry C0:location}:=1
-, {at-ferry V0:location, NOT-at-ferry V0:location}:=1
-, {at V0:car C1:location, on V0:car}:=1
-, {empty-ferry, on C0:car}:=1
->

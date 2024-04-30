@@ -1,4 +1,0 @@
-< {at t0 C0:location}:=1
-, {fuel t0 C0:fuellevel}:=1
-, {at V0:package C1:location, in V0:package t0}:=1
->
