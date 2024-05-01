@@ -169,9 +169,6 @@ namespace P10
             var refinementResults = new List<RefinementResult>();
             foreach (var candidate in candidates)
             {
-                refinedCandidates.Add(candidate);
-                continue;
-
                 ConsoleHelper.WriteLineColor($"\tCandidate: {count++} out of {candidates.Count}", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"{codeGenerator.Generate(candidate)}", ConsoleColor.Cyan);
