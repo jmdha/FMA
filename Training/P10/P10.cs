@@ -233,7 +233,7 @@ namespace P10
                 ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
             }
 
-            ConsoleHelper.WriteLineColor($"Outputting all refined candidates", ConsoleColor.Magenta);
+            ConsoleHelper.WriteLineColor($"Outputting all refined candidates", ConsoleColor.Blue);
             foreach (var refinedCandidate in refinedCandidates)
                 codeGenerator.Generate(refinedCandidate, Path.Combine(opts.OutputPath, $"{refinedCandidate.Name}.pddl"));
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
@@ -244,11 +244,15 @@ namespace P10
             codeGenerator.Generate(newDomain, Path.Combine(opts.OutputPath, "enhancedDomain.pddl"));
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
-            ConsoleHelper.WriteLineColor($"Generating macro cache for valid meta actions", ConsoleColor.Magenta);
+            ConsoleHelper.WriteLineColor($"Generating macro cache for valid meta actions", ConsoleColor.Blue);
             var cacheGenerator = new CacheGenerator();
             PathHelper.RecratePath(Path.Combine(opts.OutputPath, "cache"));
+            count = 1;
             foreach (var metaAction in refinedCandidates)
+            {
+                ConsoleHelper.WriteLineColor($"\tGenerating cache for candidate '{metaAction.Name}' [{count++} out of {refinedCandidates.Count}]", ConsoleColor.Magenta);
                 cacheGenerator.GenerateCache(domain, problems, metaAction, opts.TempPath, Path.Combine(opts.OutputPath, "cache"));
+            }
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
             File.WriteAllText(Path.Combine(opts.OutputPath, "general.csv"), CSVSerialiser.Serialise(new List<P10Result>() { generalResult }));

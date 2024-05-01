@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tools;
 
 namespace P10.MacroExtractor
 {
@@ -22,12 +23,14 @@ namespace P10.MacroExtractor
         public void GenerateCache(DomainDecl domain, List<ProblemDecl> problems, ActionDecl metaAction, string tempFolder, string outFolder)
         {
             var tmpFolder = Path.Combine(tempFolder, _cacheFolder);
-            PathHelper.RecratePath(tmpFolder);
+            Tools.PathHelper.RecratePath(tmpFolder);
 
             var listener = new ErrorListener();
             var codeGenerator = new PDDLCodeGenerator(listener);
+            int count = 1;
             foreach (var problem in problems)
             {
+                ConsoleHelper.WriteLineColor($"\t\tProblem {count++} out of {problems.Count}", ConsoleColor.Magenta);
                 var decl = StackelbergHelper.CompileToStackelberg(new PDDLDecl(domain, problem), metaAction.Copy());
                 codeGenerator.Generate(decl.Domain, Path.Combine(tmpFolder, "tempDomain.pddl"));
                 codeGenerator.Generate(decl.Problem, Path.Combine(tmpFolder, "tempProblem.pddl"));
@@ -90,7 +93,7 @@ namespace P10.MacroExtractor
                     preCount = count;
                     Thread.Sleep(1000);
                     count = Directory.GetFiles(Path.Combine(tempPath, _replacementsPath)).Count();
-                    Console.WriteLine($"Waiting for planner to finish outputting files [was {preCount} is now {count}]...");
+                    ConsoleHelper.WriteLineColor($"\t\t\tWaiting for planner to finish outputting files [was {preCount} is now {count}]...", ConsoleColor.Magenta);
                 }
             }
         }
