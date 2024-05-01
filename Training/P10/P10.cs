@@ -1,6 +1,7 @@
 ﻿using CommandLine;
 using CSVToolsSharp;
 using MetaActionGenerators;
+using P10.MacroExtractor;
 using P10.PreconditionAdditionRefinements;
 using P10.UsefulnessCheckers;
 using P10.Verifiers;
@@ -12,6 +13,7 @@ using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Overloads;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers.PDDL;
+using System.Collections.Generic;
 using Tools;
 using static MetaActionGenerators.MetaGeneratorBuilder;
 
@@ -61,6 +63,13 @@ namespace P10
             }
             if (!File.Exists(ExternalPaths.ModifiedStackelbergPath))
                 throw new FileNotFoundException($"Modified Stackelberg Planner path not found: {opts.ModifiedStackelbergPath}");
+            if (opts.OldModifiedStackelbergPath != "")
+            {
+                opts.OldModifiedStackelbergPath = PathHelper.RootPath(opts.OldModifiedStackelbergPath);
+                ExternalPaths.OldModifiedStackelbergPath = opts.OldModifiedStackelbergPath;
+            }
+            if (!File.Exists(ExternalPaths.OldModifiedStackelbergPath))
+                throw new FileNotFoundException($"Old Modified Stackelberg Planner path not found: {opts.OldModifiedStackelbergPath}");
 
             opts.OutputPath = PathHelper.RootPath(opts.OutputPath);
             opts.TempPath = PathHelper.RootPath(opts.TempPath);
@@ -173,7 +182,7 @@ namespace P10
                 ConsoleHelper.WriteLineColor($"", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"{codeGenerator.Generate(candidate)}", ConsoleColor.Cyan);
                 ConsoleHelper.WriteLineColor($"", ConsoleColor.Magenta);
-                var refiner = new PreconditionAdditionRefinement(opts.ValidationTimeLimitS, opts.ExplorationTimeLimitS, opts.RefinementTimeLimitS, candidate, opts.TempPath, opts.MaxPreconditionCombinations, opts.MaxAddedParameters, opts.LearningCache, baseDecl);
+                var refiner = new PreconditionAdditionRefinement(opts.ValidationTimeLimitS, opts.ExplorationTimeLimitS, opts.RefinementTimeLimitS, candidate, opts.TempPath, opts.MaxPreconditionCombinations, opts.MaxAddedParameters, baseDecl);
                 var refinedResult = refiner.Refine(domain, problems);
                 refinementResults.Add(refinedResult);
                 if (refinedResult.RefinedMetaActions.Count > 0)
@@ -233,6 +242,13 @@ namespace P10
             var newDomain = domain.Copy();
             newDomain.Actions.AddRange(refinedCandidates);
             codeGenerator.Generate(newDomain, Path.Combine(opts.OutputPath, "enhancedDomain.pddl"));
+            ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
+
+            ConsoleHelper.WriteLineColor($"Generating macro cache for valid meta actions", ConsoleColor.Magenta);
+            var cacheGenerator = new CacheGenerator();
+            PathHelper.RecratePath(Path.Combine(opts.OutputPath, "cache"));
+            foreach (var metaAction in refinedCandidates)
+                cacheGenerator.GenerateCache(domain, problems, metaAction, opts.TempPath, Path.Combine(opts.OutputPath, "cache"));
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
             File.WriteAllText(Path.Combine(opts.OutputPath, "general.csv"), CSVSerialiser.Serialise(new List<P10Result>() { generalResult }));

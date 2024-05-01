@@ -47,6 +47,21 @@ echo
 echo == Done! ==
 echo 
 
+echo == Installing Modified Stackelberg Planner 2 ==
+echo 
+git clone https://github.com/jamadaha/stackelberg-planner-sls.git old-modified-stackelberg-planner
+cd old-modified-stackelberg-planner
+git reset --hard 80bfecc818a5bb41f50256efc208a6a73ff4cb0d
+cd src
+sed -e s/-Werror//g -i preprocess/Makefile
+sed -e s/-Werror//g -i search/Makefile
+bash build_all -j
+cd ..
+cd ..
+echo 
+echo == Done! ==
+echo 
+
 echo == Installing CPPDL ==
 echo 
 git clone https://gitlab.com/danfis/cpddl.git

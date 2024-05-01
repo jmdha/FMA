@@ -41,6 +41,8 @@ namespace P10
         public string StackelbergPath { get; set; } = "";
         [Option("modified-stackelberg-path", Required = false, HelpText = "Path to the Stackelberg Planner")]
         public string ModifiedStackelbergPath { get; set; } = "";
+        [Option("old-modified-stackelberg-path", Required = false, HelpText = "Path to the Stackelberg Planner")]
+        public string OldModifiedStackelbergPath { get; set; } = "";
 
         [Option("validation-time-limit", Required = false, HelpText = "Time limit in seconds that each validation step is allowed to take. (-1 for no time limit)", Default = -1)]
         public int ValidationTimeLimitS { get; set; } = -1;
@@ -56,8 +58,5 @@ namespace P10
         public int MaxPreconditionCombinations { get; set; } = 100;
         [Option("max-added-parameters", Required = false, HelpText = "How many additional parameters are allowed to add", Default = 0)]
         public int MaxAddedParameters { get; set; } = 0;
-
-        [Option("learning-cache-path", Required = false, HelpText = "Path to the cross-run cache. If a path is given, the cache is enabled, otherwise the application will not use caching.")]
-        public string LearningCache { get; set; } = "";
     }
 }

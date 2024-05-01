@@ -67,7 +67,7 @@ namespace P10.UsefulnessCheckers
                         fdCaller.StdErr += (s, o) => { };
                         fdCaller.Arguments.Add(ExternalPaths.FastDownwardPath, "");
                         fdCaller.Arguments.Add("--alias", "lama-first");
-                        fdCaller.Arguments.Add("--overall-time-limit", "5m");
+                        fdCaller.Arguments.Add("--overall-time-limit", "30m");
                         fdCaller.Arguments.Add("--plan-file", "plan.plan");
                         fdCaller.Arguments.Add(domainFile.FullName, "");
                         fdCaller.Arguments.Add(problemFile.FullName, "");
@@ -77,7 +77,7 @@ namespace P10.UsefulnessCheckers
                         if (matches == null)
                             throw new Exception("No search time for problem???");
                         if (matches.Groups[1].Value == "")
-                            times.Add(TimeSpan.FromMinutes(5).TotalSeconds);
+                            times.Add(TimeSpan.FromMinutes(30).TotalSeconds);
                         else
                             times.Add(double.Parse(matches.Groups[1].Value));
                     }
@@ -121,7 +121,7 @@ namespace P10.UsefulnessCheckers
                         fdCaller.StdErr += (s, o) => { };
                         fdCaller.Arguments.Add(ExternalPaths.FastDownwardPath, "");
                         fdCaller.Arguments.Add("--alias", "lama-first");
-                        fdCaller.Arguments.Add("--overall-time-limit", "5m");
+                        fdCaller.Arguments.Add("--overall-time-limit", "30m");
                         fdCaller.Arguments.Add("--plan-file", "plan.plan");
                         fdCaller.Arguments.Add(domainFile.FullName, "");
                         fdCaller.Arguments.Add(problemFile.FullName, "");
@@ -130,7 +130,10 @@ namespace P10.UsefulnessCheckers
                         var matches = _searchTime.Match(log);
                         if (matches == null)
                             throw new Exception("No search time for problem???");
-                        times.Add(double.Parse(matches.Groups[1].Value));
+                        if (matches.Groups[1].Value == "")
+                            times.Add(TimeSpan.FromMinutes(30).TotalSeconds);
+                        else
+                            times.Add(double.Parse(matches.Groups[1].Value));
                     }
                 }
                 if (times.Average() < searchTimes[count - 1])
