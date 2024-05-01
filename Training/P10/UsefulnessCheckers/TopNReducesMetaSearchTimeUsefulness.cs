@@ -141,7 +141,10 @@ namespace P10.UsefulnessCheckers
                             var matches = _searchTime.Match(log);
                             if (matches == null)
                                 throw new Exception("No search time for problem???");
-                            times.Add(double.Parse(matches.Groups[1].Value));
+                            if (matches.Groups[1].Value == "")
+                                times.Add(TimeSpan.FromMinutes(5).TotalSeconds);
+                            else
+                                times.Add(double.Parse(matches.Groups[1].Value));
                         }
                     }
                     searchTime += times.Average();
