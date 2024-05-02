@@ -24,8 +24,6 @@ namespace P10
         public string DomainPath { get; set; } = "";
         [Option("problems", Required = true, HelpText = "Path to the problem files")]
         public IEnumerable<string> ProblemsPath { get; set; } = new List<string>();
-        [Option("remove-duplicates", Required = false, HelpText = "If duplicate meta actions should be removed from candidates and output.")]
-        public bool RemoveDuplicates { get; set; } = false;
         [Option("generator", Required = true, HelpText = $"The generator strategies")]
         public GeneratorOptions GeneratorOption { get; set; }
         [Option("args", Required = false, HelpText = "Optional arguments for the generator. Some generators require specific arguments, others do not. The arguments are in key-pairs, in the format key;value")]

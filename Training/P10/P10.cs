@@ -135,26 +135,15 @@ namespace P10
             generalResult.TotalCandidates = candidates.Count;
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
-            if (opts.RemoveDuplicates)
-            {
-                ConsoleHelper.WriteLineColor($"Pruning for duplicate meta action candidates", ConsoleColor.Blue);
-                var preCount = candidates.Count;
-                candidates = candidates.Distinct(baseDecl.Domain.Actions);
-                ConsoleHelper.WriteLineColor($"\tRemoved {preCount - candidates.Count} candidates", ConsoleColor.Magenta);
-                ConsoleHelper.WriteLineColor($"\tTotal candidates: {candidates.Count}", ConsoleColor.Magenta);
-                generalResult.PreDuplicatesRemoved = preCount - candidates.Count;
-                ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
-            }
-
             if (opts.PreUsefulnessStrategy != Options.UsefulnessStrategies.None)
             {
                 ConsoleHelper.WriteLineColor($"Pruning for useful meta action candidates", ConsoleColor.Blue);
                 var checker = UsefulnessCheckerBuilder.GetUsefulnessChecker(opts.PreUsefulnessStrategy, opts.TempPath);
-                var preCount = candidates.Count;
+                var preCountt = candidates.Count;
                 candidates = checker.GetUsefulCandidates(domain, problems, candidates);
-                ConsoleHelper.WriteLineColor($"\tRemoved {preCount - candidates.Count} candidates", ConsoleColor.Magenta);
+                ConsoleHelper.WriteLineColor($"\tRemoved {preCountt - candidates.Count} candidates", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"\tTotal candidates: {candidates.Count}", ConsoleColor.Magenta);
-                generalResult.PreNotUsefulRemoved = preCount - candidates.Count;
+                generalResult.PreNotUsefulRemoved = preCountt - candidates.Count;
                 ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
             }
 
@@ -197,25 +186,22 @@ namespace P10
             }
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
-            if (opts.RemoveDuplicates)
-            {
-                ConsoleHelper.WriteLineColor($"Pruning for duplicate meta action refined candidates", ConsoleColor.Blue);
-                var preCount = refinedCandidates.Count;
-                refinedCandidates = refinedCandidates.Distinct(baseDecl.Domain.Actions);
-                ConsoleHelper.WriteLineColor($"\tRemoved {preCount - refinedCandidates.Count} refined candidates", ConsoleColor.Magenta);
-                ConsoleHelper.WriteLineColor($"\tTotal refined candidates: {refinedCandidates.Count}", ConsoleColor.Magenta);
-                generalResult.PostDuplicatesRemoved = preCount - refinedCandidates.Count;
-                ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
-            }
+            ConsoleHelper.WriteLineColor($"Pruning for duplicate meta action refined candidates", ConsoleColor.Blue);
+            var preCount = refinedCandidates.Count;
+            refinedCandidates = refinedCandidates.Distinct(baseDecl.Domain.Actions);
+            ConsoleHelper.WriteLineColor($"\tRemoved {preCount - refinedCandidates.Count} refined candidates", ConsoleColor.Magenta);
+            ConsoleHelper.WriteLineColor($"\tTotal refined candidates: {refinedCandidates.Count}", ConsoleColor.Magenta);
+            generalResult.PostDuplicatesRemoved = preCount - refinedCandidates.Count;
+            ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
             if (opts.PostUsefulnessStrategy != Options.UsefulnessStrategies.None)
             {
                 ConsoleHelper.WriteLineColor($"Pruning for useful refined meta action", ConsoleColor.Blue);
                 var checker = UsefulnessCheckerBuilder.GetUsefulnessChecker(opts.PostUsefulnessStrategy, opts.TempPath);
-                var preCount = refinedCandidates.Count;
+                var preCountt = refinedCandidates.Count;
                 refinedCandidates = checker.GetUsefulCandidates(domain, problems, refinedCandidates);
-                ConsoleHelper.WriteLineColor($"\tRemoved {preCount - refinedCandidates.Count} refined candidates", ConsoleColor.Magenta);
+                ConsoleHelper.WriteLineColor($"\tRemoved {preCountt - refinedCandidates.Count} refined candidates", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"\tTotal meta actions: {refinedCandidates.Count}", ConsoleColor.Magenta);
-                generalResult.PostNotUsefulRemoved = preCount - refinedCandidates.Count;
+                generalResult.PostNotUsefulRemoved = preCountt - refinedCandidates.Count;
                 ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
             }
 
