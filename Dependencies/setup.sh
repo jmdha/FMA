@@ -15,43 +15,10 @@ echo
 echo == Done! ==
 echo 
 
-echo == Installing Stackelberg Planner ==
-echo 
-git clone -n --depth=1 --filter=tree:0 https://gitlab.com/atorralba_planners/stackelberg-planner-sls.git stackelberg-planner
-cd stackelberg-planner
-git sparse-checkout set --no-cone src
-git checkout
-cd src
-sed -e s/-Werror//g -i preprocess/Makefile
-sed -e s/-Werror//g -i search/Makefile
-bash build_all -j
-cd ..
-cd ..
-echo 
-echo == Done! ==
-echo 
-
 echo == Installing Modified Stackelberg Planner ==
 echo 
-git clone -n --depth=1 --filter=tree:0 https://github.com/jamadaha/stackelberg-planner-sls.git modified-stackelberg-planner
+git clone https://github.com/jamadaha/stackelberg-planner-sls.git modified-stackelberg-planner
 cd modified-stackelberg-planner
-git sparse-checkout set --no-cone src
-git checkout
-cd src
-sed -e s/-Werror//g -i preprocess/Makefile
-sed -e s/-Werror//g -i search/Makefile
-bash build_all -j
-cd ..
-cd ..
-echo 
-echo == Done! ==
-echo 
-
-echo == Installing Modified Stackelberg Planner 2 ==
-echo 
-git clone https://github.com/jamadaha/stackelberg-planner-sls.git old-modified-stackelberg-planner
-cd old-modified-stackelberg-planner
-git reset --hard 80bfecc818a5bb41f50256efc208a6a73ff4cb0d
 cd src
 sed -e s/-Werror//g -i preprocess/Makefile
 sed -e s/-Werror//g -i search/Makefile
@@ -90,7 +57,7 @@ echo
 echo == Done! ==
 echo 
 
-echo == Installing CPDDL ==
+echo == Installing CSMs ==
 echo 
 git clone https://github.com/lchrpa/CSMs
 cd CSMs

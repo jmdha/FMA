@@ -56,20 +56,6 @@ namespace P10
             }
             if (!File.Exists(ExternalPaths.StackelbergPath))
                 throw new FileNotFoundException($"Stackelberg Planner path not found: {opts.StackelbergPath}");
-            if (opts.ModifiedStackelbergPath != "")
-            {
-                opts.ModifiedStackelbergPath = PathHelper.RootPath(opts.ModifiedStackelbergPath);
-                ExternalPaths.ModifiedStackelbergPath = opts.ModifiedStackelbergPath;
-            }
-            if (!File.Exists(ExternalPaths.ModifiedStackelbergPath))
-                throw new FileNotFoundException($"Modified Stackelberg Planner path not found: {opts.ModifiedStackelbergPath}");
-            if (opts.OldModifiedStackelbergPath != "")
-            {
-                opts.OldModifiedStackelbergPath = PathHelper.RootPath(opts.OldModifiedStackelbergPath);
-                ExternalPaths.OldModifiedStackelbergPath = opts.OldModifiedStackelbergPath;
-            }
-            if (!File.Exists(ExternalPaths.OldModifiedStackelbergPath))
-                throw new FileNotFoundException($"Old Modified Stackelberg Planner path not found: {opts.OldModifiedStackelbergPath}");
 
             opts.OutputPath = PathHelper.RootPath(opts.OutputPath);
             opts.TempPath = PathHelper.RootPath(opts.TempPath);

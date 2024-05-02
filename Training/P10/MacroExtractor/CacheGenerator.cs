@@ -34,7 +34,7 @@ namespace P10.MacroExtractor
                 var decl = StackelbergHelper.CompileToStackelberg(new PDDLDecl(domain, problem), metaAction.Copy());
                 codeGenerator.Generate(decl.Domain, Path.Combine(tmpFolder, "tempDomain.pddl"));
                 codeGenerator.Generate(decl.Problem, Path.Combine(tmpFolder, "tempProblem.pddl"));
-                RunPlanner(ExternalPaths.OldModifiedStackelbergPath,
+                RunPlanner(ExternalPaths.StackelbergPath,
                     Path.Combine(tmpFolder, "tempDomain.pddl"),
                     Path.Combine(tmpFolder, "tempProblem.pddl"),
                     tmpFolder);
@@ -61,7 +61,7 @@ namespace P10.MacroExtractor
             {
                 StartInfo = new ProcessStartInfo()
                 {
-                    FileName = "python2",
+                    FileName = "python3",
                     Arguments = sb.ToString(),
                     CreateNoWindow = true,
                     UseShellExecute = false,
