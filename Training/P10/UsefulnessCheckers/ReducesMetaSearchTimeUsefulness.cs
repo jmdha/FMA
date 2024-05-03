@@ -131,7 +131,7 @@ namespace P10.UsefulnessCheckers
                         if (matches == null)
                             throw new Exception("No search time for problem???");
                         if (matches.Groups[1].Value == "")
-                            times.Add(TimeSpan.FromMinutes(30).TotalSeconds);
+                            times.Add(TimeLimitS);
                         else
                             times.Add(double.Parse(matches.Groups[1].Value));
                     }
