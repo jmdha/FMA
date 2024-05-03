@@ -50,15 +50,5 @@ namespace P10.Verifiers
                 timer.Stop();
             return any;
         }
-
-        private static readonly Dictionary<INode, string> _textCache = new Dictionary<INode, string>();
-        private static string GetCached(INode node)
-        {
-            if (_textCache.ContainsKey(node))
-                return _textCache[node];
-            var codeGenerator = new PDDLCodeGenerator(new ErrorListener());
-            _textCache.Add(node, codeGenerator.Generate(node));
-            return _textCache[node];
-        }
     }
 }

@@ -15,7 +15,7 @@ namespace P10.UsefulnessCheckers
 
         private readonly Regex _searchTime = new Regex("Search time: ([0-9.]*)", RegexOptions.Compiled);
 
-        public TopNReducesMetaSearchTimeUsefulness(string workingDir, int n) : base(workingDir)
+        public TopNReducesMetaSearchTimeUsefulness(string workingDir, int timeLimitS, int n) : base(workingDir, timeLimitS)
         {
             N = n;
         }
@@ -77,7 +77,7 @@ namespace P10.UsefulnessCheckers
                         fdCaller.StdErr += (s, o) => { };
                         fdCaller.Arguments.Add(ExternalPaths.FastDownwardPath, "");
                         fdCaller.Arguments.Add("--alias", "lama-first");
-                        fdCaller.Arguments.Add("--overall-time-limit", "30m");
+                        fdCaller.Arguments.Add("--overall-time-limit", $"{TimeLimitS}s");
                         fdCaller.Arguments.Add("--plan-file", "plan.plan");
                         fdCaller.Arguments.Add(domainFile.FullName, "");
                         fdCaller.Arguments.Add(problemFile.FullName, "");
@@ -135,7 +135,7 @@ namespace P10.UsefulnessCheckers
                             fdCaller.StdErr += (s, o) => { };
                             fdCaller.Arguments.Add(ExternalPaths.FastDownwardPath, "");
                             fdCaller.Arguments.Add("--alias", "lama-first");
-                            fdCaller.Arguments.Add("--overall-time-limit", "30m");
+                            fdCaller.Arguments.Add("--overall-time-limit", $"{TimeLimitS}s");
                             fdCaller.Arguments.Add("--plan-file", "plan.plan");
                             fdCaller.Arguments.Add(domainFile.FullName, "");
                             fdCaller.Arguments.Add(problemFile.FullName, "");

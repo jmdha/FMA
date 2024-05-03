@@ -10,11 +10,13 @@ namespace P10.UsefulnessCheckers
     public class UsedInPlansUsefulness : IUsefulnessChecker
     {
         public string WorkingDir { get; } = "usefulness";
+        public int TimeLimitS { get; }
 
-        public UsedInPlansUsefulness(string workingDir)
+        public UsedInPlansUsefulness(string workingDir, int timeLimitS)
         {
             WorkingDir = Path.Combine(workingDir, WorkingDir);
             PathHelper.RecratePath(WorkingDir);
+            TimeLimitS = timeLimitS;
         }
 
         public virtual List<ActionDecl> GetUsefulCandidates(DomainDecl domain, List<ProblemDecl> problems, List<ActionDecl> candidates)
@@ -57,7 +59,7 @@ namespace P10.UsefulnessCheckers
                     fdCaller.StdErr += (s, o) => { };
                     fdCaller.Arguments.Add(ExternalPaths.FastDownwardPath, "");
                     fdCaller.Arguments.Add("--alias", "lama-first");
-                    fdCaller.Arguments.Add("--overall-time-limit", "5m");
+                    fdCaller.Arguments.Add("--overall-time-limit", $"{TimeLimitS}s");
                     fdCaller.Arguments.Add("--plan-file", "plan.plan");
                     fdCaller.Arguments.Add(domainFile.FullName, "");
                     fdCaller.Arguments.Add(problemFile.FullName, "");

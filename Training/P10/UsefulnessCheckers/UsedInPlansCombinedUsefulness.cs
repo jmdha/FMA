@@ -9,7 +9,7 @@ namespace P10.UsefulnessCheckers
 {
     public class UsedInPlansCombinedUsefulness : UsedInPlansUsefulness
     {
-        public UsedInPlansCombinedUsefulness(string workingDir) : base(workingDir)
+        public UsedInPlansCombinedUsefulness(string workingDir, int timeLimitS) : base(workingDir, timeLimitS)
         {
         }
 
@@ -37,7 +37,7 @@ namespace P10.UsefulnessCheckers
                     fdCaller.StdErr += (s, o) => { };
                     fdCaller.Arguments.Add(ExternalPaths.FastDownwardPath, "");
                     fdCaller.Arguments.Add("--alias", "lama-first");
-                    fdCaller.Arguments.Add("--overall-time-limit", "5m");
+                    fdCaller.Arguments.Add("--overall-time-limit", $"{TimeLimitS}s");
                     fdCaller.Arguments.Add("--plan-file", "plan.plan");
                     fdCaller.Arguments.Add(domainFile.FullName, "");
                     fdCaller.Arguments.Add(problemFile.FullName, "");
