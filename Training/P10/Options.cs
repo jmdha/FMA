@@ -46,6 +46,8 @@ namespace P10
         public int RefinementTimeLimitS { get; set; } = -1;
         [Option("usefulness-time-limit", Required = false, HelpText = "Time limit in seconds that each usefulness step is allowed to take. (-1 for no time limit)", Default = -1)]
         public int UsefulnessTimeLimitS { get; set; } = -1;
+        [Option("cache-generation-time-limit", Required = false, HelpText = "Time limit in seconds that each cache generation step is allowed to take. (-1 for no time limit)", Default = -1)]
+        public int CacheGenerationTimeLimitS { get; set; } = -1;
 
         [Option("stackelberg-debug", Required = false, HelpText = "Show the stdout of the Stackelberg Planner", Default = false)]
         public bool StackelbergDebug { get; set; } = false;

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Tools;
 
@@ -17,10 +18,16 @@ namespace P10.MacroExtractor
 {
     public class CacheGenerator
     {
+        public static bool ShowSTDOut { get; set; } = false;
+
         private static string _replacementsPath = "replacements";
         private static string _cacheFolder = "cache";
         private static string _searchString = "--search \"sym_stackelberg(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false)\"";
-        public void GenerateCache(DomainDecl domain, List<ProblemDecl> problems, ActionDecl metaAction, string tempFolder, string outFolder)
+
+        private Process? _currentProcess;
+        internal string _log = "";
+
+        public void GenerateCache(DomainDecl domain, List<ProblemDecl> problems, ActionDecl metaAction, string tempFolder, string outFolder, int timeLimitS)
         {
             var tmpFolder = Path.Combine(tempFolder, _cacheFolder);
             Tools.PathHelper.RecratePath(tmpFolder);
@@ -34,10 +41,11 @@ namespace P10.MacroExtractor
                 var decl = StackelbergHelper.CompileToStackelberg(new PDDLDecl(domain, problem), metaAction.Copy());
                 codeGenerator.Generate(decl.Domain, Path.Combine(tmpFolder, "tempDomain.pddl"));
                 codeGenerator.Generate(decl.Problem, Path.Combine(tmpFolder, "tempProblem.pddl"));
-                RunPlanner(ExternalPaths.StackelbergPath,
+                ExecutePlanner(ExternalPaths.StackelbergPath,
                     Path.Combine(tmpFolder, "tempDomain.pddl"),
                     Path.Combine(tmpFolder, "tempProblem.pddl"),
-                    tmpFolder);
+                    tmpFolder,
+                    timeLimitS);
             }
 
             if (!Directory.Exists(Path.Combine(tmpFolder, _replacementsPath)))
@@ -49,15 +57,38 @@ namespace P10.MacroExtractor
             extractor.ExtractMacros(domain, Directory.GetFiles(Path.Combine(tmpFolder, _replacementsPath)).ToList(), outFolder);
         }
 
+        private void ExecutePlanner(string stackelbergPath, string domainPath, string problemPath, string outputPath, int timeLimitS)
+        {
+            var task = new Task(() => RunPlanner(stackelbergPath, domainPath, problemPath, outputPath));
+            task.Start();
+            if (timeLimitS != -1)
+            {
+                var watch = new Stopwatch();
+                watch.Start();
+                while (!task.IsCompleted)
+                {
+                    Thread.Sleep(1000);
+                    if (_currentProcess != null && watch.ElapsedMilliseconds / 1000 > timeLimitS)
+                    {
+                        ConsoleHelper.WriteLineColor("\tPlanner times out! Killing...", ConsoleColor.DarkYellow);
+                        _currentProcess.Kill(true);
+                    }
+                }
+            }
+            else
+                task.Wait();
+        }
+
         private void RunPlanner(string stackelbergPath, string domainPath, string problemPath, string tempPath)
         {
+            _log = "";
             StringBuilder sb = new StringBuilder("");
             sb.Append($"{stackelbergPath} ");
             sb.Append($"\"{domainPath}\" ");
             sb.Append($"\"{problemPath}\" ");
             sb.Append($"{_searchString} ");
 
-            var currentProcess = new Process
+            _currentProcess = new Process
             {
                 StartInfo = new ProcessStartInfo()
                 {
@@ -70,19 +101,23 @@ namespace P10.MacroExtractor
                     WorkingDirectory = tempPath
                 }
             };
-            //currentProcess.OutputDataReceived += (s, e) =>
-            //{
-            //    Console.WriteLine(e.Data);
-            //};
-            //currentProcess.ErrorDataReceived += (s, e) =>
-            //{
-            //    Console.WriteLine($"ERROR: {e.Data}");
-            //};
+            _currentProcess.OutputDataReceived += (s, e) =>
+            {
+                _log += $"{e.Data}{Environment.NewLine}";
+                if (ShowSTDOut)
+                    Console.WriteLine(e.Data);
+            };
+            _currentProcess.ErrorDataReceived += (s, e) =>
+            {
+                _log += $"ERROR: {e.Data}{Environment.NewLine}";
+                if (ShowSTDOut)
+                    Console.WriteLine($"ERROR: {e.Data}");
+            };
 
-            currentProcess.Start();
-            //currentProcess.BeginOutputReadLine();
-            //currentProcess.BeginErrorReadLine();
-            currentProcess.WaitForExit();
+            _currentProcess.Start();
+            _currentProcess.BeginOutputReadLine();
+            _currentProcess.BeginErrorReadLine();
+            _currentProcess.WaitForExit();
 
             if (Directory.Exists(Path.Combine(tempPath, _replacementsPath)))
             {

@@ -223,7 +223,7 @@ namespace P10
             foreach (var metaAction in refinedCandidates)
             {
                 ConsoleHelper.WriteLineColor($"\tGenerating cache for candidate '{metaAction.Name}' [{count++} out of {refinedCandidates.Count}]", ConsoleColor.Magenta);
-                cacheGenerator.GenerateCache(domain, problems, metaAction, opts.TempPath, Path.Combine(opts.OutputPath, "cache"));
+                cacheGenerator.GenerateCache(domain, problems, metaAction, opts.TempPath, Path.Combine(opts.OutputPath, "cache"), opts.CacheGenerationTimeLimitS);
             }
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
