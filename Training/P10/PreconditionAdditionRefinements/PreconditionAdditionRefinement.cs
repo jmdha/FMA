@@ -84,7 +84,6 @@ namespace P10.PreconditionAdditionRefinements
             }
 
             // Iterate through all problems, until some valid refinements are found
-            var invalidInSome = false;
             int count = 1;
             foreach (var problem in problems)
             {
@@ -93,8 +92,6 @@ namespace P10.PreconditionAdditionRefinements
                 // Explore state for problem
                 ConsoleHelper.WriteLineColor($"\t\tInitial state space exploration started...", ConsoleColor.Magenta);
                 var explored = ExploreState(domain, problem);
-                if (explored != StateExploreResult.MetaActionValid)
-                    invalidInSome = true;
                 if (explored == StateExploreResult.TimedOut)
                 {
                     ConsoleHelper.WriteLineColor($"\t\tState exploration timed out, assuming following problems are too hard...", ConsoleColor.Yellow);
@@ -135,9 +132,6 @@ namespace P10.PreconditionAdditionRefinements
                 else
                     break;
             }
-
-            if (!invalidInSome)
-                throw new Exception("Meta Action was valid in all problems??? This should not be possible");
 
             return returnList;
         }
