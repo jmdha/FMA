@@ -131,7 +131,7 @@ namespace P10.PreconditionAdditionRefinements
                         break;
                     }
                     ConsoleHelper.WriteLineColor($"\t\tValidating...", ConsoleColor.Magenta);
-                    if (VerificationHelper.IsAllValidOrInapplicable(domain, problems, nextRefined, _tempValidationFolder, ValidationTimeLimitS))
+                    if (VerificationHelper.IsAllValidOrInapplicable(domain, toCheck, nextRefined, _tempValidationFolder, ValidationTimeLimitS))
                     {
                         ConsoleHelper.WriteLineColor($"\tMeta action refinement is valid!", ConsoleColor.Green);
                         returnList.Add(nextRefined);
