@@ -8,7 +8,7 @@ using Tools;
 
 namespace P10.Verifiers
 {
-    public abstract class BaseVerifier : IVerifier
+    public abstract class BaseVerifier
     {
         public bool TimedOut { get; internal set; }
         public static bool ShowSTDOut { get; set; } = false;
@@ -94,7 +94,6 @@ namespace P10.Verifiers
             return _currentProcess.ExitCode;
         }
 
-        public abstract bool Verify(DomainDecl domain, ProblemDecl problem, string workingDir, int timeLimitS);
         public virtual string GetLog()
         {
             var sb = new StringBuilder();

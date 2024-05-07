@@ -17,24 +17,23 @@ namespace P10.Verifiers
             {
                 ConsoleHelper.WriteLineColor($"\t\t\tValidating on problem {problem.Name} [{count++} of {problems.Count}] ", ConsoleColor.Yellow);
                 var compiled = StackelbergHelper.CompileToStackelberg(new PDDLDecl(domain, problem), metaAction.Copy());
-                var isValid = verifier.Verify(compiled.Domain, compiled.Problem, workingDir, timeLimitS);
+                var result = verifier.Verify(compiled.Domain, compiled.Problem, workingDir, timeLimitS);
                 if (verifier.TimedOut)
                 {
                     ConsoleHelper.WriteLineColor($"\t\t\tMeta Action Verification timed out, trying next problem...", ConsoleColor.Yellow);
-                    continue;
                 }
-                if (!isValid)
+                else if (result == FrontierVerifier.FrontierResult.Invalid)
                 {
                     ConsoleHelper.WriteLineColor($"\t\t\t\tInvalid", ConsoleColor.Red);
-                    ConsoleHelper.WriteLineColor($"\t\t\tMeta action invalid in problem {problem.Name}", ConsoleColor.Red);
-                    any = false;
-                    break;
+                    return false;
                 }
-                else
+                else if (result == FrontierVerifier.FrontierResult.Valid)
                 {
                     ConsoleHelper.WriteLineColor($"\t\t\t\tValid", ConsoleColor.Green);
                     any = true;
                 }
+                else if (result == FrontierVerifier.FrontierResult.Inapplicable)
+                    ConsoleHelper.WriteLineColor($"\t\t\t\tInapplicable", ConsoleColor.Green);
             }
             return any;
         }
