@@ -153,9 +153,6 @@ namespace P10
             var refinementResults = new List<RefinementResult>();
             foreach (var candidate in candidates)
             {
-                if (!candidate.Name.EndsWith("communicated_soil_data"))
-                    continue;
-
                 ConsoleHelper.WriteLineColor($"\tCandidate: {count++} out of {candidates.Count}", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"{codeGenerator.Generate(candidate)}", ConsoleColor.Cyan);
