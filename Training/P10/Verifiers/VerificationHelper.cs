@@ -33,7 +33,10 @@ namespace P10.Verifiers
                     any = true;
                 }
                 else if (result == FrontierVerifier.FrontierResult.Inapplicable)
-                    ConsoleHelper.WriteLineColor($"\t\t\t\tInapplicable", ConsoleColor.Green);
+                {
+                    ConsoleHelper.WriteLineColor($"\t\t\t\tInapplicable", ConsoleColor.Yellow);
+                    any = true;
+                }
             }
             return any;
         }
