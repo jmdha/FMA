@@ -14,9 +14,10 @@ namespace P10.Verifiers
         {
             var verifier = new FrontierVerifier();
             bool any = false;
+            var count = 1;
             foreach (var problem in problems)
             {
-                ConsoleHelper.WriteLineColor($"\t\tValidating on problem {problem.Name}: ", ConsoleColor.Yellow);
+                ConsoleHelper.WriteLineColor($"\t\tValidating on problem {problem.Name} [{count++} of {problems.Count}] ", ConsoleColor.Yellow);
                 var compiled = StackelbergHelper.CompileToStackelberg(new PDDLDecl(domain, problem), metaAction.Copy());
                 var isValid = verifier.Verify(compiled.Domain, compiled.Problem, workingDir, timeLimitS);
                 //if (verifier.TimedOut)
