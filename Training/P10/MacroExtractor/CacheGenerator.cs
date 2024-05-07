@@ -49,9 +49,15 @@ namespace P10.MacroExtractor
             }
 
             if (!Directory.Exists(Path.Combine(tmpFolder, _replacementsPath)))
-                throw new DirectoryNotFoundException("The replacement folder was not found! This could mean the stackelberg verification failed.");
+            {
+                ConsoleHelper.WriteLineColor("Replacement folder was not found or is empty! This most likely means an error with the Training process! Check logs and make sure everything works correct!", ConsoleColor.Red);
+                return;
+            }
             if (Directory.GetFiles(Path.Combine(tmpFolder, _replacementsPath)).Length == 0)
-                throw new DirectoryNotFoundException("The replacement folder has no replacements! This could mean the stackelberg verification failed.");
+            {
+                ConsoleHelper.WriteLineColor("Replacement folder was not found or is empty! This most likely means an error with the Training process! Check logs and make sure everything works correct!", ConsoleColor.Red);
+                return;
+            }
 
             var extractor = new Extractor();
             extractor.ExtractMacros(domain, Directory.GetFiles(Path.Combine(tmpFolder, _replacementsPath)).ToList(), outFolder);
