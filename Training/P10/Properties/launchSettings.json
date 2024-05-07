@@ -6,7 +6,7 @@
     "WSL": {
       "commandName": "WSL2",
       "distributionName": "",
-      "commandLineArgs": "P10/bin/Debug/net8.0/P10.dll --output output --domain ../Dependencies/p10-benchmarks/Benchmarks/hiking/domain.pddl --problems ../Dependencies/p10-benchmarks/Benchmarks/hiking/training/p1.pddl ../Dependencies/p10-benchmarks/Benchmarks/hiking/training/p2.pddl ../Dependencies/p10-benchmarks/Benchmarks/hiking/training/p3.pddl ../Dependencies/p10-benchmarks/Benchmarks/hiking/training/p4.pddl ../Dependencies/p10-benchmarks/Benchmarks/hiking/training/p5.pddl --generator CPDDLMutexed --args cpddlOutput;../Dependencies/p10-benchmarks/CPDDLGroups/hiking.txt --refinement-time-limit 120 --exploration-time-limit 120 --validation-time-limit 10 --cache-generation-time-limit 20 --pre-usefulness-strategy UsedInPlans",
+      "commandLineArgs": "P10/bin/Debug/net8.0/P10.dll --output output --domain ../Dependencies/p10-benchmarks/Benchmarks/barman/domain.pddl --problems ../Dependencies/p10-benchmarks/Benchmarks/barman/training/p1.pddl ../Dependencies/p10-benchmarks/Benchmarks/barman/training/p2.pddl ../Dependencies/p10-benchmarks/Benchmarks/barman/training/p3.pddl ../Dependencies/p10-benchmarks/Benchmarks/barman/training/p4.pddl ../Dependencies/p10-benchmarks/Benchmarks/barman/training/p5.pddl --generator CPDDLMutexed --args cpddlOutput;../Dependencies/p10-benchmarks/CPDDLGroups/barman.txt --refinement-time-limit 120 --exploration-time-limit 120 --validation-time-limit 20 --cache-generation-time-limit 20 --pre-usefulness-strategy UsedInPlans",
       "workingDirectory": "/home/kris/P10/Training"
     }
   }

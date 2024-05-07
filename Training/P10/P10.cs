@@ -92,7 +92,6 @@ namespace P10
             var problemFiles = new List<FileInfo>();
             foreach (var problem in opts.ProblemsPath)
                 problemFiles.Add(new FileInfo(problem));
-            problemFiles = problemFiles.OrderBy(x => x.Length).ToList();
             foreach (var problem in problemFiles)
                 problems.Add(parser.ParseAs<ProblemDecl>(problem));
             var baseDecl = new PDDLDecl(domain, problems[problems.Count - 1]);
