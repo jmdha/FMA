@@ -8,7 +8,7 @@ namespace P10.UsefulnessCheckers
         {
             { UsefulnessStrategies.UsedInPlans, (w, t) => new UsedInPlansUsefulness(w, t) },
             { UsefulnessStrategies.UsedInPlansCombined, (w, t) => new UsedInPlansCombinedUsefulness(w, t) },
-            { UsefulnessStrategies.ReducesMetaSearchTime, (w, t) => new UsedInPlansCombinedUsefulness(w, t) },
+            { UsefulnessStrategies.ReducesMetaSearchTime, (w, t) => new ReducesMetaSearchTimeUsefulness(w, t) },
             { UsefulnessStrategies.ReducesMetaSearchTimeTop1, (w, t) => new TopNReducesMetaSearchTimeUsefulness(w, t, 1) },
             { UsefulnessStrategies.ReducesMetaSearchTimeTop2, (w, t) => new TopNReducesMetaSearchTimeUsefulness(w, t, 2) },
             { UsefulnessStrategies.ReducesMetaSearchTimeTop5, (w, t) => new TopNReducesMetaSearchTimeUsefulness(w, t, 5) },
