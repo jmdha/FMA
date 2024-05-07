@@ -39,6 +39,8 @@ namespace P10.Verifiers
             var exitCode = ExecutePlanner(ExternalPaths.StackelbergPath, domainFile, problemFile, workingDir, timeLimitS);
             if (exitCode != 0)
                 return FrontierResult.Invalid;
+            if (_log.Contains("Warning: running stackelberg search on a task without fix actions"))
+                return FrontierResult.Inapplicable;
             return IsFrontierValid(Path.Combine(workingDir, "pareto_frontier.json"));
         }
     }
