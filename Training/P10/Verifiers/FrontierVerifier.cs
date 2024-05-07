@@ -7,24 +7,23 @@ namespace P10.Verifiers
 {
     public class FrontierVerifier : BaseVerifier
     {
-        public enum FrontierResult { None, Valid, Invalid, Inapplicable }
-        private FrontierResult IsFrontierValid(string file)
+        private bool IsFrontierValid(string file)
         {
             if (!File.Exists(file))
-                return FrontierResult.Invalid;
+                return false;
             var text = File.ReadAllText(file);
             if (text.Replace(" ", "").Trim().ToLower() == "[{\"attackercost\":0,\"defendercost\":0,\"sequences\":[[]],\"attackerplan\":[]}]")
-                return FrontierResult.Inapplicable;
+                return false;
             var index = text.LastIndexOf("\"attacker cost\": ") + "\"attacker cost\": ".Length;
             var endIndex = text.IndexOf(",", index);
             var numberStr = text.Substring(index, endIndex - index);
             var number = int.Parse(numberStr);
             if (number != int.MaxValue)
-                return FrontierResult.Valid;
-            return FrontierResult.Invalid;
+                return true;
+            return false;
         }
 
-        public FrontierResult Verify(DomainDecl domain, ProblemDecl problem, string workingDir, int timeLimitS)
+        public override bool Verify(DomainDecl domain, ProblemDecl problem, string workingDir, int timeLimitS)
         {
             _domain = domain;
             _problem = problem;
@@ -38,7 +37,7 @@ namespace P10.Verifiers
             codeGenerator.Generate(problem, problemFile);
             var exitCode = ExecutePlanner(ExternalPaths.StackelbergPath, domainFile, problemFile, workingDir, timeLimitS);
             if (exitCode != 0)
-                return FrontierResult.Invalid;
+                return false;
             return IsFrontierValid(Path.Combine(workingDir, "pareto_frontier.json"));
         }
     }
