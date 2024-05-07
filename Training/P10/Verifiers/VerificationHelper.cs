@@ -20,11 +20,11 @@ namespace P10.Verifiers
                 ConsoleHelper.WriteLineColor($"\t\tValidating on problem {problem.Name} [{count++} of {problems.Count}] ", ConsoleColor.Yellow);
                 var compiled = StackelbergHelper.CompileToStackelberg(new PDDLDecl(domain, problem), metaAction.Copy());
                 var isValid = verifier.Verify(compiled.Domain, compiled.Problem, workingDir, timeLimitS);
-                //if (verifier.TimedOut)
-                //{
-                //    ConsoleHelper.WriteLineColor($"\t\tMeta Action Verification timed out, assuming following problems are too hard...", ConsoleColor.Yellow);
-                //    break;
-                //}
+                if (verifier.TimedOut)
+                {
+                    ConsoleHelper.WriteLineColor($"\t\tMeta Action Verification timed out, trying next problem...", ConsoleColor.Yellow);
+                    continue;
+                }
                 if (!isValid)
                 {
                     ConsoleHelper.WriteLineColor($"\t\t\tInvalid", ConsoleColor.Red);
