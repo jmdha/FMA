@@ -10,7 +10,7 @@ namespace P10.UsefulnessCheckers
 {
     public class ReducesMetaSearchTimeUsefulness : UsedInPlansUsefulness
     {
-        public static int Rounds { get; set; } = 5;
+        public static int Rounds { get; set; } = 2;
         private readonly Regex _searchTime = new Regex("Search time: ([0-9.]*)", RegexOptions.Compiled);
 
         public ReducesMetaSearchTimeUsefulness(string workingDir, int timeLimitS) : base(workingDir, timeLimitS)
@@ -19,8 +19,12 @@ namespace P10.UsefulnessCheckers
 
         public override List<ActionDecl> GetUsefulCandidates(DomainDecl domain, List<ProblemDecl> problems, List<ActionDecl> candidates)
         {
+            if (candidates.Count == 0)
+                return new List<ActionDecl>();
             var usefulCandidates = new List<ActionDecl>();
             var searchTimes = GetDefaultSearchTimes(domain, problems);
+
+            ConsoleHelper.WriteLineColor($"\tAverage base search time: {searchTimes.Average()}s", ConsoleColor.Magenta);
 
             var count = 1;
             foreach (var candidate in candidates)
@@ -136,6 +140,8 @@ namespace P10.UsefulnessCheckers
                             times.Add(double.Parse(matches.Groups[1].Value));
                     }
                 }
+
+                ConsoleHelper.WriteLineColor($"\t\tAverage search time: {times.Average()}s", ConsoleColor.Magenta);
                 if (times.Average() < searchTimes[count - 1])
                 {
                     ConsoleHelper.WriteLineColor($"\t\tMeta action reduced search time in problem {count}!", ConsoleColor.Green);

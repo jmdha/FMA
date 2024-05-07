@@ -10,7 +10,7 @@ namespace P10.UsefulnessCheckers
 {
     public class TopNReducesMetaSearchTimeUsefulness : UsedInPlansUsefulness
     {
-        public static int Rounds { get; set; } = 5;
+        public static int Rounds { get; set; } = 2;
         public int N { get; set; }
 
         private readonly Regex _searchTime = new Regex("Search time: ([0-9.]*)", RegexOptions.Compiled);
@@ -22,7 +22,10 @@ namespace P10.UsefulnessCheckers
 
         public override List<ActionDecl> GetUsefulCandidates(DomainDecl domain, List<ProblemDecl> problems, List<ActionDecl> candidates)
         {
+            if (candidates.Count == 0)
+                return new List<ActionDecl>();
             var normalSearchTime = GetDefaultSearchTime(domain, problems);
+            ConsoleHelper.WriteLineColor($"\tAverage base search time: {normalSearchTime}s", ConsoleColor.Magenta);
             var metaSearchTimes = GetMetaSearchTimes(domain, problems, candidates);
 
             var toRemove = new List<ActionDecl>();
@@ -155,6 +158,9 @@ namespace P10.UsefulnessCheckers
                 }
                 returnList.Add(candidate, searchTime);
             }
+
+            foreach(var key in returnList.Keys)
+                ConsoleHelper.WriteLineColor($"\t'{key.Name}' average search: {returnList[key]}s", ConsoleColor.Magenta);
 
             return returnList;
         }

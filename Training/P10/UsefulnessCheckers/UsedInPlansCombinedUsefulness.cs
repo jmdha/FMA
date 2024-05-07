@@ -15,6 +15,8 @@ namespace P10.UsefulnessCheckers
 
         public override List<ActionDecl> GetUsefulCandidates(DomainDecl domain, List<ProblemDecl> problems, List<ActionDecl> candidates)
         {
+            if (candidates.Count == 0)
+                return new List<ActionDecl>();
             var usefulCandidates = new List<ActionDecl>();
             var errorListener = new ErrorListener();
             var codeGenerator = new PDDLCodeGenerator(errorListener);

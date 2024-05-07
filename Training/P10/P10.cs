@@ -89,11 +89,24 @@ namespace P10
             var contexturalizer = new PDDLContextualiser(listener);
             var domain = parser.ParseAs<DomainDecl>(new FileInfo(opts.DomainPath));
             var problems = new List<ProblemDecl>();
+            var usefulnessProblems = new List<ProblemDecl>();
             var problemFiles = new List<FileInfo>();
             foreach (var problem in opts.ProblemsPath)
                 problemFiles.Add(new FileInfo(problem));
             foreach (var problem in problemFiles)
                 problems.Add(parser.ParseAs<ProblemDecl>(problem));
+            if (opts.LastNUsefulness == -1)
+                usefulnessProblems = problems;
+            else
+            {
+                usefulnessProblems.AddRange(problems.TakeLast(opts.LastNUsefulness));
+                problems.RemoveAll(x => usefulnessProblems.Contains(x));
+            }
+            if (problems.Count == 0)
+                throw new Exception("No problems to train on!");
+            if ((opts.PreUsefulnessStrategy != Options.UsefulnessStrategies.None || opts.PostUsefulnessStrategy != Options.UsefulnessStrategies.None) && usefulnessProblems.Count == 0)
+                throw new Exception("No problems to perform usefulness checks on!");
+
             var baseDecl = new PDDLDecl(domain, problems[problems.Count - 1]);
             contexturalizer.Contexturalise(baseDecl);
             generalResult.Domain = domain.Name!.Name;
@@ -137,7 +150,7 @@ namespace P10
                 ConsoleHelper.WriteLineColor($"Pruning for useful meta action candidates", ConsoleColor.Blue);
                 var checker = UsefulnessCheckerBuilder.GetUsefulnessChecker(opts.PreUsefulnessStrategy, opts.TempPath, opts.UsefulnessTimeLimitS);
                 var preCountt = candidates.Count;
-                candidates = checker.GetUsefulCandidates(domain, problems, candidates);
+                candidates = checker.GetUsefulCandidates(domain, usefulnessProblems, candidates);
                 ConsoleHelper.WriteLineColor($"\tRemoved {preCountt - candidates.Count} candidates", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"\tTotal candidates: {candidates.Count}", ConsoleColor.Magenta);
                 generalResult.PreNotUsefulRemoved = preCountt - candidates.Count;
@@ -195,7 +208,7 @@ namespace P10
                 ConsoleHelper.WriteLineColor($"Pruning for useful refined meta action", ConsoleColor.Blue);
                 var checker = UsefulnessCheckerBuilder.GetUsefulnessChecker(opts.PostUsefulnessStrategy, opts.TempPath, opts.UsefulnessTimeLimitS);
                 var preCountt = refinedCandidates.Count;
-                refinedCandidates = checker.GetUsefulCandidates(domain, problems, refinedCandidates);
+                refinedCandidates = checker.GetUsefulCandidates(domain, usefulnessProblems, refinedCandidates);
                 ConsoleHelper.WriteLineColor($"\tRemoved {preCountt - refinedCandidates.Count} refined candidates", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"\tTotal meta actions: {refinedCandidates.Count}", ConsoleColor.Magenta);
                 generalResult.PostNotUsefulRemoved = preCountt - refinedCandidates.Count;

@@ -32,6 +32,8 @@ namespace P10
         public UsefulnessStrategies PreUsefulnessStrategy { get; set; } = UsefulnessStrategies.None;
         [Option("post-usefulness-strategy", Required = false, HelpText = "The usefulness strategy for the post-usefulness check", Default = UsefulnessStrategies.None)]
         public UsefulnessStrategies PostUsefulnessStrategy { get; set; } = UsefulnessStrategies.None;
+        [Option("last-n-usefulness", Required = false, HelpText = "How many of the training problems, in reverse, should be used for the usefulness checks (-1 is all)", Default = -1)]
+        public int LastNUsefulness { get; set; } = -1;
 
         [Option("fast-downward-path", Required = false, HelpText = "Path to Fast Downward")]
         public string FastDownwardPath { get; set; } = "";

@@ -20,7 +20,8 @@ namespace P10.Verifiers
                 var result = verifier.Verify(compiled.Domain, compiled.Problem, workingDir, timeLimitS);
                 if (verifier.TimedOut)
                 {
-                    ConsoleHelper.WriteLineColor($"\t\t\tMeta Action Verification timed out, trying next problem...", ConsoleColor.Yellow);
+                    ConsoleHelper.WriteLineColor($"\t\t\tMeta Action Verification timed out, assuming following problems are too hard.", ConsoleColor.Yellow);
+                    break;
                 }
                 else if (result == FrontierVerifier.FrontierResult.Invalid)
                 {
