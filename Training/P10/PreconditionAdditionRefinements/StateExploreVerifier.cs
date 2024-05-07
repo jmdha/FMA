@@ -114,11 +114,7 @@ namespace P10.PreconditionAdditionRefinements
             SearchString = $"{start}{staticNamesString}{staticFactsString}{typeNamesString}{typeObjectsString})\"";
         }
 
-        public override bool Verify(DomainDecl domain, ProblemDecl problem, string workingDir, int timeLimitS)
-        {
-            return VerifyCode(domain, problem, workingDir, timeLimitS) == StateExploreResult.Success;
-        }
-        public StateExploreResult VerifyCode(DomainDecl domain, ProblemDecl problem, string workingDir, int timeLimitS)
+        public StateExploreResult Verify(DomainDecl domain, ProblemDecl problem, string workingDir, int timeLimitS)
         {
             _domain = domain;
             _problem = problem;

@@ -73,8 +73,15 @@ namespace P10.PreconditionAdditionRefinements
             var returnList = new List<ActionDecl>();
 
             // Check if initial meta action is valid
-            ConsoleHelper.WriteLineColor($"\t\tValidating...", ConsoleColor.Magenta);
-            if (VerificationHelper.IsValid(domain, problems, MetaAction, _tempValidationFolder, ValidationTimeLimitS))
+            ConsoleHelper.WriteLineColor($"\t\tGetting initial problem validity...", ConsoleColor.Magenta);
+            var result = VerificationHelper.GetValidity(domain, problems, MetaAction, _tempValidationFolder, ValidationTimeLimitS);
+            if (result.All(x => x == FrontierVerifier.FrontierResult.Inapplicable))
+            {
+                _result.Succeded = true;
+                ConsoleHelper.WriteLineColor($"\tOriginal meta action is inapplicable in all training problems!", ConsoleColor.Green);
+                return returnList;
+            }
+            else if (result.Any(x => x == FrontierVerifier.FrontierResult.Valid) && !result.Any(x => x == FrontierVerifier.FrontierResult.Invalid))
             {
                 _result.AlreadyValid = true;
                 _result.Succeded = true;
@@ -85,9 +92,13 @@ namespace P10.PreconditionAdditionRefinements
 
             // Iterate through all problems, until some valid refinements are found
             int count = 1;
-            foreach (var problem in problems)
+            var toCheck = new List<ProblemDecl>();
+            for (int i = 0; i < problems.Count; i++)
+                if (result[i] == FrontierVerifier.FrontierResult.Invalid)
+                    toCheck.Add(problems[i]);
+            foreach (var problem in toCheck)
             {
-                ConsoleHelper.WriteLineColor($"\t\tStarting refinement on problem {problem.Name!.Name} ({count++} out of {problems.Count})", ConsoleColor.Magenta);
+                ConsoleHelper.WriteLineColor($"\t\tStarting refinement on problem {problem.Name!.Name} ({count++} out of {toCheck.Count})", ConsoleColor.Magenta);
 
                 // Explore state for problem
                 ConsoleHelper.WriteLineColor($"\t\tInitial state space exploration started...", ConsoleColor.Magenta);
@@ -120,7 +131,7 @@ namespace P10.PreconditionAdditionRefinements
                         break;
                     }
                     ConsoleHelper.WriteLineColor($"\t\tValidating...", ConsoleColor.Magenta);
-                    if (VerificationHelper.IsValid(domain, problems, nextRefined, _tempValidationFolder, ValidationTimeLimitS))
+                    if (VerificationHelper.IsAllValidOrInapplicable(domain, toCheck, nextRefined, _tempValidationFolder, ValidationTimeLimitS))
                     {
                         ConsoleHelper.WriteLineColor($"\tMeta action refinement is valid!", ConsoleColor.Green);
                         returnList.Add(nextRefined);
@@ -147,7 +158,7 @@ namespace P10.PreconditionAdditionRefinements
             if (File.Exists(Path.Combine(_searchWorkingDir, StateInfoFile)))
                 File.Delete(Path.Combine(_searchWorkingDir, StateInfoFile));
             verifier.UpdateSearchString(compiled);
-            var result = verifier.VerifyCode(compiled.Domain, compiled.Problem, _searchWorkingDir, ExplorationTimeLimitS);
+            var result = verifier.Verify(compiled.Domain, compiled.Problem, _searchWorkingDir, ExplorationTimeLimitS);
             if (result == StateExploreResult.UnknownError)
             {
                 var file = Path.Combine(TempDir, $"{MetaAction.Name}_verification-log_{pddlDecl.Problem.Name}_{DateTime.Now.TimeOfDay}.txt");
