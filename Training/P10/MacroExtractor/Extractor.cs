@@ -4,9 +4,7 @@ using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
-using PDDLSharp.Parsers;
 using PDDLSharp.Parsers.FastDownward.Plans;
-using PDDLSharp.Toolkit.MacroGenerators;
 using PDDLSharp.Toolkit.MacroGenerators.Tools;
 using Tools;
 

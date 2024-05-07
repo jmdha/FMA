@@ -1,6 +1,4 @@
 ﻿using P10.Helpers;
-using PDDLSharp.CodeGenerators.PDDL;
-using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;

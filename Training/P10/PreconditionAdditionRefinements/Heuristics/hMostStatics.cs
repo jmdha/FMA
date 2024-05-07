@@ -5,7 +5,7 @@ namespace P10.PreconditionAdditionRefinements.Heuristics
 {
     public class hMostStatics : IHeuristic
     {
-        private HashSet<string> _statics;
+        private readonly HashSet<string> _statics;
         public hMostStatics(PDDLDecl pddlDecl)
         {
             var staticPreds = SimpleStaticPredicateDetector.FindStaticPredicates(pddlDecl);

@@ -1,17 +1,11 @@
-﻿using MetaActionGenerators.Helpers;
-using P10.Helpers;
+﻿using P10.Helpers;
 using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Tools;
 
 namespace P10.MacroExtractor
@@ -20,9 +14,9 @@ namespace P10.MacroExtractor
     {
         public static bool ShowSTDOut { get; set; } = false;
 
-        private static string _replacementsPath = "replacements";
-        private static string _cacheFolder = "cache";
-        private static string _searchString = "--search \"sym_stackelberg(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false)\"";
+        private static readonly string _replacementsPath = "replacements";
+        private static readonly string _cacheFolder = "cache";
+        private static readonly string _searchString = "--search \"sym_stackelberg(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false)\"";
 
         private Process? _currentProcess;
         internal string _log = "";
