@@ -22,25 +22,37 @@ namespace P10.UsefulnessCheckers
             if (candidates.Count == 0)
                 return new List<ActionDecl>();
             var usefulCandidates = new List<ActionDecl>();
-            var searchTimes = GetDefaultSearchTimes(domain, problems);
-
-            ConsoleHelper.WriteLineColor($"\tAverage base search time: {searchTimes.Average()}s", ConsoleColor.Magenta);
+            ConsoleHelper.WriteLineColor($"\tGetting base search times...", ConsoleColor.Magenta);
+            var searchTimes = GetSearchTimes(domain, problems);
 
             var count = 1;
             foreach (var candidate in candidates)
             {
                 ConsoleHelper.WriteLineColor($"\tChecking candidate {count++} out of {candidates.Count}", ConsoleColor.Magenta);
-                if (IsMetaActionUseful(domain, problems, candidate) &&
-                    DoesMetaActionReduceSearchTime(domain, problems, candidate, searchTimes))
+                var usedIn = IsMetaActionUseful(domain, problems, candidate);
+                if (usedIn != -1)
                 {
-                    usefulCandidates.Add(candidate);
+                    ConsoleHelper.WriteLineColor($"\t\tGetting meta search times...", ConsoleColor.Magenta);
+                    var metaSearchTimes = GetSearchTimes(domain, problems.Skip(usedIn).ToList(), candidate);
+                    var metaAvg = metaSearchTimes.Average();
+                    var searchAvg = searchTimes.GetRange(usedIn, searchTimes.Count - usedIn).Average();
+                    ConsoleHelper.WriteLineColor($"\t\t\tCandidate avg search time was {metaAvg}s vs. {searchAvg}s base", ConsoleColor.Magenta);
+                    if (metaAvg < searchAvg)
+                        usefulCandidates.Add(candidate);
                 }
             }
 
             return usefulCandidates;
         }
 
-        private List<double> GetDefaultSearchTimes(DomainDecl domain, List<ProblemDecl> problems)
+        internal List<double> GetSearchTimes(DomainDecl domain, List<ProblemDecl> problems, ActionDecl metaAction)
+        {
+            var newDomain = domain.Copy();
+            newDomain.Actions.Add(metaAction);
+            return GetSearchTimes(newDomain, problems);
+        }
+
+        internal List<double> GetSearchTimes(DomainDecl domain, List<ProblemDecl> problems)
         {
             var returnList = new List<double>();
             var errorListener = new ErrorListener();
@@ -54,7 +66,7 @@ namespace P10.UsefulnessCheckers
             int count = 1;
             foreach (var problem in problems)
             {
-                ConsoleHelper.WriteLineColor($"\t\tGetting base search time in problem {count} out of {problems.Count}", ConsoleColor.Magenta);
+                ConsoleHelper.WriteLineColor($"\t\t\tGetting search time in problem {count} out of {problems.Count}", ConsoleColor.Magenta);
                 var problemFile = new FileInfo(Path.Combine(WorkingDir, "usefulCheckProblem.pddl"));
                 codeGenerator.Generate(problem, problemFile.FullName);
 
@@ -91,67 +103,6 @@ namespace P10.UsefulnessCheckers
             }
 
             return returnList;
-        }
-
-        private bool DoesMetaActionReduceSearchTime(DomainDecl domain, List<ProblemDecl> problems, ActionDecl candidate, List<double> searchTimes)
-        {
-            var errorListener = new ErrorListener();
-            var codeGenerator = new PDDLCodeGenerator(errorListener);
-            var planParser = new FDPlanParser(errorListener);
-
-            var testDomain = domain.Copy();
-            testDomain.Actions.Add(candidate);
-
-            var domainFile = new FileInfo(Path.Combine(WorkingDir, "usefulCheckDomain.pddl"));
-            codeGenerator.Generate(testDomain, domainFile.FullName);
-
-            int count = 1;
-            foreach (var problem in problems)
-            {
-                ConsoleHelper.WriteLineColor($"\t\tChecking if meta action reduces search time in problem {count} out of {problems.Count}", ConsoleColor.Magenta);
-                var problemFile = new FileInfo(Path.Combine(WorkingDir, "usefulCheckProblem.pddl"));
-                codeGenerator.Generate(problem, problemFile.FullName);
-
-                var times = new List<double>();
-                for (int i = 0; i < Rounds; i++)
-                {
-                    using (ArgsCaller fdCaller = new ArgsCaller("python3"))
-                    {
-                        var log = "";
-                        fdCaller.StdOut += (s, o) =>
-                        {
-                            log += o.Data;
-                        };
-                        fdCaller.StdErr += (s, o) => { };
-                        fdCaller.Arguments.Add(ExternalPaths.FastDownwardPath, "");
-                        fdCaller.Arguments.Add("--alias", "lama-first");
-                        fdCaller.Arguments.Add("--overall-time-limit", $"{TimeLimitS}s");
-                        fdCaller.Arguments.Add("--plan-file", "plan.plan");
-                        fdCaller.Arguments.Add(domainFile.FullName, "");
-                        fdCaller.Arguments.Add(problemFile.FullName, "");
-                        fdCaller.Process.StartInfo.WorkingDirectory = WorkingDir;
-                        fdCaller.Run();
-                        var matches = _searchTime.Match(log);
-                        if (matches == null)
-                            throw new Exception("No search time for problem???");
-                        if (matches.Groups[1].Value == "")
-                            times.Add(TimeLimitS);
-                        else
-                            times.Add(double.Parse(matches.Groups[1].Value));
-                    }
-                }
-
-                ConsoleHelper.WriteLineColor($"\t\tSearch time for problem: {times.Average()}s vs {searchTimes[count - 1]}s base", ConsoleColor.Magenta);
-                if (times.Average() < searchTimes[count - 1])
-                {
-                    ConsoleHelper.WriteLineColor($"\t\tMeta action reduced search time in problem {count}!", ConsoleColor.Green);
-                    return true;
-                }
-                count++;
-            }
-
-            ConsoleHelper.WriteLineColor($"\t\tMeta action does not appear useful...", ConsoleColor.Red);
-            return false;
         }
     }
 }

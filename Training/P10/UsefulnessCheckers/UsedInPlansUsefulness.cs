@@ -29,14 +29,14 @@ namespace P10.UsefulnessCheckers
             foreach (var candidate in candidates)
             {
                 ConsoleHelper.WriteLineColor($"\tChecking candidate {count++} out of {candidates.Count}", ConsoleColor.Magenta);
-                if (IsMetaActionUseful(domain, problems, candidate))
+                if (IsMetaActionUseful(domain, problems, candidate) != -1)
                     usefulCandidates.Add(candidate);
             }
 
             return usefulCandidates;
         }
 
-        internal bool IsMetaActionUseful(DomainDecl domain, List<ProblemDecl> problems, ActionDecl candidate)
+        internal int IsMetaActionUseful(DomainDecl domain, List<ProblemDecl> problems, ActionDecl candidate)
         {
             var errorListener = new ErrorListener();
             var codeGenerator = new PDDLCodeGenerator(errorListener);
@@ -72,7 +72,7 @@ namespace P10.UsefulnessCheckers
                         if (plan.Plan.Any(y => y.ActionName == candidate.Name))
                         {
                             ConsoleHelper.WriteLineColor($"\t\tMeta action was used in problem {count}!", ConsoleColor.Green);
-                            return true;
+                            return count - 1;
                         }
                     }
                 }
@@ -80,7 +80,7 @@ namespace P10.UsefulnessCheckers
             }
 
             ConsoleHelper.WriteLineColor($"\t\tMeta action does not appear useful...", ConsoleColor.Red);
-            return false;
+            return -1;
         }
     }
 }
