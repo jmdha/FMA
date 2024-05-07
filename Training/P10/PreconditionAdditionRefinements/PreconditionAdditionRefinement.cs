@@ -94,8 +94,8 @@ namespace P10.PreconditionAdditionRefinements
                 var explored = ExploreState(domain, problem);
                 if (explored == StateExploreResult.TimedOut)
                 {
-                    ConsoleHelper.WriteLineColor($"\t\tState exploration timed out, assuming following problems are too hard...", ConsoleColor.Yellow);
-                    break;
+                    ConsoleHelper.WriteLineColor($"\t\tState exploration timed out. Trying next problem...", ConsoleColor.Yellow);
+                    continue;
                 }
                 if (explored != StateExploreResult.Success && explored != StateExploreResult.TimedOutButSuccess)
                     continue;
