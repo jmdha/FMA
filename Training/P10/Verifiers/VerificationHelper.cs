@@ -54,7 +54,7 @@ namespace P10.Verifiers
                 var compiled = StackelbergHelper.CompileToStackelberg(new PDDLDecl(domain, problems[i]), metaAction.Copy());
                 var result = verifier.Verify(compiled.Domain, compiled.Problem, workingDir, timeLimitS);
                 if (verifier.TimedOut)
-                    ConsoleHelper.WriteLineColor($"\t\t\tMeta Action Verification timed out, trying next problem...", ConsoleColor.Yellow);
+                    ConsoleHelper.WriteLineColor($"\t\t\t\tMeta Action Verification timed out, trying next problem...", ConsoleColor.Yellow);
                 else if (result == FrontierResult.Invalid)
                 {
                     ConsoleHelper.WriteLineColor($"\t\t\t\tInvalid", ConsoleColor.Red);
