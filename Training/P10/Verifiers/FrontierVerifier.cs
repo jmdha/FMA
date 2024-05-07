@@ -12,6 +12,8 @@ namespace P10.Verifiers
             if (!File.Exists(file))
                 return false;
             var text = File.ReadAllText(file);
+            if (text.Replace(" ", "").Trim().ToLower() == "[{\"attackercost\":0,\"defendercost\":0,\"sequences\":[[]],\"attackerplan\":[]}]")
+                return false;
             var index = text.LastIndexOf("\"attacker cost\": ") + "\"attacker cost\": ".Length;
             var endIndex = text.IndexOf(",", index);
             var numberStr = text.Substring(index, endIndex - index);

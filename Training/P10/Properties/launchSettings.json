@@ -6,7 +6,7 @@
     "WSL": {
       "commandName": "WSL2",
       "distributionName": "",
-      "commandLineArgs": "P10/bin/Debug/net8.0/P10.dll --output output --domain ../Dependencies/p10-benchmarks/Benchmarks/scanalyzer/domain.pddl --problems ../Dependencies/p10-benchmarks/Benchmarks/scanalyzer/training/p10.pddl ../Dependencies/p10-benchmarks/Benchmarks/scanalyzer/training/p13.pddl --generator CPDDLMutexed --args cpddlOutput;../Dependencies/p10-benchmarks/CPDDLGroups/scanalyzer.txt --refinement-time-limit 120 --exploration-time-limit 120 --validation-time-limit 10 --pre-usefulness-strategy UsedInPlans --post-usefulness-strategy ReducesMetaSearchTimeTop2",
+      "commandLineArgs": "P10/bin/Debug/net8.0/P10.dll --output output --domain ../Dependencies/p10-benchmarks/Benchmarks/rovers/domain.pddl --problems ../Dependencies/p10-benchmarks/Benchmarks/rovers/training/p1.pddl ../Dependencies/p10-benchmarks/Benchmarks/rovers/training/p2.pddl ../Dependencies/p10-benchmarks/Benchmarks/rovers/training/p3.pddl ../Dependencies/p10-benchmarks/Benchmarks/rovers/training/p4.pddl ../Dependencies/p10-benchmarks/Benchmarks/rovers/training/p5.pddl --generator CPDDLMutexed --args cpddlOutput;../Dependencies/p10-benchmarks/CPDDLGroups/rovers.txt --refinement-time-limit 120 --exploration-time-limit 120 --validation-time-limit 10 --cache-generation-time-limit 20",
       "workingDirectory": "/home/kris/P10/Training"
     }
   }

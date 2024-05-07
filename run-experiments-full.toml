@@ -44,95 +44,95 @@ patterns = [
 [[tasks]]
 name = "barman"
 domain = "Dependencies/p10-benchmarks/Benchmarks/barman/domain.pddl"
-learn = ["Dependencies/p10-benchmarks/Benchmarks/barman/training/p*1.pddl"]
+learn = ["Dependencies/p10-benchmarks/Benchmarks/barman/training/p*.pddl"]
 solve = ["Dependencies/p10-benchmarks/Benchmarks/barman/testing/*.pddl"]
 
 [[tasks]]
 name = "blocksworld"
 domain = "Dependencies/p10-benchmarks/Benchmarks/blocksworld/domain.pddl"
-learn = ["Dependencies/p10-benchmarks/Benchmarks/blocksworld/training/p*1.pddl"]
+learn = ["Dependencies/p10-benchmarks/Benchmarks/blocksworld/training/p*.pddl"]
 solve = ["Dependencies/p10-benchmarks/Benchmarks/blocksworld/testing/*.pddl"]
 
 [[tasks]]
 name = "childsnack"
 domain = "Dependencies/p10-benchmarks/Benchmarks/childsnack/domain.pddl"
-learn = ["Dependencies/p10-benchmarks/Benchmarks/childsnack/training/p*1.pddl"]
+learn = ["Dependencies/p10-benchmarks/Benchmarks/childsnack/training/p*.pddl"]
 solve = ["Dependencies/p10-benchmarks/Benchmarks/childsnack/testing/*.pddl"]
 
 [[tasks]]
 name = "depots"
 domain = "Dependencies/p10-benchmarks/Benchmarks/depots/domain.pddl"
-learn = ["Dependencies/p10-benchmarks/Benchmarks/depots/training/p*1.pddl"]
+learn = ["Dependencies/p10-benchmarks/Benchmarks/depots/training/p*.pddl"]
 solve = ["Dependencies/p10-benchmarks/Benchmarks/depots/testing/*.pddl"]
 
 [[tasks]]
 name = "driverlog"
 domain = "Dependencies/p10-benchmarks/Benchmarks/driverlog/domain.pddl"
-learn = ["Dependencies/p10-benchmarks/Benchmarks/driverlog/training/p*1.pddl"]
+learn = ["Dependencies/p10-benchmarks/Benchmarks/driverlog/training/p*.pddl"]
 solve = ["Dependencies/p10-benchmarks/Benchmarks/driverlog/testing/*.pddl"]
 
 [[tasks]]
 name = "floortile"
 domain = "Dependencies/p10-benchmarks/Benchmarks/floortile/domain.pddl"
-learn = ["Dependencies/p10-benchmarks/Benchmarks/floortile/training/p*1.pddl"]
+learn = ["Dependencies/p10-benchmarks/Benchmarks/floortile/training/p*.pddl"]
 solve = ["Dependencies/p10-benchmarks/Benchmarks/floortile/testing/*.pddl"]
 
 [[tasks]]
 name = "grid"
 domain = "Dependencies/p10-benchmarks/Benchmarks/grid/domain.pddl"
-learn = ["Dependencies/p10-benchmarks/Benchmarks/grid/training/p*1.pddl"]
+learn = ["Dependencies/p10-benchmarks/Benchmarks/grid/training/p*.pddl"]
 solve = ["Dependencies/p10-benchmarks/Benchmarks/grid/testing/*.pddl"]
 
 [[tasks]]
 name = "gripper"
 domain = "Dependencies/p10-benchmarks/Benchmarks/gripper/domain.pddl"
-learn = ["Dependencies/p10-benchmarks/Benchmarks/gripper/training/p*1.pddl"]
+learn = ["Dependencies/p10-benchmarks/Benchmarks/gripper/training/p*.pddl"]
 solve = ["Dependencies/p10-benchmarks/Benchmarks/gripper/testing/*.pddl"]
 
 [[tasks]]
 name = "hiking"
 domain = "Dependencies/p10-benchmarks/Benchmarks/hiking/domain.pddl"
-learn = ["Dependencies/p10-benchmarks/Benchmarks/hiking/training/p*1.pddl"]
+learn = ["Dependencies/p10-benchmarks/Benchmarks/hiking/training/p*.pddl"]
 solve = ["Dependencies/p10-benchmarks/Benchmarks/hiking/testing/*.pddl"]
 
 [[tasks]]
 name = "logistics"
 domain = "Dependencies/p10-benchmarks/Benchmarks/logistics/domain.pddl"
-learn = ["Dependencies/p10-benchmarks/Benchmarks/logistics/training/p*1.pddl"]
+learn = ["Dependencies/p10-benchmarks/Benchmarks/logistics/training/p*.pddl"]
 solve = ["Dependencies/p10-benchmarks/Benchmarks/logistics/testing/*.pddl"]
 
 [[tasks]]
 name = "miconic"
 domain = "Dependencies/p10-benchmarks/Benchmarks/miconic/domain.pddl"
-learn = ["Dependencies/p10-benchmarks/Benchmarks/miconic/training/p*1.pddl"]
+learn = ["Dependencies/p10-benchmarks/Benchmarks/miconic/training/p*.pddl"]
 solve = ["Dependencies/p10-benchmarks/Benchmarks/miconic/testing/*.pddl"]
 
 [[tasks]]
 name = "parking"
 domain = "Dependencies/p10-benchmarks/Benchmarks/parking/domain.pddl"
-learn = ["Dependencies/p10-benchmarks/Benchmarks/parking/training/p*1.pddl"]
+learn = ["Dependencies/p10-benchmarks/Benchmarks/parking/training/p*.pddl"]
 solve = ["Dependencies/p10-benchmarks/Benchmarks/parking/testing/*.pddl"]
 
 [[tasks]]
 name = "rovers"
 domain = "Dependencies/p10-benchmarks/Benchmarks/rovers/domain.pddl"
-learn = ["Dependencies/p10-benchmarks/Benchmarks/rovers/training/p*1.pddl"]
+learn = ["Dependencies/p10-benchmarks/Benchmarks/rovers/training/p*.pddl"]
 solve = ["Dependencies/p10-benchmarks/Benchmarks/rovers/testing/*.pddl"]
 
 [[tasks]]
 name = "satellite"
 domain = "Dependencies/p10-benchmarks/Benchmarks/satellite/domain.pddl"
-learn = ["Dependencies/p10-benchmarks/Benchmarks/satellite/training/p*1.pddl"]
+learn = ["Dependencies/p10-benchmarks/Benchmarks/satellite/training/p*.pddl"]
 solve = ["Dependencies/p10-benchmarks/Benchmarks/satellite/testing/*.pddl"]
 
 [[tasks]]
 name = "scanalyzer"
 domain = "Dependencies/p10-benchmarks/Benchmarks/scanalyzer/domain.pddl"
-learn = ["Dependencies/p10-benchmarks/Benchmarks/scanalyzer/training/p*1.pddl"]
+learn = ["Dependencies/p10-benchmarks/Benchmarks/scanalyzer/training/p*.pddl"]
 solve = ["Dependencies/p10-benchmarks/Benchmarks/scanalyzer/testing/*.pddl"]
 
 [[tasks]]
 name = "woodworking"
 domain = "Dependencies/p10-benchmarks/Benchmarks/woodworking/domain.pddl"
-learn = ["Dependencies/p10-benchmarks/Benchmarks/woodworking/training/p*1.pddl"]
+learn = ["Dependencies/p10-benchmarks/Benchmarks/woodworking/training/p*.pddl"]
 solve = ["Dependencies/p10-benchmarks/Benchmarks/woodworking/testing/*.pddl"]

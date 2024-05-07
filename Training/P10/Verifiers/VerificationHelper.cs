@@ -13,41 +13,30 @@ namespace P10.Verifiers
         public static bool IsValid(DomainDecl domain, List<ProblemDecl> problems, ActionDecl metaAction, string workingDir, int timeLimitS)
         {
             var verifier = new FrontierVerifier();
-            bool stop = false;
-            var timer = new System.Timers.Timer();
-            if (timeLimitS > -1)
-                timer.Interval = timeLimitS * 1000;
-            timer.AutoReset = false;
-            timer.Elapsed += (s, e) =>
-            {
-                stop = true;
-                verifier.Stop();
-            };
-            if (timeLimitS > -1)
-                timer.Start();
             bool any = false;
             foreach (var problem in problems)
             {
+                ConsoleHelper.WriteLineColor($"\t\tValidating on problem {problem.Name}: ", ConsoleColor.Yellow);
                 var compiled = StackelbergHelper.CompileToStackelberg(new PDDLDecl(domain, problem), metaAction.Copy());
-                var isValid = verifier.Verify(compiled.Domain, compiled.Problem, workingDir, -1);
-                if (stop)
-                    break;
-                if (verifier.TimedOut)
-                {
-                    ConsoleHelper.WriteLineColor($"\t\tMeta Action Verification timed out, assuming following problems are too hard...", ConsoleColor.Yellow);
-                    break;
-                }
+                var isValid = verifier.Verify(compiled.Domain, compiled.Problem, workingDir, timeLimitS);
+                //if (verifier.TimedOut)
+                //{
+                //    ConsoleHelper.WriteLineColor($"\t\tMeta Action Verification timed out, assuming following problems are too hard...", ConsoleColor.Yellow);
+                //    break;
+                //}
                 if (!isValid)
                 {
+                    ConsoleHelper.WriteLineColor($"\t\t\tInvalid", ConsoleColor.Red);
                     ConsoleHelper.WriteLineColor($"\t\tMeta action invalid in problem {problem.Name}", ConsoleColor.Red);
                     any = false;
                     break;
                 }
                 else
+                {
+                    ConsoleHelper.WriteLineColor($"\t\t\tValid", ConsoleColor.Green);
                     any = true;
+                }
             }
-            if (timeLimitS > -1)
-                timer.Stop();
             return any;
         }
     }
