@@ -10,7 +10,7 @@ namespace P10.UsefulnessCheckers
 {
     public class TopNReducesMetaSearchTimeUsefulness : UsedInPlansUsefulness
     {
-        public static int Rounds { get; set; } = 2;
+        public static int Rounds { get; set; } = 5;
         public int N { get; set; }
 
         private readonly Regex _searchTime = new Regex("Search time: ([0-9.]*)", RegexOptions.Compiled);

@@ -10,7 +10,7 @@ namespace P10.UsefulnessCheckers
 {
     public class ReducesMetaSearchTimeUsefulness : UsedInPlansUsefulness
     {
-        public static int Rounds { get; set; } = 2;
+        public static int Rounds { get; set; } = 5;
         private readonly Regex _searchTime = new Regex("Search time: ([0-9.]*)", RegexOptions.Compiled);
 
         public ReducesMetaSearchTimeUsefulness(string workingDir, int timeLimitS) : base(workingDir, timeLimitS)
@@ -81,7 +81,7 @@ namespace P10.UsefulnessCheckers
                         if (matches == null)
                             throw new Exception("No search time for problem???");
                         if (matches.Groups[1].Value == "")
-                            times.Add(TimeSpan.FromMinutes(30).TotalSeconds);
+                            times.Add(TimeLimitS);
                         else
                             times.Add(double.Parse(matches.Groups[1].Value));
                     }
@@ -141,7 +141,7 @@ namespace P10.UsefulnessCheckers
                     }
                 }
 
-                ConsoleHelper.WriteLineColor($"\t\tAverage search time: {times.Average()}s", ConsoleColor.Magenta);
+                ConsoleHelper.WriteLineColor($"\t\tSearch time for problem: {times.Average()}s vs {searchTimes[count - 1]}s base", ConsoleColor.Magenta);
                 if (times.Average() < searchTimes[count - 1])
                 {
                     ConsoleHelper.WriteLineColor($"\t\tMeta action reduced search time in problem {count}!", ConsoleColor.Green);
