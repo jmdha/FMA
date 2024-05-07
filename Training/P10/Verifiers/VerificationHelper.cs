@@ -35,7 +35,7 @@ namespace P10.Verifiers
                     ConsoleHelper.WriteLineColor($"\t\t\t\tValid", ConsoleColor.Green);
                     validity.Add(FrontierResult.Valid);
                 }
-                else if (result == FrontierResult.Inapplicable)
+                else if (result == FrontierResult.Valid)
                 {
                     ConsoleHelper.WriteLineColor($"\t\t\t\tInapplicable", ConsoleColor.Yellow);
                     validity.Add(FrontierResult.Inapplicable);
