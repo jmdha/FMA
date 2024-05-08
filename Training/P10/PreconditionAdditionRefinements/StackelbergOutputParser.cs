@@ -107,6 +107,10 @@ namespace P10.PreconditionAdditionRefinements
                     preCpy.RemoveTypes();
                     if (preconditions.All(x => preCpy.Children.Contains(x)))
                         continue;
+                    if (preconditions.Any(x => preCpy.Children.Contains(new NotExp(x))))
+                        continue;
+                    if (preconditions.Any(x => x is NotExp not && preCpy.Children.Contains(not.Child)))
+                        continue;
 
                     // Prune some nonsensical preconditions.
                     if (preconditions.Any(x => preconditions.Contains(new NotExp(x))))
