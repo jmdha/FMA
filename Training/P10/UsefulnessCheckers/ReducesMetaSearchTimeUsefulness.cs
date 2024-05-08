@@ -95,7 +95,10 @@ namespace P10.UsefulnessCheckers
                         if (matches == null)
                             throw new Exception("No search time for problem???");
                         if (matches.Groups[1].Value == "")
+                        {
+                            ConsoleHelper.WriteLineColor($"\t\t\tPlanner timed out! Consider using easier usefulness problems...", ConsoleColor.Yellow);
                             times.Add(TimeLimitS);
+                        }
                         else
                             times.Add(double.Parse(matches.Groups[1].Value));
                     }

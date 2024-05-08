@@ -46,6 +46,8 @@ namespace P10.UsefulnessCheckers
                     fdCaller.Process.StartInfo.WorkingDirectory = WorkingDir;
                     if (fdCaller.Run() == 0)
                     {
+                        if (!File.Exists(Path.Combine(WorkingDir, "plan.plan")))
+                            ConsoleHelper.WriteLineColor($"\t\tPlanner timed out! Consider using easier usefulness problems...", ConsoleColor.Yellow);
                         var plan = planParser.Parse(new FileInfo(Path.Combine(WorkingDir, "plan.plan")));
                         var allUsed = plan.Plan.Where(x => candidates.Any(y => y.Name == x.ActionName));
                         foreach (var used in allUsed)
@@ -58,6 +60,8 @@ namespace P10.UsefulnessCheckers
                             }
                         }
                     }
+                    if (!File.Exists(Path.Combine(WorkingDir, "plan.plan")))
+                        ConsoleHelper.WriteLineColor($"\t\tPlanner timed out! Consider using easier usefulness problems...", ConsoleColor.Yellow);
                 }
             }
 
