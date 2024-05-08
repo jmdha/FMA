@@ -108,6 +108,13 @@ namespace P10.PreconditionAdditionRefinements
                     foreach (var precon in preconditions)
                         if (!and.Children.Contains(precon))
                             and.Children.Add(precon);
+
+                    // Prune some nonsensical preconditions, after the new ones are added
+                    var preCpy = and.Copy();
+                    preCpy.RemoveContext();
+                    preCpy.RemoveTypes();
+                    if (preCpy.Any(x => preCpy.Contains(new NotExp(x))))
+                        continue;
                 }
 
                 if (!checkedMetaActions.Contains(metaAction))
