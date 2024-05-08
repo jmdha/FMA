@@ -77,7 +77,7 @@ namespace P10.UsefulnessCheckers
                             return count - 1;
                         }
                     }
-                    if (!File.Exists(Path.Combine(WorkingDir, "plan.plan")))
+                    else if (!File.Exists(Path.Combine(WorkingDir, "plan.plan")))
                         ConsoleHelper.WriteLineColor($"\t\tPlanner timed out! Consider using easier usefulness problems...", ConsoleColor.Yellow);
                 }
                 count++;
