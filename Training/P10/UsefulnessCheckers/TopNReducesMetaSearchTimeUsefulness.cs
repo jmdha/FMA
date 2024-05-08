@@ -26,6 +26,8 @@ namespace P10.UsefulnessCheckers
             var usefulCandidates = new List<CandidateAndSearch>();
             ConsoleHelper.WriteLineColor($"\tGetting base search times...", ConsoleColor.Magenta);
             var searchTimes = GetSearchTimes(domain, problems);
+            if (searchTimes.Average() <= 0.1)
+                ConsoleHelper.WriteLineColor($"\tBase search time for usefulness problems is way too low! Consider using more difficult ones...", ConsoleColor.Yellow);
 
             var count = 1;
             foreach (var candidate in candidates)

@@ -10,7 +10,7 @@ namespace P10.UsefulnessCheckers
 {
     public class ReducesMetaSearchTimeUsefulness : UsedInPlansUsefulness
     {
-        public static int Rounds { get; set; } = 5;
+        public static int Rounds { get; set; } = 1;
         private readonly Regex _searchTime = new Regex("Search time: ([0-9.]*)", RegexOptions.Compiled);
 
         public ReducesMetaSearchTimeUsefulness(string workingDir, int timeLimitS) : base(workingDir, timeLimitS)
@@ -24,6 +24,8 @@ namespace P10.UsefulnessCheckers
             var usefulCandidates = new List<ActionDecl>();
             ConsoleHelper.WriteLineColor($"\tGetting base search times...", ConsoleColor.Magenta);
             var searchTimes = GetSearchTimes(domain, problems);
+            if (searchTimes.Average() <= 0.1)
+                ConsoleHelper.WriteLineColor($"\tBase search time for usefulness problems is way too low! Consider using more difficult ones...", ConsoleColor.Yellow);
 
             var count = 1;
             foreach (var candidate in candidates)
