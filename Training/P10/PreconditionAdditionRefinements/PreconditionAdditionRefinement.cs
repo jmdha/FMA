@@ -74,12 +74,17 @@ namespace P10.PreconditionAdditionRefinements
 
             // Check if initial meta action is valid
             ConsoleHelper.WriteLineColor($"\t\tValidating...", ConsoleColor.Magenta);
-            if (VerificationHelper.IsValid(domain, problems, MetaAction, _tempValidationFolder, ValidationTimeLimitS))
+            var result = VerificationHelper.IsValid(domain, problems, MetaAction, _tempValidationFolder, ValidationTimeLimitS);
+            if (result == FrontierVerifier.FrontierResult.Valid)
             {
                 _result.AlreadyValid = true;
                 _result.Succeded = true;
                 ConsoleHelper.WriteLineColor($"\tOriginal meta action is valid!", ConsoleColor.Green);
                 returnList.Add(MetaAction);
+                return returnList;
+            } else if (result == FrontierVerifier.FrontierResult.Inapplicable)
+            {
+                ConsoleHelper.WriteLineColor($"\tOriginal meta action is inapplicable...", ConsoleColor.Yellow);
                 return returnList;
             }
 
@@ -120,7 +125,7 @@ namespace P10.PreconditionAdditionRefinements
                         break;
                     }
                     ConsoleHelper.WriteLineColor($"\t\tValidating...", ConsoleColor.Magenta);
-                    if (VerificationHelper.IsValid(domain, problems, nextRefined, _tempValidationFolder, ValidationTimeLimitS))
+                    if (VerificationHelper.IsValid(domain, problems, nextRefined, _tempValidationFolder, ValidationTimeLimitS) == FrontierVerifier.FrontierResult.Valid)
                     {
                         ConsoleHelper.WriteLineColor($"\tMeta action refinement is valid!", ConsoleColor.Green);
                         returnList.Add(nextRefined);

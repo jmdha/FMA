@@ -8,7 +8,7 @@ namespace P10.Verifiers
 {
     public static class VerificationHelper
     {
-        public static bool IsValid(DomainDecl domain, List<ProblemDecl> problems, ActionDecl metaAction, string workingDir, int timeLimitS)
+        public static FrontierVerifier.FrontierResult IsValid(DomainDecl domain, List<ProblemDecl> problems, ActionDecl metaAction, string workingDir, int timeLimitS)
         {
             var verifier = new FrontierVerifier();
             bool any = false;
@@ -26,7 +26,7 @@ namespace P10.Verifiers
                 else if (result == FrontierVerifier.FrontierResult.Invalid)
                 {
                     ConsoleHelper.WriteLineColor($"\t\t\t\tInvalid", ConsoleColor.Red);
-                    return false;
+                    return FrontierVerifier.FrontierResult.Invalid;
                 }
                 else if (result == FrontierVerifier.FrontierResult.Valid)
                 {
@@ -34,12 +34,11 @@ namespace P10.Verifiers
                     any = true;
                 }
                 else if (result == FrontierVerifier.FrontierResult.Inapplicable)
-                {
                     ConsoleHelper.WriteLineColor($"\t\t\t\tInapplicable", ConsoleColor.Yellow);
-                    any = true;
-                }
             }
-            return any;
+            if (any)
+                return FrontierVerifier.FrontierResult.Valid;
+            return FrontierVerifier.FrontierResult.Inapplicable;
         }
     }
 }
