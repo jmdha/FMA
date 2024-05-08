@@ -101,8 +101,17 @@ namespace P10.PreconditionAdditionRefinements
                             continue;
                     }
 
+                    // Prune some nonsensical preconditions, before the new ones are added
+                    var preCpy = and.Copy();
+                    preCpy.RemoveContext();
+                    preCpy.RemoveTypes();
+                    if (preconditions.All(x => preCpy.Children.Contains(x)))
+                        continue;
+
                     // Prune some nonsensical preconditions.
                     if (preconditions.Any(x => preconditions.Contains(new NotExp(x))))
+                        continue;
+                    if (preconditions.Any(x => x is NotExp not && preconditions.Contains(not.Child)))
                         continue;
 
                     foreach (var precon in preconditions)
@@ -110,10 +119,12 @@ namespace P10.PreconditionAdditionRefinements
                             and.Children.Add(precon);
 
                     // Prune some nonsensical preconditions, after the new ones are added
-                    var preCpy = and.Copy();
+                    preCpy = and.Copy();
                     preCpy.RemoveContext();
                     preCpy.RemoveTypes();
                     if (preCpy.Any(x => preCpy.Contains(new NotExp(x))))
+                        continue;
+                    if (preCpy.Any(x => x is NotExp not && preCpy.Contains(not.Child)))
                         continue;
                 }
 
