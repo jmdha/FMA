@@ -12,3 +12,24 @@ rename_data <- function(data) {
 	return (data)
 }
 
+rename_domains <- function(data){
+  domains <- data$domain
+  domains[domains == "barman"] <- "Barman"
+  domains[domains == "blocksworld"] <- "Blocksworld"
+  domains[domains == "child-snack"] <- "Childsnack"
+  domains[domains == "depots"] <- "Depots"
+  domains[domains == "driverlog"] <- "Driverlog"
+  domains[domains == "floor-tile"] <- "Floortile"
+  domains[domains == "grid"] <- "Grid"
+  domains[domains == "gripper-strips"] <- "Gripper"
+  domains[domains == "hiking"] <- "Hiking"
+  domains[domains == "logistics-strips"] <- "Logistics"
+  domains[domains == "miconic"] <- "Miconic"
+  domains[domains == "parking"] <- "Parking"
+  domains[domains == "rover"] <- "Rover"
+  domains[domains == "satellite"] <- "Satellite"
+  domains[domains == "scanalyzer3d"] <- "Scanalyzer"
+  domains[domains == "woodworking"] <- "Woodworking"
+  data$domain <- domains
+  return (data)
+}

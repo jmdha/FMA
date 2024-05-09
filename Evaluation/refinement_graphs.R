@@ -3,11 +3,12 @@ library(dplyr)
 source("Tools/style.R")
 source("Tools/tables.R")
 source("Tools/scatterPlots.R")
+source("Tools/graphNames.R")
 
 # Handle arguments
 args = commandArgs(trailingOnly=TRUE)
 #args[1] <- "refinement.csv"
-#args[2] <- "CPDDLInvariantMetaActions"
+#args[2] <- "CPDDLMutexed"
 if (length(args) != 2) {
   stop("2 arguments must be supplied! The source data file and the method to generate tables for", call.=FALSE)
 }
@@ -25,14 +26,14 @@ data <- read.csv(
   )
 )
 
+data <- rename_domains(data)
 data <- data[data$id == args[2],]
 
 tableData <- data %>% select(
   contains('domain'), 
   contains('final.refinement.possibilities'), 
   contains('valid.refinements'),
-  contains('succeded'),
-  contains('total.refinement.time'))
+  contains('succeded'))
 names(tableData)[names(tableData) == "succeded"] <- "unrefinable"
 tableData$unrefinable[tableData$unrefinable == "True"] <- 0
 tableData$unrefinable[tableData$unrefinable == "False"] <- 1
@@ -58,9 +59,8 @@ generate_table(
     "$Domain$",
     "$R$",
     "$R_{valid}$",
-    "$Unrefinable$",
-    "$Refinement Time$"
+    "$Unrefinable$"
   ),
-  "Refinement Process Info. $R$ is the initial refinement options for all the candidates for a domain. $R_{valid}$ is the valid refinement options. Unrefinables are failures. Refinement Time is in milliseconds",
+  "\\textit{Refinement Process Info. $R$ is the initial refinement options for all the candidates for a domain. $R_{valid}$ is the valid refinement options. Unrefinables are potential failures.}",
   "tab:refinement"
 )

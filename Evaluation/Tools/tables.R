@@ -20,7 +20,9 @@ generate_table <- function(data, outName, colNames, caption, label) {
 	      latex.environments="centering",
 	      sanitize.colnames.function = bold,
 	      floating = TRUE,
-	      rotate.colnames = TRUE)
+	      rotate.colnames = FALSE,
+	      table.placement = "H",
+	      size = "footnotesize")
 	
 	return ()
 }

@@ -3,11 +3,12 @@ library(dplyr)
 source("Tools/style.R")
 source("Tools/tables.R")
 source("Tools/scatterPlots.R")
+source("Tools/graphNames.R")
 
 # Handle arguments
 args = commandArgs(trailingOnly=TRUE)
 #args[1] <- "general.csv"
-#args[2] <- "CPDDLInvariantMetaActions"
+#args[2] <- "CPDDLMutexed"
 if (length(args) != 2) {
   stop("2 arguments must be supplied! The source data file and the method to generate tables for", call.=FALSE)
 }
@@ -25,14 +26,21 @@ data <- read.csv(
   )
 )
 
+data <- rename_domains(data)
+
 data <- data[data$id == args[2],]
+
+data$Total.Refined <- data$Total.Refined - data$Post.Duplicates.Removed
+
+data$Final.Output <- data$Total.Refined - data$Post.Not.Useful.Removed
 
 tableData <- data %>% select(
   contains('domain'), 
   contains('total.candidates'), 
   contains('pre.not.useful.removed'), 
   contains('total.refined'), 
-  contains('post.not.useful.removed'))
+  contains('post.not.useful.removed'),
+  contains('final.output'))
 tableData <- aggregate(. ~ domain, data=tableData, FUN=sum)
 generate_table(
   tableData,
@@ -40,10 +48,11 @@ generate_table(
   c(
     "$Domain$",
     "$C$",
-    "$PreRemoved$",
+    "$U_{pre}$",
     "$C_{valid}$",
-    "$PostRemoved$"
+    "$U_{post}$",
+    "$M$"
   ),
-  "Usefulness pruning information. $C$ is the initial candidate meta actions. $PreRemoved$ is the candidates removed by the pre-usefulness check. $C_{valid}$ is the valid refinements found in the end.. $PostRemoved$ is the candidates removed by the post-usefulness check.",
+  "\\textit{Usefulness pruning information. $C$ is the initial candidate meta actions. $U_{pre}$ is the candidates removed by the pre-usefulness check. $C_{valid}$ is the valid refinements found. $U_{post}$ is the candidates removed by the post-usefulness check. $M$ is the final number of meta actions.}",
   "tab:usefulness"
 )
