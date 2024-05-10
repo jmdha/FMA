@@ -1,0 +1,94 @@
+[solve]
+name = "downward"
+path = "Dependencies/fast-downward/fast-downward.py"
+args = [["--alias"], ["lama-first", "seq-sat-fdss-2018"], ["DOMAIN"], ["PROBLEM"]]
+attributes = [
+    { name = "total_time", pattern = "Total time: ([0-9.]*)" },
+    { name = "search_time", pattern = "Search time: ([0-9.]*)" },
+    { name = "peak_memory_translation", pattern = "Translator peak memory: ([0-9]*)" },
+    { name = "peak_memory_search", pattern = "Peak memory: ([0-9]*)" },
+    { name = "plan_length", pattern = "Plan length: ([0-9]*)" },
+    { name = "states_generated", pattern = "Generated ([0-9]*)" },
+    { name = "states_expanded", pattern = "Expanded ([0-9]*)" },
+]
+
+#[[tasks]]
+#name = "barman"
+#domain = "Dependencies/p10-benchmarks/Benchmarks/barman/domain.pddl"
+#solve = ["Dependencies/p10-benchmarks/Benchmarks/barman/testing/*.pddl"]
+
+#[[tasks]]
+#name = "blocksworld"
+#domain = "Dependencies/p10-benchmarks/Benchmarks/blocksworld/domain.pddl"
+#solve = ["Dependencies/p10-benchmarks/Benchmarks/blocksworld/testing/*.pddl"]
+
+#[[tasks]]
+#name = "childsnack"
+#domain = "Dependencies/p10-benchmarks/Benchmarks/childsnack/domain.pddl"
+#solve = ["Dependencies/p10-benchmarks/Benchmarks/childsnack/testing/*.pddl"]
+#
+#[[tasks]]
+#name = "depots"
+#domain = "Dependencies/p10-benchmarks/Benchmarks/depots/domain.pddl"
+#solve = ["Dependencies/p10-benchmarks/Benchmarks/depots/testing/*.pddl"]
+#
+#[[tasks]]
+#name = "driverlog"
+#domain = "Dependencies/p10-benchmarks/Benchmarks/driverlog/domain.pddl"
+#solve = ["Dependencies/p10-benchmarks/Benchmarks/driverlog/testing/*.pddl"]
+#
+#[[tasks]]
+#name = "floortile"
+#domain = "Dependencies/p10-benchmarks/Benchmarks/floortile/domain.pddl"
+#solve = ["Dependencies/p10-benchmarks/Benchmarks/floortile/testing/*.pddl"]
+#
+#[[tasks]]
+#name = "grid"
+#domain = "Dependencies/p10-benchmarks/Benchmarks/grid/domain.pddl"
+#solve = ["Dependencies/p10-benchmarks/Benchmarks/grid/testing/*.pddl"]
+
+[[tasks]]
+name = "gripper"
+domain = "Dependencies/p10-benchmarks/Benchmarks/gripper/domain.pddl"
+solve = ["Dependencies/p10-benchmarks/Benchmarks/gripper/testing/*.pddl"]
+
+#[[tasks]]
+#name = "hiking"
+#domain = "Dependencies/p10-benchmarks/Benchmarks/hiking/domain.pddl"
+#solve = ["Dependencies/p10-benchmarks/Benchmarks/hiking/testing/*.pddl"]
+#
+#[[tasks]]
+#name = "logistics"
+#domain = "Dependencies/p10-benchmarks/Benchmarks/logistics/domain.pddl"
+#solve = ["Dependencies/p10-benchmarks/Benchmarks/logistics/testing/*.pddl"]
+#
+#[[tasks]]
+#name = "miconic"
+#domain = "Dependencies/p10-benchmarks/Benchmarks/miconic/domain.pddl"
+#solve = ["Dependencies/p10-benchmarks/Benchmarks/miconic/testing/*.pddl"]
+#
+#[[tasks]]
+#name = "parking"
+#domain = "Dependencies/p10-benchmarks/Benchmarks/parking/domain.pddl"
+#solve = ["Dependencies/p10-benchmarks/Benchmarks/parking/testing/*.pddl"]
+#
+#[[tasks]]
+#name = "rovers"
+#domain = "Dependencies/p10-benchmarks/Benchmarks/rovers/domain.pddl"
+#solve = ["Dependencies/p10-benchmarks/Benchmarks/rovers/testing/*.pddl"]
+#
+#[[tasks]]
+#name = "satellite"
+#domain = "Dependencies/p10-benchmarks/Benchmarks/satellite/domain.pddl"
+#solve = ["Dependencies/p10-benchmarks/Benchmarks/satellite/testing/*.pddl"]
+#
+#[[tasks]]
+#name = "scanalyzer"
+#domain = "Dependencies/p10-benchmarks/Benchmarks/scanalyzer/domain.pddl"
+#solve = ["Dependencies/p10-benchmarks/Benchmarks/scanalyzer/testing/*.pddl"]
+#
+#[[tasks]]
+#name = "woodworking"
+#domain = "Dependencies/p10-benchmarks/Benchmarks/woodworking/domain.pddl"
+#solve = ["Dependencies/p10-benchmarks/Benchmarks/woodworking/testing/*.pddl"]
+#
