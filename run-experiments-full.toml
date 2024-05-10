@@ -7,6 +7,15 @@ args = [["--generator"], ["CPDDLMutexed"], ["--domain DOMAIN"], ["--problems PRO
 name = "downward"
 path = "Dependencies/fast-downward/fast-downward.py"
 args = [["--alias"], ["lama-first"], ["DOMAIN"], ["PROBLEM"]]
+attributes = [
+    { name = "total_time", pattern = "Total time: ([0-9.]*)" },
+    { name = "search_time", pattern = "Search time: ([0-9.]*)" },
+    { name = "peak_memory_translation", pattern = "Translator peak memory: ([0-9]*)" },
+    { name = "peak_memory_search", pattern = "Peak memory: ([0-9]*)" },
+    { name = "plan_length", pattern = "Plan length: ([0-9]*)" },
+    { name = "states_generated", pattern = "Generated ([0-9]*)" },
+    { name = "states_expanded", pattern = "Expanded ([0-9]*)" },
+]
 
 [[tasks]]
 name = "barman"
