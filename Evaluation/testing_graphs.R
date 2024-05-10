@@ -7,9 +7,9 @@ source("Tools/clamper.R")
 
 # Handle arguments
 args = commandArgs(trailingOnly=TRUE)
-#args[1] <- "solve.csv"
-#args[2] <- "StrippedMeta"
-#args[3] <- "Downward"
+args[1] <- "solve.csv"
+args[2] <- "S_CPDDL"
+args[3] <- "LAMA_FIRST"
 if (length(args) != 3) {
   stop("3 arguments must be supplied! The source data file, and one for each target reconstruction type", call.=FALSE)
 }
@@ -24,7 +24,9 @@ data <- read.csv(
     'character','character','character',
     'numeric','numeric', 'numeric',
     'numeric','numeric', 'numeric',
-    'numeric','numeric', 'numeric'
+    'numeric','numeric', 'numeric',
+	'numeric','numeric', 'numeric',
+	'numeric'
   )
 )
 data <- rename_data(data)
@@ -34,11 +36,12 @@ if (nrow(data[data$name == BName,]) == 0)
   stop(paste("Column name '", args[3], "' not found in dataset!"), call.=FALSE)
 data <- max_unsolved(data, "total_time")
 data <- max_unsolved(data, "search_time")
+data <- max_unsolved(data, "solution_time")
 
 AData = data[data$name == AName,]
-AData$problem <- sub('[.]', '_', make.names(AData$problem, unique=TRUE))
+#AData$problem <- sub('[.]', '_', make.names(AData$problem, unique=TRUE))
 BData = data[data$name == BName,]
-BData$problem <- sub('[.]', '_', make.names(BData$problem, unique=TRUE))
+#BData$problem <- sub('[.]', '_', make.names(BData$problem, unique=TRUE))
 combined <- merge(AData, BData, by = c("domain", "problem"), suffixes=c(".A", ".B"))
 combined <- combined %>% select(-contains('name.A'))
 combined <- combined %>% select(-contains('name.B'))
@@ -58,3 +61,10 @@ sideB <- combined$total_time.B
 sideDomains <- combined$domain
 searchData <- data.frame(x = sideA, y = sideB, domain = sideDomains)
 generate_scatterplot(searchData, AName, BName, "Total Time (s)", paste("out/totalTime_", AName, "_vs_", BName, ".pdf", sep = ""))
+
+print("Generating: Solve Scatterplot")
+sideA <- combined$solution_time.A
+sideB <- combined$solution_time.B
+sideDomains <- combined$domain
+searchData <- data.frame(x = sideA, y = sideB, domain = sideDomains)
+generate_scatterplot(searchData, AName, BName, "Solution Time (s)", paste("out/solutionTime_", AName, "_vs_", BName, ".pdf", sep = ""))
