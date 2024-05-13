@@ -5,7 +5,7 @@ using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Parsers.FastDownward.Plans;
-using PDDLSharp.Toolkit.MacroGenerators.Tools;
+using PDDLSharp.Toolkits;
 using Tools;
 
 namespace P10.MacroExtractor

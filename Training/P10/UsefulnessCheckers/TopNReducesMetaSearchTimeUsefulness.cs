@@ -1,8 +1,5 @@
-﻿using PDDLSharp.CodeGenerators.PDDL;
-using PDDLSharp.ErrorListeners;
-using PDDLSharp.Models.PDDL.Domain;
+﻿using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
-using PDDLSharp.Parsers.FastDownward.Plans;
 using System.Text.RegularExpressions;
 using Tools;
 

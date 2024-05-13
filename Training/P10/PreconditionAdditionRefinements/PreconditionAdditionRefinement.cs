@@ -82,7 +82,8 @@ namespace P10.PreconditionAdditionRefinements
                 ConsoleHelper.WriteLineColor($"\tOriginal meta action is valid!", ConsoleColor.Green);
                 returnList.Add(MetaAction);
                 return returnList;
-            } else if (result == FrontierVerifier.FrontierResult.Inapplicable)
+            }
+            else if (result == FrontierVerifier.FrontierResult.Inapplicable)
             {
                 ConsoleHelper.WriteLineColor($"\tOriginal meta action is inapplicable...", ConsoleColor.Yellow);
                 return returnList;

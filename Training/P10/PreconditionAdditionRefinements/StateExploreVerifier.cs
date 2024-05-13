@@ -5,7 +5,7 @@ using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Models.PDDL.Problem;
-using PDDLSharp.Translators.Tools;
+using PDDLSharp.Toolkits;
 
 namespace P10.PreconditionAdditionRefinements
 {
