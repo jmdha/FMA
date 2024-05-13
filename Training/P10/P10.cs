@@ -74,9 +74,7 @@ namespace P10
             BaseVerifier.ShowSTDOut = opts.StackelbergDebug;
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
-            ID += $"{Enum.GetName(opts.GeneratorOption)}+";
-            if (ID.EndsWith('+'))
-                ID = ID.Substring(0, ID.Length - 1);
+            ID += $"{Enum.GetName(opts.GeneratorOption)}+{Enum.GetName(opts.PreUsefulnessStrategy)}+{Enum.GetName(opts.PostUsefulnessStrategy)}";
 
             var generalResult = new P10Result()
             {
