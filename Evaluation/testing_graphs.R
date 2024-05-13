@@ -7,9 +7,9 @@ source("Tools/clamper.R")
 
 # Handle arguments
 args = commandArgs(trailingOnly=TRUE)
-args[1] <- "solve.csv"
-args[2] <- "S_CPDDL"
-args[3] <- "LAMA_FIRST"
+#args[1] <- "solve.csv"
+#args[2] <- "S_CPDDL"
+#args[3] <- "LAMA_FIRST"
 if (length(args) != 3) {
   stop("3 arguments must be supplied! The source data file, and one for each target reconstruction type", call.=FALSE)
 }
@@ -37,6 +37,8 @@ if (nrow(data[data$name == BName,]) == 0)
 data <- max_unsolved(data, "total_time")
 data <- max_unsolved(data, "search_time")
 data <- max_unsolved(data, "solution_time")
+data <- max_unsolved(data, "plan_length")
+data <- max_unsolved(data, "meta_plan_length")
 
 AData = data[data$name == AName,]
 #AData$problem <- sub('[.]', '_', make.names(AData$problem, unique=TRUE))
@@ -68,3 +70,17 @@ sideB <- combined$solution_time.B
 sideDomains <- combined$domain
 searchData <- data.frame(x = sideA, y = sideB, domain = sideDomains)
 generate_scatterplot(searchData, AName, BName, "Solution Time (s)", paste("out/solutionTime_", AName, "_vs_", BName, ".pdf", sep = ""))
+
+print("Generating: Meta Plan length Scatterplot")
+sideA <- combined$meta_plan_length.A
+sideB <- combined$plan_length.B
+sideDomains <- combined$domain
+searchData <- data.frame(x = sideA, y = sideB, domain = sideDomains)
+generate_scatterplot(searchData, AName, BName, "Meta Plan Length", paste("out/metaPlanLength_", AName, "_vs_", BName, ".pdf", sep = ""))
+
+print("Generating: Final Plan length Scatterplot")
+sideA <- combined$plan_length.A
+sideB <- combined$plan_length.B
+sideDomains <- combined$domain
+searchData <- data.frame(x = sideA, y = sideB, domain = sideDomains)
+generate_scatterplot(searchData, AName, BName, "Plan Length", paste("out/planLength_", AName, "_vs_", BName, ".pdf", sep = ""))

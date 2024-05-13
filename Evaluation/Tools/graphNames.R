@@ -1,14 +1,14 @@
 recon_names <- function(name) { 
-  	if (name == "Downward") return ("FD")
-	if (name == "Stripped") return ("Stripped")
+  	if (name == "LAMA_FIRST") return ("LAMA")
+	if (name == "S_CPDDL") return ("LAMA+F(top 2)")
 	return (name)
 }
 
 rename_data <- function(data) { 
-	data[data=="Downward"] <- "FD"
-	names(data)[names(data)=="Downward"] <- "FD"
-	data[data=="Stripped"] <- "Stripped"
-	names(data)[names(data)=="Stripped"] <- "Stripped"
+	data[data=="LAMA_FIRST"] <- "LAMA"
+	names(data)[names(data)=="LAMA_FIRST"] <- "LAMA"
+	data[data=="S_CPDDL"] <- "LAMA+F(top 2)"
+	names(data)[names(data)=="S_CPDDL"] <- "LAMA+F(top 2)"
 	return (data)
 }
 
