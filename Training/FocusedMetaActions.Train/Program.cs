@@ -1,11 +1,12 @@
 ﻿using CommandLine;
 using CommandLine.Text;
 using CSVToolsSharp;
+using FocusedMetaActions.Train.Helpers;
+using FocusedMetaActions.Train.MacroExtractor;
+using FocusedMetaActions.Train.PreconditionAdditionRefinements;
+using FocusedMetaActions.Train.UsefulnessCheckers;
+using FocusedMetaActions.Train.Verifiers;
 using MetaActionGenerators;
-using P10.MacroExtractor;
-using P10.PreconditionAdditionRefinements;
-using P10.UsefulnessCheckers;
-using P10.Verifiers;
 using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.Contextualisers.PDDL;
 using PDDLSharp.ErrorListeners;
@@ -14,11 +15,10 @@ using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Overloads;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers.PDDL;
-using P10.Helpers;
 
-namespace P10
+namespace FocusedMetaActions.Train
 {
-    public class P10
+    public class Program
     {
         public static string ID = "";
 
@@ -36,48 +36,10 @@ namespace P10
 
         public static void Run(Options opts)
         {
-            ConsoleHelper.WriteLineColor($"Checking files", ConsoleColor.Blue);
-            var problemsPath = opts.ProblemsPath.ToList();
-            if (problemsPath.Count == 0)
-                throw new Exception("No problem files where given!");
-
-            if (opts.FastDownwardPath != "")
-            {
-                opts.FastDownwardPath = PathHelper.RootPath(opts.FastDownwardPath);
-                ExternalPaths.FastDownwardPath = opts.FastDownwardPath;
-            }
-            if (!File.Exists(ExternalPaths.FastDownwardPath))
-                throw new FileNotFoundException($"Fast Downward path not found: {opts.FastDownwardPath}");
-            if (opts.StackelbergPath != "")
-            {
-                opts.StackelbergPath = PathHelper.RootPath(opts.StackelbergPath);
-                ExternalPaths.StackelbergPath = opts.StackelbergPath;
-            }
-            if (!File.Exists(ExternalPaths.StackelbergPath))
-                throw new FileNotFoundException($"Stackelberg Planner path not found: {opts.StackelbergPath}");
-
-            opts.OutputPath = PathHelper.RootPath(opts.OutputPath);
-            opts.TempPath = PathHelper.RootPath(opts.TempPath);
-            opts.DomainPath = PathHelper.RootPath(opts.DomainPath);
-            for (int i = 0; i < problemsPath.Count; i++)
-                problemsPath[i] = PathHelper.RootPath(problemsPath[i]);
-            _candidateOutput = Path.Combine(opts.TempPath, _candidateOutput);
-
-            if (!File.Exists(opts.DomainPath))
-                throw new FileNotFoundException($"Domain file not found: {opts.DomainPath}");
-            foreach (var problem in opts.ProblemsPath)
-                if (!File.Exists(problem))
-                    throw new FileNotFoundException($"Problem file not found: {problem}");
-
-            PathHelper.RecratePath(opts.OutputPath);
-            PathHelper.RecratePath(opts.TempPath);
-            PathHelper.RecratePath(_candidateOutput);
-            BaseVerifier.ShowSTDOut = opts.StackelbergDebug;
-            ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
+            HandlePaths(opts);
 
             ID += $"{Enum.GetName(opts.GeneratorOption)}+{Enum.GetName(opts.PreUsefulnessStrategy)}+{Enum.GetName(opts.PostUsefulnessStrategy)}";
-
-            var generalResult = new P10Result()
+            var generalResult = new GeneralResult()
             {
                 ID = ID
             };
@@ -119,6 +81,7 @@ namespace P10
             var generatorResults = new List<MetaActionGenerationResult>();
             ConsoleHelper.WriteLineColor($"\tGenerating with: {Enum.GetName(opts.GeneratorOption)}", ConsoleColor.Magenta);
 
+            // Build Meta Action Generator args
             var args = new Dictionary<string, string>();
             foreach (var keyvalue in opts.Args)
             {
@@ -236,7 +199,7 @@ namespace P10
             }
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
-            File.WriteAllText(Path.Combine(opts.OutputPath, "general.csv"), CSVSerialiser.Serialise(new List<P10Result>() { generalResult }));
+            File.WriteAllText(Path.Combine(opts.OutputPath, "general.csv"), CSVSerialiser.Serialise(new List<GeneralResult>() { generalResult }));
 
             ConsoleHelper.WriteLineColor($"Final Report:", ConsoleColor.Blue);
             ConsoleHelper.WriteLineColor($"General Results:", ConsoleColor.Blue);
@@ -252,7 +215,56 @@ namespace P10
                 _returnCode = 1;
         }
 
-        public static void HandleParseError(IEnumerable<Error> errs)
+        /// <summary>
+        /// Root all paths, make sure that override are valid, etc.
+        /// </summary>
+        /// <param name="opts"></param>
+        /// <exception cref="Exception"></exception>
+        /// <exception cref="FileNotFoundException"></exception>
+        private static void HandlePaths(Options opts)
+        {
+            ConsoleHelper.WriteLineColor($"Checking files", ConsoleColor.Blue);
+            var problemsPath = opts.ProblemsPath.ToList();
+            if (problemsPath.Count == 0)
+                throw new Exception("No problem files where given!");
+
+            if (opts.FastDownwardPath != "")
+            {
+                opts.FastDownwardPath = PathHelper.RootPath(opts.FastDownwardPath);
+                ExternalPaths.FastDownwardPath = opts.FastDownwardPath;
+            }
+            if (!File.Exists(ExternalPaths.FastDownwardPath))
+                throw new FileNotFoundException($"Fast Downward path not found: {opts.FastDownwardPath}");
+            if (opts.StackelbergPath != "")
+            {
+                opts.StackelbergPath = PathHelper.RootPath(opts.StackelbergPath);
+                ExternalPaths.StackelbergPath = opts.StackelbergPath;
+            }
+            if (!File.Exists(ExternalPaths.StackelbergPath))
+                throw new FileNotFoundException($"Stackelberg Planner path not found: {opts.StackelbergPath}");
+
+            opts.OutputPath = PathHelper.RootPath(opts.OutputPath);
+            opts.TempPath = PathHelper.RootPath(opts.TempPath);
+            opts.DomainPath = PathHelper.RootPath(opts.DomainPath);
+            for (int i = 0; i < problemsPath.Count; i++)
+                problemsPath[i] = PathHelper.RootPath(problemsPath[i]);
+            opts.ProblemsPath = problemsPath;
+            _candidateOutput = Path.Combine(opts.TempPath, _candidateOutput);
+
+            if (!File.Exists(opts.DomainPath))
+                throw new FileNotFoundException($"Domain file not found: {opts.DomainPath}");
+            foreach (var problem in opts.ProblemsPath)
+                if (!File.Exists(problem))
+                    throw new FileNotFoundException($"Problem file not found: {problem}");
+
+            PathHelper.RecratePath(opts.OutputPath);
+            PathHelper.RecratePath(opts.TempPath);
+            PathHelper.RecratePath(_candidateOutput);
+            BaseVerifier.ShowSTDOut = opts.StackelbergDebug;
+            ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
+        }
+
+        private static void HandleParseError(IEnumerable<Error> errs)
         {
             var sentenceBuilder = SentenceBuilder.Create();
             foreach (var error in errs)
@@ -260,7 +272,7 @@ namespace P10
                     ConsoleHelper.WriteLineColor(sentenceBuilder.FormatError(error), ConsoleColor.Red);
         }
 
-        public static void DisplayHelp<T>(ParserResult<T> result, IEnumerable<Error> errs)
+        private static void DisplayHelp<T>(ParserResult<T> result, IEnumerable<Error> errs)
         {
             var helpText = HelpText.AutoBuild(result, h =>
             {

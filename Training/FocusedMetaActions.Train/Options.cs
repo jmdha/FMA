@@ -1,7 +1,7 @@
 ﻿using CommandLine;
 using static MetaActionGenerators.MetaGeneratorBuilder;
 
-namespace P10
+namespace FocusedMetaActions.Train
 {
     public class Options
     {
@@ -54,8 +54,8 @@ namespace P10
         [Option("stackelberg-debug", Required = false, HelpText = "Show the stdout of the Stackelberg Planner", Default = false)]
         public bool StackelbergDebug { get; set; } = false;
 
-        [Option("max-precondition-combinations", Required = false, HelpText = "How many precondition combinations to try", Default = 3)]
-        public int MaxPreconditionCombinations { get; set; } = 3;
+        [Option("max-precondition-combinations", Required = false, HelpText = "How many precondition combinations to try", Default = 10)]
+        public int MaxPreconditionCombinations { get; set; } = 10;
         [Option("max-added-parameters", Required = false, HelpText = "How many additional parameters are allowed to add", Default = 0)]
         public int MaxAddedParameters { get; set; } = 0;
     }

@@ -2,7 +2,7 @@
 using PDDLSharp.Models.PDDL.Domain;
 using System.Text;
 
-namespace P10.PreconditionAdditionRefinements
+namespace FocusedMetaActions.Train.PreconditionAdditionRefinements
 {
     public class RefinementResult
     {

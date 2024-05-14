@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text;
 
-namespace P10.Helpers
+namespace FocusedMetaActions.Train.Helpers
 {
     public class ArgsCaller : IDisposable
     {

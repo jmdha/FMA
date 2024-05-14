@@ -1,9 +1,9 @@
-﻿using P10.Helpers;
+﻿using FocusedMetaActions.Train.Helpers;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
 
-namespace P10.Verifiers
+namespace FocusedMetaActions.Train.Verifiers
 {
     public static class VerificationHelper
     {

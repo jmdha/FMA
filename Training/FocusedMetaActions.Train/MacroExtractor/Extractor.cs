@@ -1,4 +1,4 @@
-﻿using P10.Helpers;
+﻿using FocusedMetaActions.Train.Helpers;
 using PDDLSharp.CodeGenerators.FastDownward.Plans;
 using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.ErrorListeners;
@@ -8,8 +8,11 @@ using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Parsers.FastDownward.Plans;
 using PDDLSharp.Toolkits;
 
-namespace P10.MacroExtractor
+namespace FocusedMetaActions.Train.MacroExtractor
 {
+    /// <summary>
+    /// This file is basically just a direct extract of the <seealso href="https://github.com/kris701/MARMA/blob/main/Training/MacroExtractor/MacroExtractor.cs">one from MARMA</seealso>
+    /// </summary>
     public class Extractor
     {
         public static string _metaActionName = "$meta";

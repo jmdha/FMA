@@ -3,7 +3,7 @@ using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
 
-namespace P10.Verifiers
+namespace FocusedMetaActions.Train.Verifiers
 {
     public class FrontierVerifier : BaseVerifier
     {

@@ -1,6 +1,6 @@
-﻿using static P10.Options;
+﻿using static FocusedMetaActions.Train.Options;
 
-namespace P10.UsefulnessCheckers
+namespace FocusedMetaActions.Train.UsefulnessCheckers
 {
     public static class UsefulnessCheckerBuilder
     {

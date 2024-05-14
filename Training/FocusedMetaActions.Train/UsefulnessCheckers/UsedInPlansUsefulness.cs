@@ -1,11 +1,11 @@
-﻿using PDDLSharp.CodeGenerators.PDDL;
+﻿using FocusedMetaActions.Train.Helpers;
+using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers.FastDownward.Plans;
-using P10.Helpers;
 
-namespace P10.UsefulnessCheckers
+namespace FocusedMetaActions.Train.UsefulnessCheckers
 {
     public class UsedInPlansUsefulness : IUsefulnessChecker
     {

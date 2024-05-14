@@ -1,4 +1,4 @@
-﻿namespace P10.Helpers
+﻿namespace FocusedMetaActions.Train.Helpers
 {
     public static class PathHelper
     {

@@ -2,7 +2,7 @@
 using PDDLSharp.Models.PDDL.Domain;
 using Stackelberg.MetaAction.Compiler.Compilers;
 
-namespace P10.Helpers
+namespace FocusedMetaActions.Train.Helpers
 {
     public static class StackelbergHelper
     {

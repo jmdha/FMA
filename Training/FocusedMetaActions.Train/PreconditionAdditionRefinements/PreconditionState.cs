@@ -3,7 +3,7 @@ using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 
-namespace P10.PreconditionAdditionRefinements
+namespace FocusedMetaActions.Train.PreconditionAdditionRefinements
 {
     public class PreconditionState
     {

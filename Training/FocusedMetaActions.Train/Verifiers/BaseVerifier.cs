@@ -1,12 +1,12 @@
-﻿using PDDLSharp.CodeGenerators.PDDL;
+﻿using FocusedMetaActions.Train.Helpers;
+using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
 using System.Diagnostics;
 using System.Text;
-using P10.Helpers;
 
-namespace P10.Verifiers
+namespace FocusedMetaActions.Train.Verifiers
 {
     public abstract class BaseVerifier
     {

@@ -1,4 +1,4 @@
-﻿namespace P10.PreconditionAdditionRefinements.Heuristics
+﻿namespace FocusedMetaActions.Train.PreconditionAdditionRefinements.Heuristics
 {
     public interface IHeuristic
     {

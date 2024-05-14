@@ -1,6 +1,6 @@
-﻿using P10.Helpers;
+﻿using FocusedMetaActions.Train.Helpers;
 
-namespace P10
+namespace FocusedMetaActions.Train
 {
     public static class ExternalPaths
     {

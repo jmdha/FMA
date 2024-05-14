@@ -5,7 +5,7 @@ using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Models.PDDL.Overloads;
 using PDDLSharp.Parsers.PDDL;
 
-namespace P10.PreconditionAdditionRefinements
+namespace FocusedMetaActions.Train.PreconditionAdditionRefinements
 {
     public static class StackelbergOutputParser
     {

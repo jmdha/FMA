@@ -1,4 +1,4 @@
-﻿using P10.Verifiers;
+﻿using FocusedMetaActions.Train.Verifiers;
 using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
@@ -7,7 +7,7 @@ using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Toolkits;
 
-namespace P10.PreconditionAdditionRefinements
+namespace FocusedMetaActions.Train.PreconditionAdditionRefinements
 {
     public class StateExploreVerifier : BaseVerifier
     {

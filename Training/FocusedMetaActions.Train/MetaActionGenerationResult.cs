@@ -1,7 +1,7 @@
 ﻿using CSVToolsSharp;
 using System.Text;
 
-namespace P10
+namespace FocusedMetaActions.Train
 {
     public class MetaActionGenerationResult
     {

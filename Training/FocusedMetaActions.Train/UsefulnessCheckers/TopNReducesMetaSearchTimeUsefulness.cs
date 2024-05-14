@@ -1,9 +1,9 @@
-﻿using PDDLSharp.Models.PDDL.Domain;
+﻿using FocusedMetaActions.Train.Helpers;
+using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
 using System.Text.RegularExpressions;
-using P10.Helpers;
 
-namespace P10.UsefulnessCheckers
+namespace FocusedMetaActions.Train.UsefulnessCheckers
 {
     public class TopNReducesMetaSearchTimeUsefulness : ReducesMetaSearchTimeUsefulness
     {

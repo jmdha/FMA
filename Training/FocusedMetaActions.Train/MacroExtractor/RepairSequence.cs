@@ -1,7 +1,7 @@
 ﻿using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.PDDL.Domain;
 
-namespace P10.MacroExtractor
+namespace FocusedMetaActions.Train.MacroExtractor
 {
     public class RepairSequence
     {

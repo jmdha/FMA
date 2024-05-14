@@ -1,13 +1,13 @@
-﻿using P10.Helpers;
-using P10.PreconditionAdditionRefinements.Heuristics;
-using P10.Verifiers;
+﻿using FocusedMetaActions.Train.Helpers;
+using FocusedMetaActions.Train.PreconditionAdditionRefinements.Heuristics;
+using FocusedMetaActions.Train.Verifiers;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
 using System.Diagnostics;
-using static P10.PreconditionAdditionRefinements.StateExploreVerifier;
+using static FocusedMetaActions.Train.PreconditionAdditionRefinements.StateExploreVerifier;
 
-namespace P10.PreconditionAdditionRefinements
+namespace FocusedMetaActions.Train.PreconditionAdditionRefinements
 {
     public class PreconditionAdditionRefinement
     {
@@ -55,7 +55,7 @@ namespace P10.PreconditionAdditionRefinements
         {
             _result = new RefinementResult()
             {
-                ID = P10.ID,
+                ID = Program.ID,
                 Domain = domain.Name!.Name,
                 MetaAction = MetaAction.Name
             };

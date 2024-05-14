@@ -1,4 +1,4 @@
-﻿using P10.Helpers;
+﻿using FocusedMetaActions.Train.Helpers;
 using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
@@ -7,7 +7,7 @@ using PDDLSharp.Models.PDDL.Problem;
 using System.Diagnostics;
 using System.Text;
 
-namespace P10.MacroExtractor
+namespace FocusedMetaActions.Train.MacroExtractor
 {
     public class CacheGenerator
     {

@@ -1,7 +1,7 @@
 ﻿using PDDLSharp.Models.PDDL;
 using PDDLSharp.Toolkits;
 
-namespace P10.PreconditionAdditionRefinements.Heuristics
+namespace FocusedMetaActions.Train.PreconditionAdditionRefinements.Heuristics
 {
     public class hMostStatics : IHeuristic
     {

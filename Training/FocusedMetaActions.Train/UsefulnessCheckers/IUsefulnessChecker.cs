@@ -1,7 +1,7 @@
 ﻿using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
 
-namespace P10.UsefulnessCheckers
+namespace FocusedMetaActions.Train.UsefulnessCheckers
 {
     public interface IUsefulnessChecker
     {

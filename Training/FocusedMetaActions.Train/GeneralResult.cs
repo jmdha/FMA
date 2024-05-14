@@ -1,9 +1,9 @@
 ﻿using CSVToolsSharp;
 using System.Text;
 
-namespace P10
+namespace FocusedMetaActions.Train
 {
-    public class P10Result
+    public class GeneralResult
     {
         [CSVColumn("id")]
         public string ID { get; set; } = "";
@@ -13,8 +13,6 @@ namespace P10
         public int Problems { get; set; } = 0;
         [CSVColumn("Total-Candidates")]
         public int TotalCandidates { get; set; } = 0;
-        [CSVColumn("Pre-Duplicates-Removed")]
-        public int PreDuplicatesRemoved { get; set; } = 0;
         [CSVColumn("Pre-Not-Useful-Removed")]
         public int PreNotUsefulRemoved { get; set; } = 0;
         [CSVColumn("Post-Duplicates-Removed")]
@@ -24,7 +22,7 @@ namespace P10
         [CSVColumn("Total-Refined")]
         public int TotalRefinedCandidates { get; set; } = 0;
 
-        public P10Result() { }
+        public GeneralResult() { }
 
         public override string ToString()
         {
@@ -34,7 +32,6 @@ namespace P10
             sb.AppendLine($"Domain: {Domain}");
             sb.AppendLine($"Problems: {Problems}");
             sb.AppendLine($"Total Candidates: {TotalCandidates}");
-            sb.AppendLine($"(Pre) Removed Duplicates: {PreDuplicatesRemoved}");
             sb.AppendLine($"(Pre) Removed Non-useful: {PreNotUsefulRemoved}");
             sb.AppendLine($"(Post) Removed Duplicates: {PostDuplicatesRemoved}");
             sb.AppendLine($"(Post) Removed Non-useful: {PostNotUsefulRemoved}");
