@@ -9,6 +9,14 @@ namespace FocusedMetaActions.Train.PreconditionAdditionRefinements
 {
     public static class StackelbergOutputParser
     {
+        /// <summary>
+        /// This is a rather lazy parsing method for the output of the state exploration from the Stackelberg Planner.
+        /// </summary>
+        /// <param name="currentMetaAction"></param>
+        /// <param name="workingDir"></param>
+        /// <param name="closedList"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static List<PreconditionState> ParseOutput(ActionDecl currentMetaAction, string workingDir, List<PreconditionState> closedList)
         {
             currentMetaAction.EnsureAnd();

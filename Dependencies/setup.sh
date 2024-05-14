@@ -32,7 +32,7 @@ echo
 echo == Installing CPPDL ==
 echo 
 git clone https://gitlab.com/danfis/cpddl.git
-cd cppdl
+cd cpddl
 cp Makefile.config.tpl Makefile.config
 ./scripts/build.sh
 cd ..

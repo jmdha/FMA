@@ -25,6 +25,12 @@ namespace FocusedMetaActions.Train.PreconditionAdditionRefinements
             SearchString = $"--search \"state_explorer(optimal_engine=symbolic(plan_reuse_minimal_task_upper_bound=false, plan_reuse_upper_bound=true), upper_bound_pruning=false, max_precondition_size={MaxPreconditionCombinations}, max_parameters={MaxParameters}, exploration_time_limit={TimeLimit})\"";
         }
 
+        /// <summary>
+        /// A rather complex sequence of arguments we have to give to the planner.
+        /// This is because there is no simple way (internally) in the Stackelberg Planner to get lifted PDDL information that we need for precondition generation.
+        /// </summary>
+        /// <param name="from"></param>
+        /// <exception cref="Exception"></exception>
         public void UpdateSearchString(PDDLDecl from)
         {
             if (from.Problem.Objects == null)
@@ -131,18 +137,22 @@ namespace FocusedMetaActions.Train.PreconditionAdditionRefinements
             var exitCode = ExecutePlanner(ExternalPaths.StackelbergPath, domainFile, problemFile, workingDir, timeLimitS);
             if (TimedOut)
             {
+                // If it timed out, but there still exists a out file, do still try and read some of that file.
                 if (File.Exists(Path.Combine(workingDir, StateInfoFile)))
                     return StateExploreResult.TimedOutButSuccess;
                 else
                     return StateExploreResult.TimedOut;
             }
 
+            // If the output state exploration file exists, it means the process succeeded
             if (File.Exists(Path.Combine(workingDir, StateInfoFile)))
                 return StateExploreResult.Success;
             else
             {
+                // If this string appears in the Stackelberg Planner, it usually means the translator saw the problem as unsolvable
                 if (_log.Contains("There should be no goal defined for a non-attack var! Error in PDDL!"))
                     return StateExploreResult.PDDLError;
+                // Mystical error that may show itself sometimes. We dont really know why, but we concluded it is some sort of translator issue like the one above.
                 else if (_log.Contains("Mutex type changed to mutex_and because the domain has conditional effects"))
                     return StateExploreResult.InvariantError;
                 else if (exitCode == 0)
