@@ -27,7 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{5A87
 		Testing\testing.sh = Testing\testing.sh
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "P10", "Training\P10\P10.csproj", "{A283D523-F2BE-41B6-B16A-D1F0DF658713}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FocusedMetaActions.Train", "Training\FocusedMetaActions.Train\FocusedMetaActions.Train.csproj", "{A283D523-F2BE-41B6-B16A-D1F0DF658713}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
