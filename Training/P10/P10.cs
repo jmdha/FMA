@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using CommandLine.Text;
 using CSVToolsSharp;
 using MetaActionGenerators;
 using P10.MacroExtractor;
@@ -13,11 +14,11 @@ using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Overloads;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers.PDDL;
-using Tools;
+using P10.Helpers;
 
 namespace P10
 {
-    public class P10 : BaseCLI
+    public class P10
     {
         public static string ID = "";
 
@@ -249,6 +250,25 @@ namespace P10
 
             if (refinedCandidates.Count == 0)
                 _returnCode = 1;
+        }
+
+        public static void HandleParseError(IEnumerable<Error> errs)
+        {
+            var sentenceBuilder = SentenceBuilder.Create();
+            foreach (var error in errs)
+                if (error is not HelpRequestedError)
+                    ConsoleHelper.WriteLineColor(sentenceBuilder.FormatError(error), ConsoleColor.Red);
+        }
+
+        public static void DisplayHelp<T>(ParserResult<T> result, IEnumerable<Error> errs)
+        {
+            var helpText = HelpText.AutoBuild(result, h =>
+            {
+                h.AddEnumValuesToHelpText = true;
+                return h;
+            }, e => e, verbsIndex: true);
+            Console.WriteLine(helpText);
+            HandleParseError(errs);
         }
     }
 }

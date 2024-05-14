@@ -1,4 +1,5 @@
-﻿using PDDLSharp.CodeGenerators.FastDownward.Plans;
+﻿using P10.Helpers;
+using PDDLSharp.CodeGenerators.FastDownward.Plans;
 using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.FastDownward.Plans;
@@ -6,7 +7,6 @@ using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Parsers.FastDownward.Plans;
 using PDDLSharp.Toolkits;
-using Tools;
 
 namespace P10.MacroExtractor
 {

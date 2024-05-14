@@ -15,10 +15,6 @@
     <PackageReference Include="Stackelberg.MetaAction.Compiler" Version="1.0.8" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Tools\Tools.csproj" />
-  </ItemGroup>
-
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="wsl cd /home/kris/P10/Training/P10/bin; cp -r /mnt/d/kris7/OneDrive/Programming/University/P10/Training/P10/bin/Debug .; echo Files Moved" />

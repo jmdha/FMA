@@ -1,7 +1,7 @@
 ﻿using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
 using System.Text.RegularExpressions;
-using Tools;
+using P10.Helpers;
 
 namespace P10.UsefulnessCheckers
 {

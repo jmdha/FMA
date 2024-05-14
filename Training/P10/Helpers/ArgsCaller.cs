@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text;
 
-namespace Tools
+namespace P10.Helpers
 {
     public class ArgsCaller : IDisposable
     {

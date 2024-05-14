@@ -1,4 +1,4 @@
-﻿namespace Tools
+﻿namespace P10.Helpers
 {
     public static class PathHelper
     {

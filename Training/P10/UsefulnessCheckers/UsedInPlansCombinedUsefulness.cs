@@ -3,7 +3,7 @@ using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers.FastDownward.Plans;
-using Tools;
+using P10.Helpers;
 
 namespace P10.UsefulnessCheckers
 {

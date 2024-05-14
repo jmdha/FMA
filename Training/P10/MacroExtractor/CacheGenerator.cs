@@ -6,7 +6,6 @@ using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
 using System.Diagnostics;
 using System.Text;
-using Tools;
 
 namespace P10.MacroExtractor
 {
@@ -24,7 +23,7 @@ namespace P10.MacroExtractor
         public void GenerateCache(DomainDecl domain, List<ProblemDecl> problems, ActionDecl metaAction, string tempFolder, string outFolder, int timeLimitS)
         {
             var tmpFolder = Path.Combine(tempFolder, _cacheFolder);
-            Tools.PathHelper.RecratePath(tmpFolder);
+            PathHelper.RecratePath(tmpFolder);
 
             var listener = new ErrorListener();
             var codeGenerator = new PDDLCodeGenerator(listener);
