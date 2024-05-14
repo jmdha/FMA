@@ -27,12 +27,12 @@ namespace FocusedMetaActions.Train.PreconditionAdditionRefinements
         private readonly int _maxAddedParameters;
         private readonly string _searchWorkingDir;
 
-        public PreconditionAdditionRefinement(int validationTimeLimitS, int explorationTimeLimitS, int refinementTimeLimitS, ActionDecl metaAction, string tempDir, int maxPreconditionCombinations, int maxAddedParameters, PDDLDecl pddlDecl)
+        public PreconditionAdditionRefinement(int validationTimeLimitS, int explorationTimeLimitS, int refinementTimeLimitS, ActionDecl metaAction, string tempDir, int maxPreconditionCombinations, int maxAddedParameters)
         {
             Heuristic = new hSum(new List<IHeuristic>() {
                 new hMustBeApplicable(),
                 //new hMustBeValid(),
-                new hWeighted(new hMostStatics(pddlDecl), 100000),
+                //new hWeighted(new hMostStatics(pddlDecl), 100000),
                 //new hWeighted(new hMostValid(), 10000),
                 new hWeighted(new hFewestParameters(), 1000),
                 new hWeighted(new hFewestPre(), 100),

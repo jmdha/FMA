@@ -7,6 +7,7 @@ using FocusedMetaActions.Train.PreconditionAdditionRefinements;
 using FocusedMetaActions.Train.UsefulnessCheckers;
 using FocusedMetaActions.Train.Verifiers;
 using MetaActionGenerators;
+using PDDLSharp.CodeGenerators;
 using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.Contextualisers.PDDL;
 using PDDLSharp.ErrorListeners;
@@ -15,6 +16,7 @@ using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Overloads;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers.PDDL;
+using System.Linq;
 
 namespace FocusedMetaActions.Train
 {
@@ -47,7 +49,6 @@ namespace FocusedMetaActions.Train
             ConsoleHelper.WriteLineColor($"Parsing PDDL Files", ConsoleColor.Blue);
             var listener = new ErrorListener();
             var parser = new PDDLParser(listener);
-            var contexturalizer = new PDDLContextualiser(listener);
             var domain = parser.ParseAs<DomainDecl>(new FileInfo(opts.DomainPath));
             var problems = new List<ProblemDecl>();
             var usefulnessProblems = new List<ProblemDecl>();
@@ -68,58 +69,39 @@ namespace FocusedMetaActions.Train
             if ((opts.PreUsefulnessStrategy != Options.UsefulnessStrategies.None || opts.PostUsefulnessStrategy != Options.UsefulnessStrategies.None) && usefulnessProblems.Count == 0)
                 throw new Exception("No problems to perform usefulness checks on!");
 
-            var baseDecl = new PDDLDecl(domain, problems[problems.Count - 1]);
-            contexturalizer.Contexturalise(baseDecl);
             generalResult.Domain = domain.Name!.Name;
             generalResult.Problems = problems.Count;
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
-            ConsoleHelper.WriteLineColor($"Generating Initial Candidates", ConsoleColor.Blue);
-            var candidates = new List<ActionDecl>();
-            var codeGenerator = new PDDLCodeGenerator(listener);
-            codeGenerator.Readable = true;
-            var generatorResults = new List<MetaActionGenerationResult>();
-            ConsoleHelper.WriteLineColor($"\tGenerating with: {Enum.GetName(opts.GeneratorOption)}", ConsoleColor.Magenta);
-
-            // Build Meta Action Generator args
-            var args = new Dictionary<string, string>();
-            foreach (var keyvalue in opts.Args)
-            {
-                var key = keyvalue.Substring(0, keyvalue.IndexOf(';')).Trim();
-                var value = keyvalue.Substring(keyvalue.IndexOf(';') + 1).Trim();
-                args.Add(key, value);
-            }
-
-            var generator = MetaGeneratorBuilder.GetGenerator(opts.GeneratorOption, domain, problems, args);
-            var newCandidates = generator.GenerateCandidates();
-            candidates.AddRange(newCandidates);
-            generatorResults.Add(new MetaActionGenerationResult()
+            var candidates = GenerateInitialMetaActions(
+                opts.GeneratorOption,
+                domain,
+                problems,
+                opts.Args.ToList());
+            generalResult.TotalCandidates = candidates.Count;
+            var generatorResult = new MetaActionGenerationResult()
             {
                 ID = ID,
                 Domain = domain.Name!.Name,
-                TotalCandidates = newCandidates.Count,
+                TotalCandidates = candidates.Count,
                 Generator = $"{Enum.GetName(opts.GeneratorOption)}"
-            });
-            File.WriteAllText(Path.Combine(opts.OutputPath, "candidates.csv"), CSVSerialiser.Serialise(generatorResults, new CSVSerialiserOptions() { PrettyOutput = true }));
-            foreach (var candidiate in candidates)
-                codeGenerator.Generate(candidiate, Path.Combine(_candidateOutput, $"{candidiate.Name}.pddl"));
-            ConsoleHelper.WriteLineColor($"\tTotal candidates: {candidates.Count}", ConsoleColor.Magenta);
-            generalResult.TotalCandidates = candidates.Count;
-            ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
+            };
 
             if (opts.PreUsefulnessStrategy != Options.UsefulnessStrategies.None)
             {
-                ConsoleHelper.WriteLineColor($"Pruning for useful meta action candidates", ConsoleColor.Blue);
-                var checker = UsefulnessCheckerBuilder.GetUsefulnessChecker(opts.PreUsefulnessStrategy, opts.TempPath, opts.UsefulnessTimeLimitS);
-                var preCountt = candidates.Count;
-                candidates = checker.GetUsefulCandidates(domain, usefulnessProblems, candidates);
-                ConsoleHelper.WriteLineColor($"\tRemoved {preCountt - candidates.Count} candidates", ConsoleColor.Magenta);
-                ConsoleHelper.WriteLineColor($"\tTotal candidates: {candidates.Count}", ConsoleColor.Magenta);
-                generalResult.PreNotUsefulRemoved = preCountt - candidates.Count;
-                ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
+                var postPruning = UsefulnessPruning(
+                    opts.TempPath,
+                    opts.PreUsefulnessStrategy,
+                    domain,
+                    usefulnessProblems,
+                    candidates,
+                    opts.UsefulnessTimeLimitS);
+                generalResult.PreNotUsefulRemoved = candidates.Count - postPruning.Count;
+                candidates = postPruning;
             }
 
             ConsoleHelper.WriteLineColor($"Begining refinement process", ConsoleColor.Blue);
+            var codeGenerator = new PDDLCodeGenerator(listener);
             int count = 1;
             var refinedCandidates = new List<ActionDecl>();
             var refinementResults = new List<RefinementResult>();
@@ -129,7 +111,7 @@ namespace FocusedMetaActions.Train
                 ConsoleHelper.WriteLineColor($"", ConsoleColor.Magenta);
                 ConsoleHelper.WriteLineColor($"{codeGenerator.Generate(candidate)}", ConsoleColor.Cyan);
                 ConsoleHelper.WriteLineColor($"", ConsoleColor.Magenta);
-                var refiner = new PreconditionAdditionRefinement(opts.ValidationTimeLimitS, opts.ExplorationTimeLimitS, opts.RefinementTimeLimitS, candidate, opts.TempPath, opts.MaxPreconditionCombinations, opts.MaxAddedParameters, baseDecl);
+                var refiner = new PreconditionAdditionRefinement(opts.ValidationTimeLimitS, opts.ExplorationTimeLimitS, opts.RefinementTimeLimitS, candidate, opts.TempPath, opts.MaxPreconditionCombinations, opts.MaxAddedParameters);
                 var refinedResult = refiner.Refine(domain, problems);
                 refinementResults.Add(refinedResult);
                 if (refinedResult.RefinedMetaActions.Count > 0)
@@ -141,75 +123,52 @@ namespace FocusedMetaActions.Train
                     ConsoleHelper.WriteLineColor($"\tCandidate could not be refined!", ConsoleColor.Red);
                 ConsoleHelper.WriteLineColor($"", ConsoleColor.Magenta);
             }
-            File.WriteAllText(Path.Combine(opts.OutputPath, "refinement.csv"), CSVSerialiser.Serialise(refinementResults));
             generalResult.TotalRefinedCandidates = refinedCandidates.Count;
             ConsoleHelper.WriteLineColor($"\tTotal refined candidates: {refinedCandidates.Count}", ConsoleColor.Magenta);
-            // Make sure names are unique
-            while (refinedCandidates.DistinctBy(x => x.Name).Count() != refinedCandidates.Count)
-            {
-                foreach (var action in refinedCandidates)
-                {
-                    var others = refinedCandidates.Where(x => x.Name == action.Name);
-                    int counter = 0;
-                    foreach (var other in others)
-                        if (action != other)
-                            other.Name = $"{other.Name}_{counter++}";
-                }
-            }
+            refinedCandidates = EnsureUniqueNames(refinedCandidates);
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
 
-            ConsoleHelper.WriteLineColor($"Pruning for duplicate meta action refined candidates", ConsoleColor.Blue);
             var preCount = refinedCandidates.Count;
-            refinedCandidates = refinedCandidates.Distinct(baseDecl.Domain.Actions);
-            ConsoleHelper.WriteLineColor($"\tRemoved {preCount - refinedCandidates.Count} refined candidates", ConsoleColor.Magenta);
-            ConsoleHelper.WriteLineColor($"\tTotal refined candidates: {refinedCandidates.Count}", ConsoleColor.Magenta);
+            refinedCandidates = RemoveDuplicates(
+                domain,
+                refinedCandidates);
             generalResult.PostDuplicatesRemoved = preCount - refinedCandidates.Count;
-            ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
+
             if (opts.PostUsefulnessStrategy != Options.UsefulnessStrategies.None)
             {
-                ConsoleHelper.WriteLineColor($"Pruning for useful refined meta action", ConsoleColor.Blue);
-                var checker = UsefulnessCheckerBuilder.GetUsefulnessChecker(opts.PostUsefulnessStrategy, opts.TempPath, opts.UsefulnessTimeLimitS);
-                var preCountt = refinedCandidates.Count;
-                refinedCandidates = checker.GetUsefulCandidates(domain, usefulnessProblems, refinedCandidates);
-                ConsoleHelper.WriteLineColor($"\tRemoved {preCountt - refinedCandidates.Count} refined candidates", ConsoleColor.Magenta);
-                ConsoleHelper.WriteLineColor($"\tTotal meta actions: {refinedCandidates.Count}", ConsoleColor.Magenta);
-                generalResult.PostNotUsefulRemoved = preCountt - refinedCandidates.Count;
-                ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
+                var postPruning = UsefulnessPruning(
+                    opts.TempPath,
+                    opts.PostUsefulnessStrategy,
+                    domain,
+                    usefulnessProblems,
+                    refinedCandidates,
+                    opts.UsefulnessTimeLimitS);
+                generalResult.PostNotUsefulRemoved = refinedCandidates.Count - postPruning.Count;
+                refinedCandidates = postPruning;
             }
 
-            ConsoleHelper.WriteLineColor($"Outputting all refined candidates", ConsoleColor.Blue);
-            foreach (var refinedCandidate in refinedCandidates)
-                codeGenerator.Generate(refinedCandidate, Path.Combine(opts.OutputPath, $"{refinedCandidate.Name}.pddl"));
-            ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
+            OutputRefinedCandidates(
+                opts.OutputPath,
+                refinedCandidates);
 
-            ConsoleHelper.WriteLineColor($"Outputting enhanced domain", ConsoleColor.Blue);
-            var newDomain = domain.Copy();
-            newDomain.Actions.AddRange(refinedCandidates);
-            codeGenerator.Generate(newDomain, Path.Combine(opts.OutputPath, "enhancedDomain.pddl"));
-            ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
+            OutputEnhancedDomain(
+                opts.OutputPath,
+                domain,
+                refinedCandidates);
 
-            ConsoleHelper.WriteLineColor($"Generating macro cache for valid meta actions", ConsoleColor.Blue);
-            var cacheGenerator = new CacheGenerator();
-            PathHelper.RecratePath(Path.Combine(opts.OutputPath, "cache"));
-            count = 1;
-            foreach (var metaAction in refinedCandidates)
-            {
-                ConsoleHelper.WriteLineColor($"\tGenerating cache for candidate '{metaAction.Name}' [{count++} out of {refinedCandidates.Count}]", ConsoleColor.Magenta);
-                cacheGenerator.GenerateCache(domain, problems, metaAction, opts.TempPath, Path.Combine(opts.OutputPath, "cache"), opts.CacheGenerationTimeLimitS);
-            }
-            ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
+            GenerateMacroCache(
+                Path.Combine(opts.OutputPath, "cache"),
+                opts.TempPath,
+                refinedCandidates,
+                domain,
+                problems,
+                opts.CacheGenerationTimeLimitS);
 
+            File.WriteAllText(Path.Combine(opts.OutputPath, "candidates.csv"), CSVSerialiser.Serialise(new List<MetaActionGenerationResult>() { generatorResult }));
             File.WriteAllText(Path.Combine(opts.OutputPath, "general.csv"), CSVSerialiser.Serialise(new List<GeneralResult>() { generalResult }));
+            File.WriteAllText(Path.Combine(opts.OutputPath, "refinement.csv"), CSVSerialiser.Serialise(refinementResults));
 
-            ConsoleHelper.WriteLineColor($"Final Report:", ConsoleColor.Blue);
-            ConsoleHelper.WriteLineColor($"General Results:", ConsoleColor.Blue);
-            ConsoleHelper.WriteLineColor($"{generalResult}", ConsoleColor.DarkGreen);
-            ConsoleHelper.WriteLineColor($"Generators Results:", ConsoleColor.Blue);
-            foreach (var genResult in generatorResults)
-                ConsoleHelper.WriteLineColor($"{genResult}", ConsoleColor.DarkGreen);
-            ConsoleHelper.WriteLineColor($"Refinement Results:", ConsoleColor.Blue);
-            foreach (var refResult in refinementResults)
-                ConsoleHelper.WriteLineColor($"{refResult}", ConsoleColor.DarkGreen);
+            PrintFinalReport(generalResult, generatorResult, refinementResults);
 
             if (refinedCandidates.Count == 0)
                 _returnCode = 1;
@@ -262,6 +221,175 @@ namespace FocusedMetaActions.Train
             PathHelper.RecratePath(_candidateOutput);
             BaseVerifier.ShowSTDOut = opts.StackelbergDebug;
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
+        }
+
+        /// <summary>
+        /// Generate initial meta action candidates
+        /// </summary>
+        /// <param name="generatorOption"></param>
+        /// <param name="domain"></param>
+        /// <param name="problems"></param>
+        /// <param name="generatorArgs"></param>
+        /// <returns></returns>
+        private static List<ActionDecl> GenerateInitialMetaActions(MetaGeneratorBuilder.GeneratorOptions generatorOption, DomainDecl domain, List<ProblemDecl> problems, List<string> generatorArgs)
+        {
+            ConsoleHelper.WriteLineColor($"Generating Initial Candidates", ConsoleColor.Blue);
+            var candidates = new List<ActionDecl>();
+            var listener = new ErrorListener();
+            var codeGenerator = new PDDLCodeGenerator(listener);
+            codeGenerator.Readable = true;
+            ConsoleHelper.WriteLineColor($"\tGenerating with: {Enum.GetName(generatorOption)}", ConsoleColor.Magenta);
+
+            // Build Meta Action Generator args
+            var args = new Dictionary<string, string>();
+            foreach (var keyvalue in generatorArgs)
+            {
+                var key = keyvalue.Substring(0, keyvalue.IndexOf(';')).Trim();
+                var value = keyvalue.Substring(keyvalue.IndexOf(';') + 1).Trim();
+                args.Add(key, value);
+            }
+
+            var generator = MetaGeneratorBuilder.GetGenerator(generatorOption, domain, problems, args);
+            var newCandidates = generator.GenerateCandidates();
+            candidates.AddRange(newCandidates);
+            foreach (var candidiate in candidates)
+                codeGenerator.Generate(candidiate, Path.Combine(_candidateOutput, $"{candidiate.Name}.pddl"));
+            ConsoleHelper.WriteLineColor($"\tTotal candidates: {candidates.Count}", ConsoleColor.Magenta);
+            ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
+            return candidates;
+        }
+
+        /// <summary>
+        /// Final print of all results
+        /// </summary>
+        /// <param name="generalResult"></param>
+        /// <param name="generatorResults"></param>
+        /// <param name="refinementResults"></param>
+        private static void PrintFinalReport(GeneralResult generalResult, MetaActionGenerationResult generatorResult, List<RefinementResult> refinementResults)
+        {
+            ConsoleHelper.WriteLineColor($"Final Report:", ConsoleColor.Blue);
+            ConsoleHelper.WriteLineColor($"General Results:", ConsoleColor.Blue);
+            ConsoleHelper.WriteLineColor($"{generalResult}", ConsoleColor.DarkGreen);
+            ConsoleHelper.WriteLineColor($"Generator Result:", ConsoleColor.Blue);
+            ConsoleHelper.WriteLineColor($"{generatorResult}", ConsoleColor.DarkGreen);
+            ConsoleHelper.WriteLineColor($"Refinement Results:", ConsoleColor.Blue);
+            foreach (var refResult in refinementResults)
+                ConsoleHelper.WriteLineColor($"{refResult}", ConsoleColor.DarkGreen);
+        }
+
+        /// <summary>
+        /// Generate macro cache for valid meta actions for the reconstruction process.
+        /// </summary>
+        /// <param name="targetPath"></param>
+        /// <param name="tempPath"></param>
+        /// <param name="refinedCandidates"></param>
+        /// <param name="domain"></param>
+        /// <param name="problems"></param>
+        /// <param name="timeLimit"></param>
+        private static void GenerateMacroCache(string targetPath, string tempPath, List<ActionDecl> refinedCandidates, DomainDecl domain, List<ProblemDecl> problems, int timeLimit)
+        {
+            ConsoleHelper.WriteLineColor($"Generating macro cache for valid meta actions", ConsoleColor.Blue);
+            var cacheGenerator = new CacheGenerator();
+            PathHelper.RecratePath(targetPath);
+            var count = 1;
+            foreach (var metaAction in refinedCandidates)
+            {
+                ConsoleHelper.WriteLineColor($"\tGenerating cache for candidate '{metaAction.Name}' [{count++} out of {refinedCandidates.Count}]", ConsoleColor.Magenta);
+                cacheGenerator.GenerateCache(domain, problems, metaAction, tempPath, targetPath, timeLimit);
+            }
+            ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
+        }
+
+        /// <summary>
+        /// Outputs the refined candidates
+        /// </summary>
+        /// <param name="targetPath"></param>
+        /// <param name="refinedCandidates"></param>
+        private static void OutputRefinedCandidates(string targetPath, List<ActionDecl> refinedCandidates)
+        {
+            ConsoleHelper.WriteLineColor($"Outputting all refined candidates", ConsoleColor.Blue);
+            var listener = new ErrorListener();
+            var codeGenerator = new PDDLCodeGenerator(listener);
+            foreach (var refinedCandidate in refinedCandidates)
+                codeGenerator.Generate(refinedCandidate, Path.Combine(targetPath, $"{refinedCandidate.Name}.pddl"));
+            ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
+        }
+
+        /// <summary>
+        /// Output an enhanced version of the original domain, with the valid meta actions in it
+        /// </summary>
+        /// <param name="targetPath"></param>
+        /// <param name="domain"></param>
+        /// <param name="refinedCandidates"></param>
+        private static void OutputEnhancedDomain(string targetPath, DomainDecl domain, List<ActionDecl> refinedCandidates)
+        {
+            ConsoleHelper.WriteLineColor($"Outputting enhanced domain", ConsoleColor.Blue);
+            var newDomain = domain.Copy();
+            newDomain.Actions.AddRange(refinedCandidates);
+            var listener = new ErrorListener();
+            var codeGenerator = new PDDLCodeGenerator(listener);
+            codeGenerator.Generate(newDomain, Path.Combine(targetPath, "enhancedDomain.pddl"));
+            ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
+        }
+
+        /// <summary>
+        /// Perform usefulness pruning on a set of meta action candidates.
+        /// </summary>
+        /// <param name="tempPath"></param>
+        /// <param name="strategy"></param>
+        /// <param name="domain"></param>
+        /// <param name="problems"></param>
+        /// <param name="refinedCandidates"></param>
+        /// <param name="timeLimit"></param>
+        /// <returns></returns>
+        private static List<ActionDecl> UsefulnessPruning(string tempPath, Options.UsefulnessStrategies strategy, DomainDecl domain, List<ProblemDecl> problems, List<ActionDecl> refinedCandidates, int timeLimit)
+        {
+            ConsoleHelper.WriteLineColor($"Pruning for useful meta actions", ConsoleColor.Blue);
+            var checker = UsefulnessCheckerBuilder.GetUsefulnessChecker(strategy, tempPath, timeLimit);
+            var preCount = refinedCandidates.Count;
+            var newCandidates = checker.GetUsefulCandidates(domain, problems, refinedCandidates);
+            ConsoleHelper.WriteLineColor($"\tRemoved {preCount - newCandidates.Count} refined candidates", ConsoleColor.Magenta);
+            ConsoleHelper.WriteLineColor($"\tTotal meta actions: {newCandidates.Count}", ConsoleColor.Magenta);
+            ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
+            return newCandidates;
+        }
+
+        /// <summary>
+        /// Remove equivalent meta actions
+        /// </summary>
+        /// <param name="domain"></param>
+        /// <param name="candidates"></param>
+        /// <returns></returns>
+        private static List<ActionDecl> RemoveDuplicates(DomainDecl domain, List<ActionDecl> candidates)
+        {
+            ConsoleHelper.WriteLineColor($"Pruning for duplicate meta action refined candidates", ConsoleColor.Blue);
+            var preCount = candidates.Count;
+            var newCandidates = candidates.Distinct(domain.Actions);
+            ConsoleHelper.WriteLineColor($"\tRemoved {preCount - newCandidates.Count} refined candidates", ConsoleColor.Magenta);
+            ConsoleHelper.WriteLineColor($"\tTotal refined candidates: {newCandidates.Count}", ConsoleColor.Magenta);
+            ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
+            return newCandidates;
+        }
+
+        /// <summary>
+        /// Ensures that all names of the candidates are unique (so we dont overwrite output files)
+        /// </summary>
+        /// <param name="candidates"></param>
+        /// <returns></returns>
+        private static List<ActionDecl> EnsureUniqueNames(List<ActionDecl> candidates)
+        {
+            while (candidates.DistinctBy(x => x.Name).Count() != candidates.Count)
+            {
+                foreach (var action in candidates)
+                {
+                    var others = candidates.Where(x => x.Name == action.Name);
+                    int counter = 0;
+                    foreach (var other in others)
+                        if (action != other)
+                            other.Name = $"{other.Name}_{counter++}";
+                }
+            }
+            return candidates;
         }
 
         private static void HandleParseError(IEnumerable<Error> errs)

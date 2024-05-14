@@ -42,8 +42,7 @@ echo
 
 echo == Installing Benchmarks ==
 echo 
-git clone https://github.com/ipc2023-learning/benchmarks learning-benchmarks
-git clone https://github.com/kris701/P10Data p10-benchmarks
+git clone https://github.com/kris701/FocusedMetaActionsData focused-meta-actions-benchmarks
 echo 
 echo == Done! ==
 echo 
@@ -57,14 +56,10 @@ echo
 echo == Done! ==
 echo 
 
-echo == Installing CSMs ==
+echo == Installing Labyr ==
 echo 
-git clone https://github.com/lchrpa/CSMs
-cd CSMs
-cd src
-make
-cd ..
-cd ..
+cargo install labyr
 echo 
 echo == Done! ==
 echo 
+
