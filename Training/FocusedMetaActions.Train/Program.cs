@@ -109,6 +109,7 @@ namespace FocusedMetaActions.Train
             {
                 if (opts.SkipRefinement)
                 {
+                    ConsoleHelper.WriteLineColor($"\tRefinement skipped...", ConsoleColor.Yellow);
                     refinedCandidates.AddRange(candidates);
                     break;
                 }
@@ -162,13 +163,14 @@ namespace FocusedMetaActions.Train
                 domain,
                 refinedCandidates);
 
-            GenerateMacroCache(
-                Path.Combine(opts.OutputPath, "cache"),
-                opts.TempPath,
-                refinedCandidates,
-                domain,
-                problems,
-                opts.CacheGenerationTimeLimitS);
+            if (!opts.SkipMacroCache)
+                GenerateMacroCache(
+                    Path.Combine(opts.OutputPath, "cache"),
+                    opts.TempPath,
+                    refinedCandidates,
+                    domain,
+                    problems,
+                    opts.CacheGenerationTimeLimitS);
 
             File.WriteAllText(Path.Combine(opts.OutputPath, "candidates.csv"), CSVSerialiser.Serialise(new List<MetaActionGenerationResult>() { generatorResult }));
             File.WriteAllText(Path.Combine(opts.OutputPath, "general.csv"), CSVSerialiser.Serialise(new List<GeneralResult>() { generalResult }));

@@ -60,5 +60,7 @@ namespace FocusedMetaActions.Train
         public int MaxAddedParameters { get; set; } = 0;
         [Option("skip-refinement", Required = false, HelpText = "Optionally skip refinement step and assume the initial meta actions are correct (useful for debugging)", Default = false)]
         public bool SkipRefinement { get; set; } = false;
+        [Option("skip-macro-cache", Required = false, HelpText = "Optionally skip macro cache generation (useful for debugging)", Default = false)]
+        public bool SkipMacroCache { get; set; } = false;
     }
 }
