@@ -16,97 +16,97 @@ patterns = [
 
 [[tasks]]
 name = "barman"
-domain = "Dependencies/focused-meta-actions/Benchmarks/barman/domain.pddl"
-learn = ["Dependencies/focused-meta-actions/Benchmarks/barman/training/p*.pddl", "Dependencies/focused-meta-actions/Benchmarks/barman/usefulness/p*.pddl"]
-solve = ["Dependencies/focused-meta-actions/Benchmarks/barman/testing/*.pddl"]
+domain = "Dependencies/focused-meta-actions-benchmarks/Benchmarks/barman/domain.pddl"
+learn = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/barman/training/p*.pddl", "Dependencies/focused-meta-actions-benchmarks/Benchmarks/barman/usefulness/p*.pddl"]
+solve = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/barman/testing/*.pddl"]
 
 [[tasks]]
 name = "blocksworld"
-domain = "Dependencies/focused-meta-actions/Benchmarks/blocksworld/domain.pddl"
-learn = ["Dependencies/focused-meta-actions/Benchmarks/blocksworld/training/p*.pddl", "Dependencies/focused-meta-actions/Benchmarks/blocksworld/usefulness/p*.pddl"]
-solve = ["Dependencies/focused-meta-actions/Benchmarks/blocksworld/testing/*.pddl"]
+domain = "Dependencies/focused-meta-actions-benchmarks/Benchmarks/blocksworld/domain.pddl"
+learn = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/blocksworld/training/p*.pddl", "Dependencies/focused-meta-actions-benchmarks/Benchmarks/blocksworld/usefulness/p*.pddl"]
+solve = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/blocksworld/testing/*.pddl"]
 
 [[tasks]]
 name = "childsnack"
-domain = "Dependencies/focused-meta-actions/Benchmarks/childsnack/domain.pddl"
-learn = ["Dependencies/focused-meta-actions/Benchmarks/childsnack/training/p*.pddl", "Dependencies/focused-meta-actions/Benchmarks/childsnack/usefulness/p*.pddl"]
-solve = ["Dependencies/focused-meta-actions/Benchmarks/childsnack/testing/*.pddl"]
+domain = "Dependencies/focused-meta-actions-benchmarks/Benchmarks/childsnack/domain.pddl"
+learn = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/childsnack/training/p*.pddl", "Dependencies/focused-meta-actions-benchmarks/Benchmarks/childsnack/usefulness/p*.pddl"]
+solve = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/childsnack/testing/*.pddl"]
 
 [[tasks]]
 name = "depots"
-domain = "Dependencies/focused-meta-actions/Benchmarks/depots/domain.pddl"
-learn = ["Dependencies/focused-meta-actions/Benchmarks/depots/training/p*.pddl", "Dependencies/focused-meta-actions/Benchmarks/depots/usefulness/p*.pddl"]
-solve = ["Dependencies/focused-meta-actions/Benchmarks/depots/testing/*.pddl"]
+domain = "Dependencies/focused-meta-actions-benchmarks/Benchmarks/depots/domain.pddl"
+learn = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/depots/training/p*.pddl", "Dependencies/focused-meta-actions-benchmarks/Benchmarks/depots/usefulness/p*.pddl"]
+solve = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/depots/testing/*.pddl"]
 
 [[tasks]]
 name = "driverlog"
-domain = "Dependencies/focused-meta-actions/Benchmarks/driverlog/domain.pddl"
-learn = ["Dependencies/focused-meta-actions/Benchmarks/driverlog/training/p*.pddl", "Dependencies/focused-meta-actions/Benchmarks/driverlog/usefulness/p*.pddl"]
-solve = ["Dependencies/focused-meta-actions/Benchmarks/driverlog/testing/*.pddl"]
+domain = "Dependencies/focused-meta-actions-benchmarks/Benchmarks/driverlog/domain.pddl"
+learn = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/driverlog/training/p*.pddl", "Dependencies/focused-meta-actions-benchmarks/Benchmarks/driverlog/usefulness/p*.pddl"]
+solve = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/driverlog/testing/*.pddl"]
 
 [[tasks]]
 name = "floortile"
-domain = "Dependencies/focused-meta-actions/Benchmarks/floortile/domain.pddl"
-learn = ["Dependencies/focused-meta-actions/Benchmarks/floortile/training/p*.pddl", "Dependencies/focused-meta-actions/Benchmarks/floortile/usefulness/p*.pddl"]
-solve = ["Dependencies/focused-meta-actions/Benchmarks/floortile/testing/*.pddl"]
+domain = "Dependencies/focused-meta-actions-benchmarks/Benchmarks/floortile/domain.pddl"
+learn = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/floortile/training/p*.pddl", "Dependencies/focused-meta-actions-benchmarks/Benchmarks/floortile/usefulness/p*.pddl"]
+solve = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/floortile/testing/*.pddl"]
 
 [[tasks]]
 name = "grid"
-domain = "Dependencies/focused-meta-actions/Benchmarks/grid/domain.pddl"
-learn = ["Dependencies/focused-meta-actions/Benchmarks/grid/training/p*.pddl", "Dependencies/focused-meta-actions/Benchmarks/grid/usefulness/p*.pddl"]
-solve = ["Dependencies/focused-meta-actions/Benchmarks/grid/testing/*.pddl"]
+domain = "Dependencies/focused-meta-actions-benchmarks/Benchmarks/grid/domain.pddl"
+learn = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/grid/training/p*.pddl", "Dependencies/focused-meta-actions-benchmarks/Benchmarks/grid/usefulness/p*.pddl"]
+solve = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/grid/testing/*.pddl"]
 
 [[tasks]]
 name = "gripper"
-domain = "Dependencies/focused-meta-actions/Benchmarks/gripper/domain.pddl"
-learn = ["Dependencies/focused-meta-actions/Benchmarks/gripper/training/p*.pddl", "Dependencies/focused-meta-actions/Benchmarks/gripper/usefulness/p*.pddl"]
-solve = ["Dependencies/focused-meta-actions/Benchmarks/gripper/testing/*.pddl"]
+domain = "Dependencies/focused-meta-actions-benchmarks/Benchmarks/gripper/domain.pddl"
+learn = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/gripper/training/p*.pddl", "Dependencies/focused-meta-actions-benchmarks/Benchmarks/gripper/usefulness/p*.pddl"]
+solve = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/gripper/testing/*.pddl"]
 
 [[tasks]]
 name = "hiking"
-domain = "Dependencies/focused-meta-actions/Benchmarks/hiking/domain.pddl"
-learn = ["Dependencies/focused-meta-actions/Benchmarks/hiking/training/p*.pddl", "Dependencies/focused-meta-actions/Benchmarks/hiking/usefulness/p*.pddl"]
-solve = ["Dependencies/focused-meta-actions/Benchmarks/hiking/testing/*.pddl"]
+domain = "Dependencies/focused-meta-actions-benchmarks/Benchmarks/hiking/domain.pddl"
+learn = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/hiking/training/p*.pddl", "Dependencies/focused-meta-actions-benchmarks/Benchmarks/hiking/usefulness/p*.pddl"]
+solve = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/hiking/testing/*.pddl"]
 
 [[tasks]]
 name = "logistics"
-domain = "Dependencies/focused-meta-actions/Benchmarks/logistics/domain.pddl"
-learn = ["Dependencies/focused-meta-actions/Benchmarks/logistics/training/p*.pddl", "Dependencies/focused-meta-actions/Benchmarks/logistics/usefulness/p*.pddl"]
-solve = ["Dependencies/focused-meta-actions/Benchmarks/logistics/testing/*.pddl"]
+domain = "Dependencies/focused-meta-actions-benchmarks/Benchmarks/logistics/domain.pddl"
+learn = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/logistics/training/p*.pddl", "Dependencies/focused-meta-actions-benchmarks/Benchmarks/logistics/usefulness/p*.pddl"]
+solve = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/logistics/testing/*.pddl"]
 
 [[tasks]]
 name = "miconic"
-domain = "Dependencies/focused-meta-actions/Benchmarks/miconic/domain.pddl"
-learn = ["Dependencies/focused-meta-actions/Benchmarks/miconic/training/p*.pddl", "Dependencies/focused-meta-actions/Benchmarks/miconic/usefulness/p*.pddl"]
-solve = ["Dependencies/focused-meta-actions/Benchmarks/miconic/testing/*.pddl"]
+domain = "Dependencies/focused-meta-actions-benchmarks/Benchmarks/miconic/domain.pddl"
+learn = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/miconic/training/p*.pddl", "Dependencies/focused-meta-actions-benchmarks/Benchmarks/miconic/usefulness/p*.pddl"]
+solve = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/miconic/testing/*.pddl"]
 
 [[tasks]]
 name = "parking"
-domain = "Dependencies/focused-meta-actions/Benchmarks/parking/domain.pddl"
-learn = ["Dependencies/focused-meta-actions/Benchmarks/parking/training/p*.pddl", "Dependencies/focused-meta-actions/Benchmarks/parking/usefulness/p*.pddl"]
-solve = ["Dependencies/focused-meta-actions/Benchmarks/parking/testing/*.pddl"]
+domain = "Dependencies/focused-meta-actions-benchmarks/Benchmarks/parking/domain.pddl"
+learn = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/parking/training/p*.pddl", "Dependencies/focused-meta-actions-benchmarks/Benchmarks/parking/usefulness/p*.pddl"]
+solve = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/parking/testing/*.pddl"]
 
 [[tasks]]
 name = "rovers"
-domain = "Dependencies/focused-meta-actions/Benchmarks/rovers/domain.pddl"
-learn = ["Dependencies/focused-meta-actions/Benchmarks/rovers/training/p*.pddl", "Dependencies/focused-meta-actions/Benchmarks/rovers/usefulness/p*.pddl"]
-solve = ["Dependencies/focused-meta-actions/Benchmarks/rovers/testing/*.pddl"]
+domain = "Dependencies/focused-meta-actions-benchmarks/Benchmarks/rovers/domain.pddl"
+learn = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/rovers/training/p*.pddl", "Dependencies/focused-meta-actions-benchmarks/Benchmarks/rovers/usefulness/p*.pddl"]
+solve = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/rovers/testing/*.pddl"]
 
 [[tasks]]
 name = "satellite"
-domain = "Dependencies/focused-meta-actions/Benchmarks/satellite/domain.pddl"
-learn = ["Dependencies/focused-meta-actions/Benchmarks/satellite/training/p*.pddl", "Dependencies/focused-meta-actions/Benchmarks/satellite/usefulness/p*.pddl"]
-solve = ["Dependencies/focused-meta-actions/Benchmarks/satellite/testing/*.pddl"]
+domain = "Dependencies/focused-meta-actions-benchmarks/Benchmarks/satellite/domain.pddl"
+learn = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/satellite/training/p*.pddl", "Dependencies/focused-meta-actions-benchmarks/Benchmarks/satellite/usefulness/p*.pddl"]
+solve = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/satellite/testing/*.pddl"]
 
 [[tasks]]
 name = "scanalyzer"
-domain = "Dependencies/focused-meta-actions/Benchmarks/scanalyzer/domain.pddl"
-learn = ["Dependencies/focused-meta-actions/Benchmarks/scanalyzer/training/p*.pddl", "Dependencies/focused-meta-actions/Benchmarks/scanalyzer/usefulness/p*.pddl"]
-solve = ["Dependencies/focused-meta-actions/Benchmarks/scanalyzer/testing/*.pddl"]
+domain = "Dependencies/focused-meta-actions-benchmarks/Benchmarks/scanalyzer/domain.pddl"
+learn = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/scanalyzer/training/p*.pddl", "Dependencies/focused-meta-actions-benchmarks/Benchmarks/scanalyzer/usefulness/p*.pddl"]
+solve = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/scanalyzer/testing/*.pddl"]
 
 [[tasks]]
 name = "woodworking"
-domain = "Dependencies/focused-meta-actions/Benchmarks/woodworking/domain.pddl"
-learn = ["Dependencies/focused-meta-actions/Benchmarks/woodworking/training/p*.pddl", "Dependencies/focused-meta-actions/Benchmarks/woodworking/usefulness/p*.pddl"]
-solve = ["Dependencies/focused-meta-actions/Benchmarks/woodworking/testing/*.pddl"]
+domain = "Dependencies/focused-meta-actions-benchmarks/Benchmarks/woodworking/domain.pddl"
+learn = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/woodworking/training/p*.pddl", "Dependencies/focused-meta-actions-benchmarks/Benchmarks/woodworking/usefulness/p*.pddl"]
+solve = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/woodworking/testing/*.pddl"]
 

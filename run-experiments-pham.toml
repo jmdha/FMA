@@ -1,0 +1,75 @@
+time_limit_solve = 300
+memory_limit_solve = 4000
+
+[[runners]]
+name = "L_CPDDL"
+path = "Training/training-pham.sh"
+kind = "Learn"
+args = ["Manual"]
+attribute = "P10"
+
+[[attributes]]
+name = "P10"
+patterns = [
+    { name = "total_candidates", pattern = "Total candidates: ([0-9]*)" },
+]
+
+[[tasks]]
+name = "barman"
+domain = "Dependencies/focused-meta-actions-benchmarks/Benchmarks/barman/domain.pddl"
+learn = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/barman/training/p*.pddl"]
+solve = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/barman/testing/*.pddl"]
+
+[[tasks]]
+name = "childsnack"
+domain = "Dependencies/focused-meta-actions-benchmarks/Benchmarks/childsnack/domain.pddl"
+learn = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/childsnack/training/p*.pddl"]
+solve = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/childsnack/testing/*.pddl"]
+
+[[tasks]]
+name = "depots"
+domain = "Dependencies/focused-meta-actions-benchmarks/Benchmarks/depots/domain.pddl"
+learn = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/depots/training/p*.pddl"]
+solve = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/depots/testing/*.pddl"]
+
+[[tasks]]
+name = "driverlog"
+domain = "Dependencies/focused-meta-actions-benchmarks/Benchmarks/driverlog/domain.pddl"
+learn = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/driverlog/training/p*.pddl"]
+solve = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/driverlog/testing/*.pddl"]
+
+[[tasks]]
+name = "grid"
+domain = "Dependencies/focused-meta-actions-benchmarks/Benchmarks/grid/domain.pddl"
+learn = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/grid/training/p*.pddl"]
+solve = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/grid/testing/*.pddl"]
+
+[[tasks]]
+name = "gripper"
+domain = "Dependencies/focused-meta-actions-benchmarks/Benchmarks/gripper/domain.pddl"
+learn = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/gripper/training/p*.pddl"]
+solve = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/gripper/testing/*.pddl"]
+
+[[tasks]]
+name = "logistics"
+domain = "Dependencies/focused-meta-actions-benchmarks/Benchmarks/logistics/domain.pddl"
+learn = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/logistics/training/p*.pddl"]
+solve = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/logistics/testing/*.pddl"]
+
+[[tasks]]
+name = "miconic"
+domain = "Dependencies/focused-meta-actions-benchmarks/Benchmarks/miconic/domain.pddl"
+learn = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/miconic/training/p*.pddl"]
+solve = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/miconic/testing/*.pddl"]
+
+[[tasks]]
+name = "rovers"
+domain = "Dependencies/focused-meta-actions-benchmarks/Benchmarks/rovers/domain.pddl"
+learn = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/rovers/training/p*.pddl"]
+solve = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/rovers/testing/*.pddl"]
+
+[[tasks]]
+name = "satellite"
+domain = "Dependencies/focused-meta-actions-benchmarks/Benchmarks/satellite/domain.pddl"
+learn = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/satellite/training/p*.pddl"]
+solve = ["Dependencies/focused-meta-actions-benchmarks/Benchmarks/satellite/testing/*.pddl"]
