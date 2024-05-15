@@ -15,7 +15,7 @@ namespace FocusedMetaActions.Train.MacroExtractor
     /// </summary>
     public class Extractor
     {
-        public static string _metaActionName = "$meta";
+        public static string _metaActionName = "$";
         public static string _macroActionName = "$macro";
         public static string[] _RemoveNamesFromActions = { "attack_", "fix_" };
 
