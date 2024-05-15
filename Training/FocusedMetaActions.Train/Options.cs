@@ -58,5 +58,7 @@ namespace FocusedMetaActions.Train
         public int MaxPreconditionCombinations { get; set; } = 10;
         [Option("max-added-parameters", Required = false, HelpText = "How many additional parameters are allowed to add", Default = 0)]
         public int MaxAddedParameters { get; set; } = 0;
+        [Option("skip-refinement", Required = false, HelpText = "Optionally skip refinement step and assume the initial meta actions are correct (useful for debugging)", Default = false)]
+        public bool SkipRefinement { get; set; } = false;
     }
 }
