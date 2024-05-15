@@ -62,5 +62,7 @@ namespace FocusedMetaActions.Train
         public bool SkipRefinement { get; set; } = false;
         [Option("skip-macro-cache", Required = false, HelpText = "Optionally skip macro cache generation (useful for debugging)", Default = false)]
         public bool SkipMacroCache { get; set; } = false;
+        [Option("remove-temp-on-finish", Required = false, HelpText = "If the temp folder should be removed after a run", Default = false)]
+        public bool RemoveTempOnFinish { get; set; } = false;
     }
 }

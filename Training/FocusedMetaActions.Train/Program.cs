@@ -178,6 +178,9 @@ namespace FocusedMetaActions.Train
 
             PrintFinalReport(generalResult, generatorResult, refinementResults);
 
+            if (opts.RemoveTempOnFinish && Directory.Exists(opts.TempPath))
+                Directory.Delete(opts.TempPath, true);
+
             if (refinedCandidates.Count == 0)
                 _returnCode = 1;
         }
