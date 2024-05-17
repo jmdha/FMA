@@ -102,6 +102,7 @@ namespace FocusedMetaActions.Train
 
             ConsoleHelper.WriteLineColor($"Begining refinement process", ConsoleColor.Blue);
             var codeGenerator = new PDDLCodeGenerator(listener);
+            codeGenerator.Readable = true;
             int count = 1;
             var refinedCandidates = new List<ActionDecl>();
             var refinementResults = new List<RefinementResult>();

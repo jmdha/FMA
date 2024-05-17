@@ -30,7 +30,7 @@ namespace FocusedMetaActions.Train.PreconditionAdditionRefinements
         public PreconditionAdditionRefinement(int validationTimeLimitS, int explorationTimeLimitS, int refinementTimeLimitS, ActionDecl metaAction, string tempDir, int maxPreconditionCombinations, int maxAddedParameters)
         {
             Heuristic = new hSum(new List<IHeuristic>() {
-                new hMustBeApplicable(),
+                //new hMustBeApplicable(),
                 //new hMustBeValid(),
                 //new hWeighted(new hMostStatics(pddlDecl), 100000),
                 //new hWeighted(new hMostValid(), 10000),
@@ -221,13 +221,10 @@ namespace FocusedMetaActions.Train.PreconditionAdditionRefinements
 
         private bool IsCovered(PreconditionState check, List<PreconditionState> others)
         {
-            if (check.ValidStates == check.TotalValidStates)
-                return false;
             foreach (var state in others)
             {
                 if (state != check &&
                     state.Precondition.Count < check.Precondition.Count &&
-                    state.ValidStates == check.ValidStates &&
                     state.Applicability == check.Applicability)
                 {
                     if (state.Precondition.All(x => check.Precondition.Any(y => y.Equals(x))))

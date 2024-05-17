@@ -4,7 +4,7 @@
     {
         public int GetValue(PreconditionState preconditions)
         {
-            return 100 - (int)(((double)preconditions.Applicability / (double)(preconditions.TotalValidStates + preconditions.TotalInvalidStates)) * 100);
+            return -preconditions.Applicability;
         }
     }
 }

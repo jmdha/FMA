@@ -29,14 +29,11 @@ namespace FocusedMetaActions.Train.PreconditionAdditionRefinements
             var text = File.ReadAllText(targetFile.FullName);
             var lines = text.Split('\n').ToList();
             var checkedMetaActions = new HashSet<ActionDecl>();
-            var totalValidStates = Convert.ToInt32(lines[0]);
-            var totalInvalidStates = Convert.ToInt32(lines[1]);
-            for (int i = 2; i < lines.Count; i += 4)
+            for (int i = 2; i < lines.Count; i += 3)
             {
                 if (i + 4 > lines.Count)
                     break;
 
-                var invalidStates = Convert.ToInt32(lines[i + 3]);
                 var applicability = Convert.ToInt32(lines[i + 2]);
                 if (applicability == 0)
                     continue;
@@ -144,10 +141,6 @@ namespace FocusedMetaActions.Train.PreconditionAdditionRefinements
                 {
                     checkedMetaActions.Add(metaAction);
                     var newState = new PreconditionState(
-                        totalValidStates,
-                        totalInvalidStates,
-                        totalValidStates - (totalInvalidStates - invalidStates),
-                        invalidStates,
                         applicability,
                         metaAction,
                         preconditions,
