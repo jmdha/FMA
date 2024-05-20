@@ -8,17 +8,18 @@ namespace FocusedMetaActions.Train
         [Flags]
         public enum UsefulnessStrategies
         {
-            None = 1,
-            UsedInPlans = 2,
-            UsedInPlansCombined = 3,
-            ReducesMetaSearchTime = 4,
-            ReducesMetaSearchTimeTop1 = 5,
-            ReducesMetaSearchTimeTop2 = 6,
-            ReducesMetaSearchTimeTop5 = 7,
-            ReducesPlanLength = 8,
-            ReducesPlanLengthTop1 = 9,
-            ReducesPlanLengthTop2 = 10,
-            ReducesPlanLengthTop5 = 11,
+            None,
+            UsedInPlans,
+            ReducesMetaSearchTime,
+            ReducesMetaSearchTimeTop1,
+            ReducesMetaSearchTimeTop2,
+            ReducesMetaSearchTimeTop5,
+            ReducesMetaSearchTimeTop10,
+            ReducesPlanLength,
+            ReducesPlanLengthTop1,
+            ReducesPlanLengthTop2,
+            ReducesPlanLengthTop5,
+            ReducesPlanLengthTop10,
         }
         [Option("output", Required = false, HelpText = "Where to output the meta actions", Default = "output")]
         public string OutputPath { get; set; } = "output";
