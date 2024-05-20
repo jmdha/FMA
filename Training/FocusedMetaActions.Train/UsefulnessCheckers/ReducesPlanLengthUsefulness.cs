@@ -103,7 +103,7 @@ namespace FocusedMetaActions.Train.UsefulnessCheckers
             int count = 1;
             foreach (var problem in problems)
             {
-                ConsoleHelper.WriteLineColor($"\t\tGetting meta plan lengths for problem {count} out of {problems.Count}", ConsoleColor.Magenta);
+                ConsoleHelper.WriteLineColor($"\t\tChecking if meta action is used and reduces plan length in problem {count} out of {problems.Count}", ConsoleColor.Magenta);
                 var problemFile = new FileInfo(Path.Combine(WorkingDir, "usefulCheckProblem.pddl"));
                 codeGenerator.Generate(problem, problemFile.FullName);
 
