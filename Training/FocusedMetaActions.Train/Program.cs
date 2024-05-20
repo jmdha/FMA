@@ -7,17 +7,13 @@ using FocusedMetaActions.Train.PreconditionAdditionRefinements;
 using FocusedMetaActions.Train.UsefulnessCheckers;
 using FocusedMetaActions.Train.Verifiers;
 using MetaActionGenerators;
-using PDDLSharp.CodeGenerators;
 using PDDLSharp.CodeGenerators.PDDL;
-using PDDLSharp.Contextualisers.PDDL;
 using PDDLSharp.ErrorListeners;
-using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Overloads;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers.PDDL;
 using System.Diagnostics;
-using System.Linq;
 
 namespace FocusedMetaActions.Train
 {
