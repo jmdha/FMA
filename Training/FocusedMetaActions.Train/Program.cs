@@ -16,6 +16,7 @@ using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Overloads;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers.PDDL;
+using System.Diagnostics;
 using System.Linq;
 
 namespace FocusedMetaActions.Train
@@ -106,6 +107,8 @@ namespace FocusedMetaActions.Train
             int count = 1;
             var refinedCandidates = new List<ActionDecl>();
             var refinementResults = new List<RefinementResult>();
+            var watch = new Stopwatch();
+            watch.Start();
             foreach (var candidate in candidates)
             {
                 if (opts.SkipRefinement)
@@ -130,6 +133,12 @@ namespace FocusedMetaActions.Train
                 else
                     ConsoleHelper.WriteLineColor($"\tCandidate could not be refined!", ConsoleColor.Red);
                 ConsoleHelper.WriteLineColor($"", ConsoleColor.Magenta);
+                if (opts.TotalRefinementTimeLimitS > 0 && watch.ElapsedMilliseconds / 1000 > opts.TotalRefinementTimeLimitS)
+                {
+                    watch.Stop();
+                    ConsoleHelper.WriteLineColor($"\tTotal refinement time limit reached!", ConsoleColor.Yellow);
+                    break;
+                }
             }
             generalResult.TotalRefinedCandidates = refinedCandidates.Count;
             ConsoleHelper.WriteLineColor($"\tTotal refined candidates: {refinedCandidates.Count}", ConsoleColor.Magenta);
