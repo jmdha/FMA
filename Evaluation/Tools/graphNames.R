@@ -1,7 +1,7 @@
 recon_names <- function(name) { 
   	if (name == "LAMA_FIRST") return ("LAMA")
-	if (name == "S_CPDDL") return ("LAMA+F(top 2)")
-	if (name == "L_PHAM") return ("LAMA+PTT(top 2)")
+	if (name == "S_CPDDL") return ("LAMA+F(top 2)")
+	if (name == "S_PHAM") return ("LAMA+PTT(top 2)")
 	return (name)
 }
 
@@ -10,8 +10,8 @@ rename_data <- function(data) {
 	names(data)[names(data)=="LAMA_FIRST"] <- "LAMA"
 	data[data=="S_CPDDL"] <- "LAMA+F(top 2)"
 	names(data)[names(data)=="S_CPDDL"] <- "LAMA+F(top 2)"
-	data[data=="L_PHAM"] <- "LAMA+PTT(top 2)"
-	names(data)[names(data)=="L_PHAM"] <- "LAMA+PTT(top 2)"
+	data[data=="S_PHAM"] <- "LAMA+PTT(top 2)"
+	names(data)[names(data)=="S_PHAM"] <- "LAMA+PTT(top 2)"
 	return (data)
 }
 
