@@ -35,7 +35,7 @@ namespace FocusedMetaActions.Train.UsefulnessCheckers
                     var metaPlanLengths = GetPlanLengths(domain, problems.Skip(usedIn).ToList(), candidate);
                     var metaAvg = metaPlanLengths.Average();
                     var planAvg = planLengths.GetRange(usedIn, planLengths.Count - usedIn).Average();
-                    ConsoleHelper.WriteLineColor($"\t\t\tCandidate avg plan length was {metaAvg}s vs. {planAvg}s base", ConsoleColor.Magenta);
+                    ConsoleHelper.WriteLineColor($"\t\t\tCandidate avg plan length was {metaAvg} steps vs. {planAvg} steps base", ConsoleColor.Magenta);
                     if (metaAvg < planAvg)
                         usefulCandidates.Add(new CandidateAndPlanLength(candidate, metaPlanLengths.Sum()));
                 }
