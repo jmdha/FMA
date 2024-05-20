@@ -15,6 +15,10 @@ namespace FocusedMetaActions.Train
             ReducesMetaSearchTimeTop1 = 5,
             ReducesMetaSearchTimeTop2 = 6,
             ReducesMetaSearchTimeTop5 = 7,
+            ReducesPlanLength = 8,
+            ReducesPlanLengthTop1 = 9,
+            ReducesPlanLengthTop2 = 10,
+            ReducesPlanLengthTop5 = 11,
         }
         [Option("output", Required = false, HelpText = "Where to output the meta actions", Default = "output")]
         public string OutputPath { get; set; } = "output";

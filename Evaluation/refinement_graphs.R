@@ -8,7 +8,7 @@ source("Tools/graphNames.R")
 # Handle arguments
 args = commandArgs(trailingOnly=TRUE)
 #args[1] <- "refinement.csv"
-#args[2] <- "CPDDLMutexed"
+#args[2] <- "CPDDLMutexed+UsedInPlans+ReducesMetaSearchTimeTop2"
 if (length(args) != 2) {
   stop("2 arguments must be supplied! The source data file and the method to generate tables for", call.=FALSE)
 }

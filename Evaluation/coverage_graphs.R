@@ -24,10 +24,7 @@ data <- read.csv(
   colClasses = c(
     'character','character','character',
     'numeric','numeric', 'numeric',
-    'numeric','numeric', 'numeric',
-    'numeric','numeric', 'numeric',
-    'numeric','numeric', 'numeric',
-    'numeric'
+    'numeric','numeric'
   )
 )
 data <- rename_data(data)

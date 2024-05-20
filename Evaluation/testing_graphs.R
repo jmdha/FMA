@@ -23,10 +23,7 @@ data <- read.csv(
   colClasses = c(
     'character','character','character',
     'numeric','numeric', 'numeric',
-    'numeric','numeric', 'numeric',
-    'numeric','numeric', 'numeric',
-	'numeric','numeric', 'numeric',
-	'numeric'
+    'numeric','numeric'
   )
 )
 data <- rename_data(data)
@@ -36,9 +33,9 @@ if (nrow(data[data$name == BName,]) == 0)
   stop(paste("Column name '", args[3], "' not found in dataset!"), call.=FALSE)
 data <- max_unsolved(data, "total_time")
 data <- max_unsolved(data, "search_time")
-data <- max_unsolved(data, "solution_time")
+#data <- max_unsolved(data, "solution_time")
 data <- max_unsolved(data, "plan_length")
-data <- max_unsolved(data, "meta_plan_length")
+#data <- max_unsolved(data, "meta_plan_length")
 
 AData = data[data$name == AName,]
 #AData$problem <- sub('[.]', '_', make.names(AData$problem, unique=TRUE))
@@ -64,19 +61,19 @@ sideDomains <- combined$domain
 searchData <- data.frame(x = sideA, y = sideB, domain = sideDomains)
 generate_scatterplot(searchData, AName, BName, "Total Time (s)", paste("out/totalTime_", AName, "_vs_", BName, ".pdf", sep = ""))
 
-print("Generating: Solve Scatterplot")
-sideA <- combined$solution_time.A
-sideB <- combined$solution_time.B
-sideDomains <- combined$domain
-searchData <- data.frame(x = sideA, y = sideB, domain = sideDomains)
-generate_scatterplot(searchData, AName, BName, "Solution Time (s)", paste("out/solutionTime_", AName, "_vs_", BName, ".pdf", sep = ""))
+#print("Generating: Solve Scatterplot")
+#sideA <- combined$solution_time.A
+#sideB <- combined$solution_time.B
+#sideDomains <- combined$domain
+#searchData <- data.frame(x = sideA, y = sideB, domain = sideDomains)
+#generate_scatterplot(searchData, AName, BName, "Solution Time (s)", paste("out/solutionTime_", AName, "_vs_", BName, ".pdf", sep = ""))
 
-print("Generating: Meta Plan length Scatterplot")
-sideA <- combined$meta_plan_length.A
-sideB <- combined$plan_length.B
-sideDomains <- combined$domain
-searchData <- data.frame(x = sideA, y = sideB, domain = sideDomains)
-generate_scatterplot(searchData, AName, BName, "Meta Plan Length", paste("out/metaPlanLength_", AName, "_vs_", BName, ".pdf", sep = ""))
+#print("Generating: Meta Plan length Scatterplot")
+#sideA <- combined$meta_plan_length.A
+#sideB <- combined$plan_length.B
+#sideDomains <- combined$domain
+#searchData <- data.frame(x = sideA, y = sideB, domain = sideDomains)
+#generate_scatterplot(searchData, AName, BName, "Meta Plan Length", paste("out/metaPlanLength_", AName, "_vs_", BName, ".pdf", sep = ""))
 
 print("Generating: Final Plan length Scatterplot")
 sideA <- combined$plan_length.A
