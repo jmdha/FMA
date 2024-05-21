@@ -84,6 +84,7 @@ namespace FocusedMetaActions.Train
                 Generator = $"{Enum.GetName(opts.GeneratorOption)}"
             };
 
+            CacheGenerator.WaitDelay = opts.MacroCacheCheckDelay * 1000;
             if (opts.PreUsefulnessStrategy != Options.UsefulnessStrategies.None)
             {
                 var postPruning = UsefulnessPruning(

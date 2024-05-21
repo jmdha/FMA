@@ -73,5 +73,7 @@ namespace FocusedMetaActions.Train
         public bool RemoveTempOnFinish { get; set; } = false;
         [Option("post-validity-check", Required = false, HelpText = "If an additional check of validity should be done before finishing the program. Useful for sanity checking.", Default = false)]
         public bool PostValidityCheck { get; set; } = false;
+        [Option("macro-cache-check-delay", Required = false, HelpText = "How long the program should wait to check replacement folder before continuing (in seconds)", Default = 1)]
+        public int MacroCacheCheckDelay { get; set; } = 1;
     }
 }
