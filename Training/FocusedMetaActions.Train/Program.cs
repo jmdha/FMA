@@ -84,6 +84,7 @@ namespace FocusedMetaActions.Train
                 Generator = $"{Enum.GetName(opts.GeneratorOption)}"
             };
 
+            CacheGenerator.WaitDelay = opts.MacroCacheCheckDelay * 1000;
             if (opts.PreUsefulnessStrategy != Options.UsefulnessStrategies.None)
             {
                 var postPruning = UsefulnessPruning(
@@ -181,6 +182,14 @@ namespace FocusedMetaActions.Train
             File.WriteAllText(Path.Combine(opts.OutputPath, "candidates.csv"), CSVSerialiser.Serialise(new List<MetaActionGenerationResult>() { generatorResult }));
             File.WriteAllText(Path.Combine(opts.OutputPath, "general.csv"), CSVSerialiser.Serialise(new List<GeneralResult>() { generalResult }));
             File.WriteAllText(Path.Combine(opts.OutputPath, "refinement.csv"), CSVSerialiser.Serialise(refinementResults));
+
+            if (opts.PostValidityCheck)
+                PostValidityCheck(
+                    Path.Combine(opts.TempPath, "post-validity"),
+                    domain,
+                    problems,
+                    refinedCandidates,
+                    opts.ValidationTimeLimitS);
 
             PrintFinalReport(generalResult, generatorResult, refinementResults);
 
@@ -407,6 +416,35 @@ namespace FocusedMetaActions.Train
                 }
             }
             return candidates;
+        }
+
+        /// <summary>
+        /// Before finishing, do a final check of validity on the final candidates.
+        /// If an invalid one is found, the program will continue like normal, but will write a warning to stdout
+        /// </summary>
+        /// <param name="tempPath"></param>
+        /// <param name="domain"></param>
+        /// <param name="problems"></param>
+        /// <param name="candidates"></param>
+        private static void PostValidityCheck(string tempPath, DomainDecl domain, List<ProblemDecl> problems, List<ActionDecl> candidates, int timeLimit)
+        {
+            ConsoleHelper.WriteLineColor($"Post validity check started", ConsoleColor.Blue);
+            PathHelper.RecratePath(tempPath);
+
+            int count = 1;
+            foreach(var candidate in candidates)
+            {
+                ConsoleHelper.WriteLineColor($"\tChecking candidate {count++} out of {candidates.Count}", ConsoleColor.Magenta);
+                var result = VerificationHelper.IsValid(domain, problems, candidate, tempPath, timeLimit);
+                if (result == FrontierVerifier.FrontierResult.Invalid)
+                    ConsoleHelper.WriteLineColor($"\t\tCandidate '{candidate.Name}' is invalid!", ConsoleColor.Red);
+                else if (result == FrontierVerifier.FrontierResult.Inapplicable)
+                    ConsoleHelper.WriteLineColor($"\t\tCandidate '{candidate.Name}' is inapplicable!", ConsoleColor.Yellow);
+                else if (result == FrontierVerifier.FrontierResult.Valid)
+                    ConsoleHelper.WriteLineColor($"\t\tCandidate '{candidate.Name}' is valid!", ConsoleColor.Green);
+            }
+
+            ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
         }
 
         private static void HandleParseError(IEnumerable<Error> errs)
