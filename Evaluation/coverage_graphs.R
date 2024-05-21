@@ -48,6 +48,11 @@ for(domain in unique(data$domain))
   result[nrow(result) + 1,] = newRow
 }
 
+totalRow <- list("Total")
+for(i in 2:ncol(result))
+	totalRow <- append(totalRow, sum(sapply(result[i], as.integer)))
+result[nrow(result) + 1,] <- totalRow 
+
 generate_table(
   result,
   paste("out/coverage.tex", sep = ""),

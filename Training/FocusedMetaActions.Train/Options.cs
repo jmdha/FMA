@@ -71,5 +71,7 @@ namespace FocusedMetaActions.Train
         public bool SkipMacroCache { get; set; } = false;
         [Option("remove-temp-on-finish", Required = false, HelpText = "If the temp folder should be removed after a run", Default = false)]
         public bool RemoveTempOnFinish { get; set; } = false;
+        [Option("post-validity-check", Required = false, HelpText = "If an additional check of validity should be done before finishing the program. Useful for sanity checking.", Default = false)]
+        public bool PostValidityCheck { get; set; } = false;
     }
 }
