@@ -14,6 +14,6 @@ generateRowDefinition <- function(columnCount, ignoreFirst = FALSE) {
 	else
 		source <- "|X|"
 	for (i in 2:columnCount)
-		source <- paste(source, "l|", sep="")
+		source <- paste(source, "r|", sep="")
 	return (source)
 }
