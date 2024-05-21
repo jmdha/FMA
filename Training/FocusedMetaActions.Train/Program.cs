@@ -428,6 +428,7 @@ namespace FocusedMetaActions.Train
         private static void PostValidityCheck(string tempPath, DomainDecl domain, List<ProblemDecl> problems, List<ActionDecl> candidates, int timeLimit)
         {
             ConsoleHelper.WriteLineColor($"Post validity check started", ConsoleColor.Blue);
+            PathHelper.RecratePath(tempPath);
 
             int count = 1;
             foreach(var candidate in candidates)
