@@ -1,51 +1,46 @@
-library(dplyr) 
+library(dplyr, warn.conflicts = FALSE) 
 
 source("Tools/style.R")
 source("Tools/scatterPlots.R")
 source("Tools/graphNames.R")
 source("Tools/clamper.R")
+source("Tools/parsers.R")
 
 # Handle arguments
 args = commandArgs(trailingOnly=TRUE)
 #args[1] <- "solve.csv"
-#args[2] <- "S_CPDDL"
-#args[3] <- "LAMA_FIRST"
-if (length(args) != 3) {
-  stop("3 arguments must be supplied! The source data file, and one for each target reconstruction type", call.=FALSE)
+#args[2] <- "general.csv"
+#args[3] <- "CPDDLMutexed+ReducesPlanLengthTop10+ReducesPlanLengthTop2"
+#args[4] <- "S_CPDDL"
+#args[5] <- "LAMA_FIRST"
+if (length(args) != 5) {
+  stop("5 arguments must be supplied!", call.=FALSE)
 }
-AName <- recon_names(args[2])
-BName <- recon_names(args[3])
 
-data <- read.csv(
-  args[1], 
-  header = T, 
-  sep = ",", 
-  colClasses = c(
-    'character','character','character',
-    'numeric','numeric', 'numeric',
-    'numeric','numeric'
-  )
-)
-data <- rename_data(data)
+generalData <- parse_general(args[2])
+data <- parse_solve(args[1])
+
+metaDomains <- generalData[generalData$Total.Refined - generalData$Post.Not.Useful.Removed > 0,]$domain
+data <- data[data$domain %in% metaDomains,]
+
+AName <- recon_names(args[4])
+BName <- recon_names(args[5])
+
 if (nrow(data[data$name == AName,]) == 0)
   stop(paste("Column name '", args[2], "' not found in dataset!"), call.=FALSE)
 if (nrow(data[data$name == BName,]) == 0)
   stop(paste("Column name '", args[3], "' not found in dataset!"), call.=FALSE)
 data <- max_unsolved(data, "total_time")
 data <- max_unsolved(data, "search_time")
-#data <- max_unsolved(data, "solution_time")
 data <- max_unsolved(data, "plan_length")
-#data <- max_unsolved(data, "meta_plan_length")
 
 AData = data[data$name == AName,]
-#AData$problem <- sub('[.]', '_', make.names(AData$problem, unique=TRUE))
 BData = data[data$name == BName,]
-#BData$problem <- sub('[.]', '_', make.names(BData$problem, unique=TRUE))
 combined <- merge(AData, BData, by = c("domain", "problem"), suffixes=c(".A", ".B"))
 combined <- combined %>% select(-contains('name.A'))
 combined <- combined %>% select(-contains('name.B'))
 
-dir.create(file.path("out"), showWarnings = FALSE)
+dir.create(file.path("Out"), showWarnings = FALSE)
 
 print("Generating: Search Scatterplot")
 sideA <- combined$search_time.A

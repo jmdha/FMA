@@ -371,4 +371,5 @@ Dependencies/**
 /Results/**
 
 /Evaluation/**.csv
+/Evaluation/Results/**.csv
 /Evaluation/**.pdf
