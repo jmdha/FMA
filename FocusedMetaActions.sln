@@ -14,17 +14,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{B69FF3BF-8010-4A04-99B4-8E994E1F9392}"
 	ProjectSection(SolutionItems) = preProject
+		Dependencies\readme.md = Dependencies\readme.md
 		Dependencies\setup.sh = Dependencies\setup.sh
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Training", "Training", "{695C7306-A45B-4F6B-AA5D-C38AAF4A7BF2}"
 	ProjectSection(SolutionItems) = preProject
+		Training\readme.md = Training\readme.md
 		Training\training-pham.sh = Training\training-pham.sh
 		Training\training.sh = Training\training.sh
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{5A87B27E-1706-48C2-822C-8B3847F43DA1}"
 	ProjectSection(SolutionItems) = preProject
+		Testing\readme.md = Testing\readme.md
 		Testing\testing-meta.sh = Testing\testing-meta.sh
 		Testing\testing.sh = Testing\testing.sh
 	EndProjectSection
@@ -34,6 +37,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestingSets", "TestingSets", "{346A56F2-51F9-4DF6-9F29-1E638ACBAC65}"
 	ProjectSection(SolutionItems) = preProject
 		Testing\TestingSets\readme.md = Testing\TestingSets\readme.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Evaluation", "Evaluation", "{C670A899-895F-418B-9D98-1351EAEEC0C3}"
+	ProjectSection(SolutionItems) = preProject
+		Evaluation\readme.md = Evaluation\readme.md
 	EndProjectSection
 EndProject
 Global
