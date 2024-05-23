@@ -6,6 +6,12 @@ namespace FocusedMetaActions.Train.Helpers
 {
     public static class StackelbergHelper
     {
+        /// <summary>
+        /// Compile and simplify the conditional domain
+        /// </summary>
+        /// <param name="pddlDecl"></param>
+        /// <param name="metaAction"></param>
+        /// <returns></returns>
         public static PDDLDecl CompileToStackelberg(PDDLDecl pddlDecl, ActionDecl metaAction)
         {
             ConditionalEffectCompiler compiler = new ConditionalEffectCompiler();
