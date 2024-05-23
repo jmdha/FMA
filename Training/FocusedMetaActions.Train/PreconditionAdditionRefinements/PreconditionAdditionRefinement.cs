@@ -9,6 +9,10 @@ using static FocusedMetaActions.Train.PreconditionAdditionRefinements.StateExplo
 
 namespace FocusedMetaActions.Train.PreconditionAdditionRefinements
 {
+    /// <summary>
+    /// This is the primary refinement interfacing class.
+    /// It is given a meta action candidate, and then attempts to refine it across all the problems for a domain.
+    /// </summary>
     public class PreconditionAdditionRefinement
     {
         public int ValidationTimeLimitS { get; }
@@ -29,14 +33,12 @@ namespace FocusedMetaActions.Train.PreconditionAdditionRefinements
 
         public PreconditionAdditionRefinement(int validationTimeLimitS, int explorationTimeLimitS, int refinementTimeLimitS, ActionDecl metaAction, string tempDir, int maxPreconditionCombinations, int maxAddedParameters)
         {
+            // Do note, this is more or less optional and was not used in the report
+            // But it is a system to order the precondition possibilities, since some domains can have a lot of options
             Heuristic = new hSum(new List<IHeuristic>() {
-                //new hMustBeApplicable(),
-                //new hMustBeValid(),
-                //new hWeighted(new hMostStatics(pddlDecl), 100000),
-                //new hWeighted(new hMostValid(), 10000),
-                new hWeighted(new hFewestParameters(), 1000),
-                new hWeighted(new hFewestPre(), 100),
-                new hWeighted(new hMostApplicable(), 10)
+                new hWeighted(new hFewestParameters(), 100),
+                new hWeighted(new hFewestPre(), 10),
+                new hMostApplicable()
             });
             MetaAction = metaAction;
             ValidationTimeLimitS = validationTimeLimitS;
@@ -155,6 +157,7 @@ namespace FocusedMetaActions.Train.PreconditionAdditionRefinements
             var result = verifier.VerifyCode(compiled.Domain, compiled.Problem, _searchWorkingDir, ExplorationTimeLimitS);
             if (result == StateExploreResult.UnknownError)
             {
+                // If some unknown error occured durring the state exploration, output the stdout and stderr as well as the domain and problem it was for
                 var file = Path.Combine(TempDir, $"{MetaAction.Name}_verification-log_{pddlDecl.Problem.Name}_{DateTime.Now.TimeOfDay}.txt");
                 File.WriteAllText(file, verifier.GetLog());
                 ConsoleHelper.WriteLineColor($"\t\t\tUnknown error! Trying next problem...", ConsoleColor.Yellow);
@@ -190,6 +193,11 @@ namespace FocusedMetaActions.Train.PreconditionAdditionRefinements
             return state.MetaAction;
         }
 
+        /// <summary>
+        /// Update the list of options to go through
+        /// </summary>
+        /// <param name="currentMetaAction"></param>
+        /// <returns></returns>
         private PriorityQueue<PreconditionState, int> UpdateOpenList(ActionDecl currentMetaAction)
         {
             var parseWatch = new Stopwatch();
@@ -219,6 +227,12 @@ namespace FocusedMetaActions.Train.PreconditionAdditionRefinements
             return openList;
         }
 
+        /// <summary>
+        /// Prunes options where there exist another option, with fewer preconditions, that have the same applicability.
+        /// </summary>
+        /// <param name="check"></param>
+        /// <param name="others"></param>
+        /// <returns></returns>
         private bool IsCovered(PreconditionState check, List<PreconditionState> others)
         {
             foreach (var state in others)

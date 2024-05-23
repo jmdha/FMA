@@ -7,16 +7,21 @@ using PDDLSharp.Parsers.PDDL;
 
 namespace FocusedMetaActions.Train.PreconditionAdditionRefinements
 {
+    /// <summary>
+    /// This is a rather lazy parsing method for the output of the state exploration from the Stackelberg Planner.
+    /// As a reference, the output of the modified stackelberg planner is the following:
+    /// <code>
+    /// (TOTALSTATES)
+    /// (INVALIDSTATES)
+    /// 
+    /// (PRECONDITIONS)
+    /// (APPLICABILITY)
+    /// (ARGUMENTTYPES)
+    /// ...
+    /// </code>
+    /// </summary>
     public static class StackelbergOutputParser
     {
-        /// <summary>
-        /// This is a rather lazy parsing method for the output of the state exploration from the Stackelberg Planner.
-        /// </summary>
-        /// <param name="currentMetaAction"></param>
-        /// <param name="workingDir"></param>
-        /// <param name="closedList"></param>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
         public static List<PreconditionState> ParseOutput(ActionDecl currentMetaAction, string workingDir, List<PreconditionState> closedList)
         {
             currentMetaAction.EnsureAnd();
@@ -92,50 +97,8 @@ namespace FocusedMetaActions.Train.PreconditionAdditionRefinements
                         preconditions.Add(newPredicate);
                 }
 
-                if (metaAction.Preconditions is AndExp and)
-                {
-                    // Remove preconditions that have the same effect
-                    if (metaAction.Effects is AndExp effAnd)
-                    {
-                        var cpy = effAnd.Copy();
-                        cpy.RemoveContext();
-                        cpy.RemoveTypes();
-                        if (cpy.Children.All(x => preconditions.Any(y => y.Equals(x))))
-                            continue;
-                        if (IsSubset(preconditions, cpy.Children))
-                            continue;
-                    }
-
-                    // Prune some nonsensical preconditions, before the new ones are added
-                    var preCpy = and.Copy();
-                    preCpy.RemoveContext();
-                    preCpy.RemoveTypes();
-                    if (preconditions.All(x => preCpy.Children.Contains(x)))
-                        continue;
-                    if (preconditions.Any(x => preCpy.Children.Contains(new NotExp(x))))
-                        continue;
-                    if (preconditions.Any(x => x is NotExp not && preCpy.Children.Contains(not.Child)))
-                        continue;
-
-                    // Prune some nonsensical preconditions.
-                    if (preconditions.Any(x => preconditions.Contains(new NotExp(x))))
-                        continue;
-                    if (preconditions.Any(x => x is NotExp not && preconditions.Contains(not.Child)))
-                        continue;
-
-                    foreach (var precon in preconditions)
-                        if (!and.Children.Contains(precon))
-                            and.Children.Add(precon);
-
-                    // Prune some nonsensical preconditions, after the new ones are added
-                    preCpy = and.Copy();
-                    preCpy.RemoveContext();
-                    preCpy.RemoveTypes();
-                    if (preCpy.Any(x => preCpy.Contains(new NotExp(x))))
-                        continue;
-                    if (preCpy.Any(x => x is NotExp not && preCpy.Contains(not.Child)))
-                        continue;
-                }
+                if (!IsStructurallyGood(metaAction, preconditions))
+                    continue;
 
                 if (!checkedMetaActions.Contains(metaAction))
                 {
@@ -150,6 +113,62 @@ namespace FocusedMetaActions.Train.PreconditionAdditionRefinements
                 }
             }
             return toCheck;
+        }
+
+        /// <summary>
+        /// Returns false if any of the structural items in it does not make sense (such as having the same predicate being set to true and false)
+        /// Do note, many of these are handled from the Modified Stackelberg planner side, but these are here as a safeguard anyway.
+        /// </summary>
+        /// <param name="metaAction"></param>
+        /// <param name="preconditions"></param>
+        /// <returns></returns>
+        private static bool IsStructurallyGood(ActionDecl metaAction, List<IExp> preconditions)
+        {
+            if (metaAction.Preconditions is AndExp and)
+            {
+                // Remove preconditions that have the same effect
+                if (metaAction.Effects is AndExp effAnd)
+                {
+                    var cpy = effAnd.Copy();
+                    cpy.RemoveContext();
+                    cpy.RemoveTypes();
+                    if (cpy.Children.All(x => preconditions.Any(y => y.Equals(x))))
+                        return false;
+                    if (IsSubset(preconditions, cpy.Children))
+                        return false;
+                }
+
+                // Prune some nonsensical preconditions, before the new ones are added
+                var preCpy = and.Copy();
+                preCpy.RemoveContext();
+                preCpy.RemoveTypes();
+                if (preconditions.All(x => preCpy.Children.Contains(x)))
+                    return false;
+                if (preconditions.Any(x => preCpy.Children.Contains(new NotExp(x))))
+                    return false;
+                if (preconditions.Any(x => x is NotExp not && preCpy.Children.Contains(not.Child)))
+                    return false;
+
+                // Prune some nonsensical preconditions.
+                if (preconditions.Any(x => preconditions.Contains(new NotExp(x))))
+                    return false;
+                if (preconditions.Any(x => x is NotExp not && preconditions.Contains(not.Child)))
+                    return false;
+
+                foreach (var precon in preconditions)
+                    if (!and.Children.Contains(precon))
+                        and.Children.Add(precon);
+
+                // Prune some nonsensical preconditions, after the new ones are added
+                preCpy = and.Copy();
+                preCpy.RemoveContext();
+                preCpy.RemoveTypes();
+                if (preCpy.Any(x => preCpy.Contains(new NotExp(x))))
+                    return false;
+                if (preCpy.Any(x => x is NotExp not && preCpy.Contains(not.Child)))
+                    return false;
+            }
+            return true;
         }
 
         private static bool IsSubset(List<IExp> set1, List<IExp> set2)

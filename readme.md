@@ -47,3 +47,6 @@ dotnet build --configuration Release
 labyr run-experiments-full.toml --work-dir Results --threads 0 --keep-working-dir
 ```
 This will create a `results` folder in the end, containing the combined results of all the runs.
+
+## How to run this on the Cluster
+To be made...

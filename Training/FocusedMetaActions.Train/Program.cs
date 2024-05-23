@@ -432,7 +432,7 @@ namespace FocusedMetaActions.Train
             PathHelper.RecratePath(tempPath);
 
             int count = 1;
-            foreach(var candidate in candidates)
+            foreach (var candidate in candidates)
             {
                 ConsoleHelper.WriteLineColor($"\tChecking candidate {count++} out of {candidates.Count}", ConsoleColor.Magenta);
                 var result = VerificationHelper.IsValid(domain, problems, candidate, tempPath, timeLimit);
