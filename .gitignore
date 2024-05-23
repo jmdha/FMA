@@ -364,6 +364,7 @@ FodyWeavers.xsd
 
 Dependencies/**
 !Dependencies/setup.sh
+!Dependencies/readme.md
 
 /Training/output/**
 /Training/temp/**

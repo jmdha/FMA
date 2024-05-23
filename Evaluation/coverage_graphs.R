@@ -50,6 +50,6 @@ generate_table(
   result,
   paste("out/coverage.tex", sep = ""),
   colnames(result),
-  "\\textit{Coverage of how many problems each method was able to solve within the time limit.}",
+  "\\textit{Coverage of how many problems each method was able to solve within the time limit. P is the amount of problems for the given domain.}",
   "tab:coverage"
 )
