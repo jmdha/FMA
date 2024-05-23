@@ -68,7 +68,7 @@ namespace FocusedMetaActions.Train.MacroExtractor
                 while (!task.IsCompleted)
                 {
                     Thread.Sleep(1000);
-                    if (_currentProcess != null && watch.ElapsedMilliseconds / WaitDelay > timeLimitS)
+                    if (_currentProcess != null && watch.ElapsedMilliseconds / 1000 > timeLimitS)
                     {
                         ConsoleHelper.WriteLineColor("\tPlanner times out! Killing...", ConsoleColor.DarkYellow);
                         _currentProcess.Kill(true);
@@ -126,7 +126,7 @@ namespace FocusedMetaActions.Train.MacroExtractor
                 while (count != preCount)
                 {
                     preCount = count;
-                    Thread.Sleep(1000);
+                    Thread.Sleep(WaitDelay);
                     count = Directory.GetFiles(Path.Combine(tempPath, _replacementsPath)).Count();
                     ConsoleHelper.WriteLineColor($"\t\t\tWaiting for planner to finish outputting files [was {preCount} is now {count}]...", ConsoleColor.Magenta);
                 }
