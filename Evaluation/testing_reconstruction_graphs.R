@@ -26,6 +26,7 @@ if (nrow(data[data$name == BName,]) == 0)
 data <- max_unsolved(data, "total_time")
 data <- max_unsolved(data, "search_time")
 data <- max_unsolved(data, "plan_length")
+data <- max_unsolved(data, "meta_plan_length")
 data <- max_unsolved(data, "solution_time")
 data <- max_unsolved(data, "reconstruction_time")
 data <- min_unsolved(data, "invalid_meta_actions")
@@ -42,23 +43,30 @@ print("Domains that contains invalid meta actions:")
 print(invalids)
 combined <- combined[!combined$domain %in% invalids,]
 
-print("Generating: Reconstruction Time Scatterplot")
-sideA <- combined$reconstruction_time.A
-sideB <- combined$reconstruction_time.B
-sideDomains <- combined$domain
-searchData <- data.frame(x = sideA, y = sideB, domain = sideDomains)
-generate_scatterplot(searchData, AName, BName, "Reconstruction Time (s)", paste("out/reconstruction_reconstructionTime_", AName, "_vs_", BName, ".pdf", sep = ""))
-
-print("Generating: Reconstruction Total Time Scatterplot")
-sideA <- combined$solution_time.A
-sideB <- combined$solution_time.B
+print("Generating: Reconstruction Total Time")
+sideA <- combined$total_time.A
+sideB <- combined$total_time.B
 sideDomains <- combined$domain
 searchData <- data.frame(x = sideA, y = sideB, domain = sideDomains)
 generate_scatterplot(searchData, AName, BName, "Total Time (s)", paste("out/reconstruction_totalTime_", AName, "_vs_", BName, ".pdf", sep = ""))
 
-print("Generating: Reconstruction Search Scatterplot")
+print("Generating: Reconstruction Search")
 sideA <- combined$search_time.A
 sideB <- combined$search_time.B
 sideDomains <- combined$domain
 searchData <- data.frame(x = sideA, y = sideB, domain = sideDomains)
 generate_scatterplot(searchData, AName, BName, "Search Time (s)", paste("out/reconstruction_searchTime_", AName, "_vs_", BName, ".pdf", sep = ""))
+
+print("Generating: Reconstruction Plan Lengths (A)")
+sideA <- combined$plan_length.A
+sideB <- combined$meta_plan_length.A
+sideDomains <- combined$domain
+searchData <- data.frame(x = sideA, y = sideB, domain = sideDomains)
+generate_scatterplot(searchData, "Final Plan Length", "Meta Plan Length", paste("Final vs Meta Plan Lengths (", AName , ")"), paste("out/reconstruction_", AName, "_planLengths", ".pdf", sep = ""))
+
+print("Generating: Reconstruction Plan Lengths (B)")
+sideA <- combined$plan_length.B
+sideB <- combined$meta_plan_length.B
+sideDomains <- combined$domain
+searchData <- data.frame(x = sideA, y = sideB, domain = sideDomains)
+generate_scatterplot(searchData, "Final Plan Length", "Meta Plan Length", paste("Final vs Meta Plan Lengths (", BName , ")"), paste("out/reconstruction_", BName, "_planLengths", ".pdf", sep = ""))
