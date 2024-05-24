@@ -8,9 +8,9 @@ source("Tools/parsers.R")
 
 # Handle arguments
 args = commandArgs(trailingOnly=TRUE)
-args[1] <- "Results/solve.csv"
-args[2] <- "S_CPDDL"
-args[3] <- "S_PHAM"
+#args[1] <- "Results/solve.csv"
+#args[2] <- "S_CPDDL"
+#args[3] <- "S_PHAM"
 if (length(args) != 3) {
   stop("3 arguments must be supplied!", call.=FALSE)
 }
