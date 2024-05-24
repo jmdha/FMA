@@ -54,7 +54,7 @@ namespace FocusedMetaActions.Train.MacroExtractor
             }
 
             var extractor = new Extractor();
-            extractor.ExtractMacros(domain, Directory.GetFiles(Path.Combine(tmpFolder, _replacementsPath)).ToList(), outFolder);
+            extractor.ExtractMacros(domain, Directory.GetFiles(Path.Combine(tmpFolder, _replacementsPath)).ToList(), outFolder, metaAction.Name);
         }
 
         private void ExecutePlanner(string stackelbergPath, string domainPath, string problemPath, string outputPath, int timeLimitS)

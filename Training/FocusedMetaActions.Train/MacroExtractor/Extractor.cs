@@ -19,11 +19,11 @@ namespace FocusedMetaActions.Train.MacroExtractor
         public static string _macroActionName = "$macro";
         public static string[] _RemoveNamesFromActions = { "attack_", "fix_" };
 
-        public void ExtractMacros(DomainDecl domain, List<string> followerPlans, string outPath)
+        public void ExtractMacros(DomainDecl domain, List<string> followerPlans, string outPath, string targetMetaAction)
         {
             outPath = PathHelper.RootPath(outPath);
 
-            var repairSequences = ExtractMacros(domain, followerPlans);
+            var repairSequences = ExtractMacros(domain, followerPlans, targetMetaAction);
             var listener = new ErrorListener();
             var codeGenerator = new PDDLCodeGenerator(listener);
             var planGenerator = new FastDownwardPlanGenerator(listener);
@@ -37,14 +37,14 @@ namespace FocusedMetaActions.Train.MacroExtractor
             }
         }
 
-        private List<RepairSequence> ExtractMacros(DomainDecl domain, List<string> planFiles)
+        private List<RepairSequence> ExtractMacros(DomainDecl domain, List<string> planFiles, string targetMetaAction)
         {
-            var planSequences = ExtractUniquePlanSequences(planFiles);
+            var planSequences = ExtractUniquePlanSequences(planFiles, targetMetaAction);
             var macros = GenerateMacros(planSequences, domain);
             return macros.ToList();
         }
 
-        private static Dictionary<GroundedAction, HashSet<ActionPlan>> ExtractUniquePlanSequences(List<string> followerPlanFiles)
+        private static Dictionary<GroundedAction, HashSet<ActionPlan>> ExtractUniquePlanSequences(List<string> followerPlanFiles, string targetMetaAction)
         {
             var followerPlans = PathHelper.ResolveFileWildcards(followerPlanFiles);
 
@@ -61,6 +61,8 @@ namespace FocusedMetaActions.Train.MacroExtractor
                 if (metaActionIndex == -1)
                     continue;
                 var metaAction = plan.Plan[metaActionIndex];
+                if (metaAction.ActionName.Replace("fix_","") != targetMetaAction)
+                    continue;
                 var nameDictionary = GenerateNameReplacementDict(metaAction);
                 RenameActionArguments(metaAction, nameDictionary);
                 if (!planSequences.ContainsKey(metaAction))

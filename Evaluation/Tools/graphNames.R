@@ -1,5 +1,5 @@
 recon_names <- function(name) { 
-  	if (name == "LAMA_FIRST") return ("LAMA")
+  if (name == "LAMA_FIRST") return ("LAMA")
 	if (name == "S_CPDDL") return ("LAMA+F(top 2)")
 	if (name == "S_PHAM") return ("LAMA+PTT(top 2)")
 	return (name)
