@@ -54,11 +54,11 @@ sideA <- combined$plan_length.A
 sideB <- combined$plan_length.B
 sideDomains <- combined$domain
 searchData <- data.frame(x = sideA, y = sideB, domain = sideDomains)
-generate_scatterplot_nolegend(searchData, "Final Plan Length", "Final Plan Length", "Final Plan Length", paste("out/reconstruction_planLength_", AName, "_vs_", BName, ".pdf", sep = ""))
+generate_scatterplot_nolegend(searchData, AName, BName, "Final Plan Length", paste("out/reconstruction_planLength_", AName, "_vs_", BName, ".pdf", sep = ""))
 
 print("Generating: Meta Plan Length")
 sideA <- combined$meta_plan_length.A
 sideB <- combined$meta_plan_length.B
 sideDomains <- combined$domain
 searchData <- data.frame(x = sideA, y = sideB, domain = sideDomains)
-generate_scatterplot_nolegend(searchData, "Meta Plan Length", "Meta Plan Length", "Meta Plan Length", paste("out/reconstruction_metaPlanLength_", AName, "_vs_", BName, ".pdf", sep = ""))
+generate_scatterplot_nolegend(searchData, AName, BName, "Meta Plan Length", paste("out/reconstruction_metaPlanLength_", AName, "_vs_", BName, ".pdf", sep = ""))
