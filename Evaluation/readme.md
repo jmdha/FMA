@@ -33,9 +33,8 @@ Rscript coverage_graphs.R Results/solve.csv LAMA_FIRST CPDDL
 
 ### Solve Graphs (Non-reconstruction)
 This generates all the scatter plots to compare two methods in the solve csv.
-Do note, it also needs the general csv, to filter out domains that have no meta actions.
 ```bash
-Rscript testing_graphs.R Results/solve.csv Results/general.csv CPDDLMutexed+UsedInPlans+ReducesPlanLengthTop2 CPDDL LAMA_FIRST
+Rscript testing_graphs.R Results/solve.csv CPDDL LAMA_FIRST
 ```
 
 ### Solve Graphs (Reconstruction)
