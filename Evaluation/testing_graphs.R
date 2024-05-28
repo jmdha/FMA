@@ -47,4 +47,4 @@ sideA <- combined$plan_length.A
 sideB <- combined$plan_length.B
 sideDomains <- combined$domain
 searchData <- data.frame(x = sideA, y = sideB, domain = sideDomains)
-generate_scatterplot_nolegend(searchData, AName, BName, "Plan Length", paste("out/planLength_", AName, "_vs_", BName, ".pdf", sep = ""))
+generate_scatterplot(searchData, AName, BName, "Plan Length", paste("out/planLength_", AName, "_vs_", BName, ".pdf", sep = ""))

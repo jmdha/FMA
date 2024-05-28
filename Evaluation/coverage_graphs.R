@@ -10,8 +10,8 @@ args = commandArgs(trailingOnly=TRUE)
 #args[1] <- "solve.csv"
 #args[2] <- "S_CPDDL"
 #args[3] <- "LAMA_FIRST"
-if (length(args) != 3) {
-  stop("3 arguments must be supplied!", call.=FALSE)
+if (length(args) < 2) {
+  stop("At least 2 arguments must be supplied!", call.=FALSE)
 }
 
 targets <- args[2:length(args)]
@@ -50,6 +50,6 @@ generate_table(
   result,
   paste("out/coverage.tex", sep = ""),
   colnames(result),
-  "\\textit{Coverage of how many problems each method was able to solve within the time limit. P is the amount of problems for the given domain.}",
+  "\\textit{Coverage of how many problems each method was able to solve within the time limit. P is the amount of problems for the given domain. Do note, this is without reconstruction but purely based on being able to find a plan.}",
   "tab:coverage"
 )
