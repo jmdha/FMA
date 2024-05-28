@@ -1,5 +1,6 @@
 library(ggplot2)
 library(scales)
+library(cowplot)
 
 source("./Tools/style.R")
 
@@ -35,7 +36,7 @@ generate_scatterplot <- function(data, name1, name2, title, outName, forceMin = 
 			axis.text.x = element_text(angle=90, hjust=1),
 			legend.position="bottom"
 		) +
-		guides(shape=guide_legend(nrow=4, byrow=TRUE))
+		guides(shape=guide_legend(nrow=1, byrow=TRUE))
 	ggsave(plot=plot, filename=outName, width=imgWidth, height=imgHeight)
 	return (plot)
 }
@@ -72,7 +73,14 @@ generate_scatterplot_nolegend <- function(data, name1, name2, title, outName, fo
           axis.text.x = element_text(angle=90, hjust=1),
           legend.position="none"
     ) +
-    guides(shape=guide_legend(nrow=4, byrow=TRUE))
+    guides(shape=guide_legend(nrow=1, byrow=TRUE))
   ggsave(plot=plot, filename=outName, width=imgWidth, height=imgHeight_noLegend)
   return (plot)
+}
+
+generate_scatterplot_onlylegend <- function(data, name1, name2, title, outName, forceMin = -1) {
+  plot <- generate_scatterplot(data, name1, name2, title, outName, forceMin)
+  legend <- get_plot_component(plot, 'guide-box-bottom', return_all = TRUE)
+  ggsave(plot=legend, filename=outName, width=imgWidth * 3, height=0.5)
+  return (legend)
 }

@@ -40,25 +40,26 @@ sideA <- combined$search_time.A
 sideB <- combined$search_time.B
 sideDomains <- combined$domain
 searchData <- data.frame(x = sideA, y = sideB, domain = sideDomains)
-generate_scatterplot(searchData, AName, BName, "Search Time (s)", paste("out/reconstruction_searchTime_", AName, "_vs_", BName, ".pdf", sep = ""))
+generate_scatterplot_nolegend(searchData, AName, BName, "Search Time (s)", paste("out/reconstruction_searchTime_", AName, "_vs_", BName, ".pdf", sep = ""))
+generate_scatterplot_onlylegend(searchData, AName, BName, "", paste("out/legend_reconstruction_", AName, "_", BName, ".pdf", sep = ""))
 
 print("Generating: Reconstruction Total Time")
 sideA <- combined$total_time.A
 sideB <- combined$total_time.B
 sideDomains <- combined$domain
 searchData <- data.frame(x = sideA, y = sideB, domain = sideDomains)
-generate_scatterplot(searchData, AName, BName, "Total Time (s)", paste("out/reconstruction_totalTime_", AName, "_vs_", BName, ".pdf", sep = ""))
+generate_scatterplot_nolegend(searchData, AName, BName, "Total Time (s)", paste("out/reconstruction_totalTime_", AName, "_vs_", BName, ".pdf", sep = ""))
 
 print("Generating: Final Plan Length")
 sideA <- combined$plan_length.A
 sideB <- combined$plan_length.B
 sideDomains <- combined$domain
 searchData <- data.frame(x = sideA, y = sideB, domain = sideDomains)
-generate_scatterplot(searchData, AName, BName, "Final Plan Length", paste("out/reconstruction_planLength_", AName, "_vs_", BName, ".pdf", sep = ""))
+generate_scatterplot_nolegend(searchData, AName, BName, "Final Plan Length", paste("out/reconstruction_planLength_", AName, "_vs_", BName, ".pdf", sep = ""))
 
 print("Generating: Meta Plan Length")
 sideA <- combined$meta_plan_length.A
 sideB <- combined$meta_plan_length.B
 sideDomains <- combined$domain
 searchData <- data.frame(x = sideA, y = sideB, domain = sideDomains)
-generate_scatterplot(searchData, AName, BName, "Meta Plan Length", paste("out/reconstruction_metaPlanLength_", AName, "_vs_", BName, ".pdf", sep = ""))
+generate_scatterplot_nolegend(searchData, AName, BName, "Meta Plan Length", paste("out/reconstruction_metaPlanLength_", AName, "_vs_", BName, ".pdf", sep = ""))

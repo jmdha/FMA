@@ -9,8 +9,8 @@ source("Tools/dataSplitter.R")
 
 # Handle arguments
 args = commandArgs(trailingOnly=TRUE)
-#args[1] <- "solve.csv"
-#args[2] <- "S_CPDDL"
+#args[1] <- "Results/solve.csv"
+#args[2] <- "CPDDL"
 #args[3] <- "LAMA_FIRST"
 if (length(args) != 3) {
   stop("3 arguments must be supplied!", call.=FALSE)
@@ -33,18 +33,20 @@ sideA <- combined$search_time.A
 sideB <- combined$search_time.B
 sideDomains <- combined$domain
 searchData <- data.frame(x = sideA, y = sideB, domain = sideDomains)
-generate_scatterplot(searchData, AName, BName, "Search Time (s)", paste("out/searchTime_", AName, "_vs_", BName, ".pdf", sep = ""))
+generate_scatterplot_nolegend(searchData, AName, BName, "Search Time (s)", paste("out/searchTime_", AName, "_vs_", BName, ".pdf", sep = ""))
+generate_scatterplot_onlylegend(searchData, AName, BName, "", paste("out/legend_", AName, "_", BName, ".pdf", sep = ""))
 
 print("Generating: Total Time")
 sideA <- combined$total_time.A
 sideB <- combined$total_time.B
 sideDomains <- combined$domain
 searchData <- data.frame(x = sideA, y = sideB, domain = sideDomains)
-generate_scatterplot(searchData, AName, BName, "Total Time (s)", paste("out/totalTime_", AName, "_vs_", BName, ".pdf", sep = ""))
+generate_scatterplot_nolegend(searchData, AName, BName, "Total Time (s)", paste("out/totalTime_", AName, "_vs_", BName, ".pdf", sep = ""))
 
 print("Generating: Final Plan Length")
 sideA <- combined$plan_length.A
 sideB <- combined$plan_length.B
 sideDomains <- combined$domain
 searchData <- data.frame(x = sideA, y = sideB, domain = sideDomains)
-generate_scatterplot(searchData, AName, BName, "Plan Length", paste("out/planLength_", AName, "_vs_", BName, ".pdf", sep = ""))
+generate_scatterplot_nolegend(searchData, AName, BName, "Plan Length", paste("out/planLength_", AName, "_vs_", BName, ".pdf", sep = ""))
+
