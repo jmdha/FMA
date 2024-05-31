@@ -75,5 +75,7 @@ namespace FocusedMetaActions.Train
         public bool PostValidityCheck { get; set; } = false;
         [Option("macro-cache-check-delay", Required = false, HelpText = "How long the program should wait to check replacement folder before continuing (in seconds)", Default = 1)]
         public int MacroCacheCheckDelay { get; set; } = 1;
+        [Option("macro-cache-max-free-params", Required = false, HelpText = "Maximum amount of free parameters is allowed in a macro.", Default = 2)]
+        public int MaxMacroCacheFreeParams { get; set; } = 2;
     }
 }

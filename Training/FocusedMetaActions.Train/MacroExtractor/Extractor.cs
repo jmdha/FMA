@@ -19,11 +19,11 @@ namespace FocusedMetaActions.Train.MacroExtractor
         public static string _macroActionName = "$macro";
         public static string[] _RemoveNamesFromActions = { "attack_", "fix_" };
 
-        public void ExtractMacros(DomainDecl domain, List<string> followerPlans, string outPath, string targetMetaAction)
+        public void ExtractMacros(DomainDecl domain, List<string> followerPlans, string outPath, string targetMetaAction, int freeParamLimit)
         {
             outPath = PathHelper.RootPath(outPath);
 
-            var repairSequences = ExtractMacros(domain, followerPlans, targetMetaAction);
+            var repairSequences = ExtractMacros(domain, followerPlans, targetMetaAction, freeParamLimit);
             var listener = new ErrorListener();
             var codeGenerator = new PDDLCodeGenerator(listener);
             var planGenerator = new FastDownwardPlanGenerator(listener);
@@ -37,10 +37,10 @@ namespace FocusedMetaActions.Train.MacroExtractor
             }
         }
 
-        private List<RepairSequence> ExtractMacros(DomainDecl domain, List<string> planFiles, string targetMetaAction)
+        private List<RepairSequence> ExtractMacros(DomainDecl domain, List<string> planFiles, string targetMetaAction, int freeParamLimit)
         {
             var planSequences = ExtractUniquePlanSequences(planFiles, targetMetaAction);
-            var macros = GenerateMacros(planSequences, domain);
+            var macros = GenerateMacros(planSequences, domain, freeParamLimit);
             return macros.ToList();
         }
 
@@ -105,7 +105,7 @@ namespace FocusedMetaActions.Train.MacroExtractor
             return -1;
         }
 
-        private static List<RepairSequence> GenerateMacros(Dictionary<GroundedAction, HashSet<ActionPlan>> from, DomainDecl domain)
+        private static List<RepairSequence> GenerateMacros(Dictionary<GroundedAction, HashSet<ActionPlan>> from, DomainDecl domain, int freeParamLimit)
         {
             var returnList = new List<RepairSequence>();
 
@@ -119,6 +119,8 @@ namespace FocusedMetaActions.Train.MacroExtractor
 
                     int id = 0;
                     var changeParams = macro.Parameters.Values.Where(x => !x.Name.StartsWith("?"));
+                    if (changeParams.Count() > freeParamLimit)
+                        continue;
                     var replacementDict = new Dictionary<string, string>();
                     foreach (var arg in changeParams)
                         replacementDict.Add(arg.Name, $"?O{id++}");

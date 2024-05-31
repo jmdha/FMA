@@ -21,7 +21,7 @@ namespace FocusedMetaActions.Train.MacroExtractor
         private Process? _currentProcess;
         internal string _log = "";
 
-        public void GenerateCache(DomainDecl domain, List<ProblemDecl> problems, ActionDecl metaAction, string tempFolder, string outFolder, int timeLimitS)
+        public void GenerateCache(DomainDecl domain, List<ProblemDecl> problems, ActionDecl metaAction, string tempFolder, string outFolder, int timeLimitS, int freeParamsLimit)
         {
             var tmpFolder = Path.Combine(tempFolder, _cacheFolder);
             PathHelper.RecratePath(tmpFolder);
@@ -54,7 +54,7 @@ namespace FocusedMetaActions.Train.MacroExtractor
             }
 
             var extractor = new Extractor();
-            extractor.ExtractMacros(domain, Directory.GetFiles(Path.Combine(tmpFolder, _replacementsPath)).ToList(), outFolder, metaAction.Name);
+            extractor.ExtractMacros(domain, Directory.GetFiles(Path.Combine(tmpFolder, _replacementsPath)).ToList(), outFolder, metaAction.Name, freeParamsLimit);
         }
 
         private void ExecutePlanner(string stackelbergPath, string domainPath, string problemPath, string outputPath, int timeLimitS)

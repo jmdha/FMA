@@ -177,7 +177,8 @@ namespace FocusedMetaActions.Train
                     refinedCandidates,
                     domain,
                     problems,
-                    opts.CacheGenerationTimeLimitS);
+                    opts.CacheGenerationTimeLimitS,
+                    opts.MaxMacroCacheFreeParams);
 
             File.WriteAllText(Path.Combine(opts.OutputPath, "candidates.csv"), CSVSerialiser.Serialise(new List<MetaActionGenerationResult>() { generatorResult }));
             File.WriteAllText(Path.Combine(opts.OutputPath, "general.csv"), CSVSerialiser.Serialise(new List<GeneralResult>() { generalResult }));
@@ -312,7 +313,7 @@ namespace FocusedMetaActions.Train
         /// <param name="domain"></param>
         /// <param name="problems"></param>
         /// <param name="timeLimit"></param>
-        private static void GenerateMacroCache(string targetPath, string tempPath, List<ActionDecl> refinedCandidates, DomainDecl domain, List<ProblemDecl> problems, int timeLimit)
+        private static void GenerateMacroCache(string targetPath, string tempPath, List<ActionDecl> refinedCandidates, DomainDecl domain, List<ProblemDecl> problems, int timeLimit, int maxFreeParams)
         {
             ConsoleHelper.WriteLineColor($"Generating macro cache for valid meta actions", ConsoleColor.Blue);
             var cacheGenerator = new CacheGenerator();
@@ -321,7 +322,7 @@ namespace FocusedMetaActions.Train
             foreach (var metaAction in refinedCandidates)
             {
                 ConsoleHelper.WriteLineColor($"\tGenerating cache for candidate '{metaAction.Name}' [{count++} out of {refinedCandidates.Count}]", ConsoleColor.Magenta);
-                cacheGenerator.GenerateCache(domain, problems, metaAction, tempPath, targetPath, timeLimit);
+                cacheGenerator.GenerateCache(domain, problems, metaAction, tempPath, targetPath, timeLimit, maxFreeParams);
             }
             ConsoleHelper.WriteLineColor($"Done!", ConsoleColor.Green);
         }
