@@ -214,10 +214,6 @@ namespace FocusedMetaActions.Train.PreconditionAdditionRefinements
 
             ConsoleHelper.WriteLineColor($"\t\t\tChecks for covered meta actions", ConsoleColor.Magenta);
             ConsoleHelper.WriteLineColor($"\t\t\tTotal to check: {toCheck.Count}", ConsoleColor.Magenta);
-            foreach (var state in toCheck)
-                if (!IsCovered(state, toCheck))
-                    openList.Enqueue(state, state.hValue);
-            ConsoleHelper.WriteLineColor($"\t\t\tTotal not covered: {openList.Count}", ConsoleColor.Magenta);
 
             parseWatch.Stop();
             _result.StackelbergOutputParsingTime += parseWatch.ElapsedMilliseconds;
@@ -225,27 +221,6 @@ namespace FocusedMetaActions.Train.PreconditionAdditionRefinements
             _initialPossibilities = openList.Count;
 
             return openList;
-        }
-
-        /// <summary>
-        /// Prunes options where there exist another option, with fewer preconditions, that have the same applicability.
-        /// </summary>
-        /// <param name="check"></param>
-        /// <param name="others"></param>
-        /// <returns></returns>
-        private bool IsCovered(PreconditionState check, List<PreconditionState> others)
-        {
-            foreach (var state in others)
-            {
-                if (state != check &&
-                    state.Precondition.Count < check.Precondition.Count &&
-                    state.Applicability == check.Applicability)
-                {
-                    if (state.Precondition.All(x => check.Precondition.Any(y => y.Equals(x))))
-                        return true;
-                }
-            }
-            return false;
         }
     }
 }
