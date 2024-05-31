@@ -142,7 +142,7 @@ namespace FocusedMetaActions.Train.PreconditionAdditionRefinements
                 var preCpy = and.Copy();
                 preCpy.RemoveContext();
                 preCpy.RemoveTypes();
-                if (preconditions.All(x => preCpy.Children.Contains(x)))
+                if (preconditions.Any(x => preCpy.Children.Contains(x)))
                     return false;
                 if (preconditions.Any(x => preCpy.Children.Contains(new NotExp(x))))
                     return false;
