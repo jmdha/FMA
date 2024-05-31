@@ -5,7 +5,9 @@ Generally, this project is split into a few couple of repositories, where the mo
 * This one
     * The `Training` folder contains file and project needed for training.
     * The `Testing` folder contains file and project needed for testing.
+        * This folder also contains log files from the learning process, as well as the final meta action sets.
     * The `Evaluation` folder contains all the automatic graph and table generation used in the paper.
+        * This folder also contains the final CSV files that the results in the paper where generated from.
 * A [benchmark](https://github.com/kris701/FocusedMetaActionsData/tree/master) repository
 * A repository for [labyr](https://github.com/jamadaha/labyr) (do note, this is not needed to run the project, its only used to run all the experiments from the paper)
 * A repository for a [modified Stackelberg Planner](https://github.com/jamadaha/stackelberg-planner-sls) for state exploration and macro generation
