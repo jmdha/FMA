@@ -214,6 +214,8 @@ namespace FocusedMetaActions.Train.PreconditionAdditionRefinements
 
             ConsoleHelper.WriteLineColor($"\t\t\tChecks for covered meta actions", ConsoleColor.Magenta);
             ConsoleHelper.WriteLineColor($"\t\t\tTotal to check: {toCheck.Count}", ConsoleColor.Magenta);
+            foreach (var state in toCheck)
+                openList.Enqueue(state, state.hValue);
 
             parseWatch.Stop();
             _result.StackelbergOutputParsingTime += parseWatch.ElapsedMilliseconds;
