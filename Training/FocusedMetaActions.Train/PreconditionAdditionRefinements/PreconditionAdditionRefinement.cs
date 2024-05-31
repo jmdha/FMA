@@ -136,8 +136,8 @@ namespace FocusedMetaActions.Train.PreconditionAdditionRefinements
                 }
                 if (returnList.Count == 0)
                     ConsoleHelper.WriteLineColor($"\t\tNo valid refinements for state explored problem! Trying next problem...", ConsoleColor.Magenta);
-                else
-                    break;
+                //else
+                //    break;
             }
 
             return returnList;
